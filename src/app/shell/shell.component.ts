@@ -13,6 +13,14 @@ import { AuthenticationService, CredentialsService } from '@app/auth';
   styleUrls: ['./shell.component.scss'],
 })
 export class ShellComponent {
+  public routes: any[] = [
+    { title: 'Inicio', link: '/home', icon: 'home' },
+    { title: 'Repartidores', link: '/home', icon: 'bicycle' },
+    { title: 'Clientes', link: '/home', icon: 'person' },
+    { title: 'Empresas', link: '/companies', icon: 'briefcase' },
+    { title: 'Configuración', link: '/companies', icon: 'build' },
+  ];
+
   constructor(
     private router: Router,
     private translateService: TranslateService,
@@ -24,45 +32,27 @@ export class ShellComponent {
     private i18nService: I18nService
   ) {}
 
-  async showProfileActions() {
-    let createdActionSheet: any;
-    const buttons: ActionSheetButton[] = [
-      {
-        text: this.translateService.instant('Logout'),
-        icon: this.platform.is('ios') ? undefined : 'log-out',
-        role: 'destructive',
-        handler: () => this.logout(),
-      },
-      {
-        text: this.translateService.instant('Change language'),
-        icon: this.platform.is('ios') ? undefined : 'globe',
-        handler: async () => {
-          // Wait for action sheet dismiss animation to finish, see "Dismissing And Async Navigation" section in:
-          // http://ionicframework.com/docs/api/components/action-sheet/ActionSheetController/#advanced
-          await createdActionSheet.dismiss();
-          this.changeLanguage();
-          return false;
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Cerrar la sesión',
+      message: 'Quieres cerrar la sesión?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'primary',
         },
-      },
-      {
-        text: this.translateService.instant('Cancel'),
-        icon: this.platform.is('ios') ? undefined : 'close',
-        role: 'cancel',
-      },
-    ];
+        {
+          text: 'Ok',
+          cssClass: 'secondary',
+          handler: () => {
+            this.logout();
+          },
+        },
+      ],
+    });
 
-    // On Cordova platform language is set to the device language
-    if (this.platform.is('cordova')) {
-      buttons.splice(1, 1);
-    }
-
-    const actionSheetOptions: ActionSheetOptions = {
-      header: this.username || undefined,
-      buttons,
-    };
-
-    createdActionSheet = await this.actionSheetController.create(actionSheetOptions);
-    await createdActionSheet.present();
+    await alert.present();
   }
 
   get username(): string | null {

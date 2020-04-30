@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { Credentials, CredentialsService } from './credentials.service';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 export interface LoginContext {
   username: string;
@@ -17,21 +18,37 @@ export interface LoginContext {
   providedIn: 'root',
 })
 export class AuthenticationService {
-  constructor(private credentialsService: CredentialsService) {}
+  constructor(private credentialsService: CredentialsService, private afAuth: AngularFireAuth) {}
 
   /**
    * Authenticates the user.
    * @param context The login parameters.
    * @return The user credentials.
    */
-  login(context: LoginContext): Observable<Credentials> {
+  async login(context: LoginContext): Promise<Observable<Credentials>> {
+    const user = await this.afAuth
+      .signInWithEmailAndPassword(String(context.username).toLocaleLowerCase(), context.password)
+      .then((resp) => {
+        return {
+          email: resp.user.email,
+          uid: resp.user.uid,
+        };
+      })
+      .catch((error) => {
+        console.error(error);
+        return error;
+      });
     // Replace by proper authentication call
-    const data = {
-      username: context.username,
-      token: '123456',
-    };
-    this.credentialsService.setCredentials(data, context.remember);
-    return of(data);
+    if (user && user.uid && user.email) {
+      const data = {
+        username: user.email,
+        uid: user.uid,
+      };
+      this.credentialsService.setCredentials(data, context.remember);
+      return of(data);
+    } else {
+      return of();
+    }
   }
 
   /**
