@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { ModalController } from '@ionic/angular';
+import { AddCompanyComponent } from './add-company/add-company.component';
 
 @Component({
   selector: 'app-companies',
@@ -9,7 +11,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 export class CompaniesComponent implements OnInit {
   public docs: any[];
 
-  constructor(private afs: AngularFirestore) {}
+  constructor(private afs: AngularFirestore, private modalController: ModalController) {}
 
   ngOnInit(): void {}
 
@@ -29,5 +31,12 @@ export class CompaniesComponent implements OnInit {
           console.error(error);
         }
       );
+  }
+
+  async add() {
+    const modal = await this.modalController.create({
+      component: AddCompanyComponent,
+    });
+    return await modal.present();
   }
 }

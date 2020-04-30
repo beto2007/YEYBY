@@ -7,6 +7,9 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-button (click)="add()" expand="block" fill="clear" shape="round">
+    Agregar empresa
+  </ion-button>
   <ion-list>
     <ion-item *ngFor="let item of docs">
       <ion-label>{{ item?.name }}</ion-label>

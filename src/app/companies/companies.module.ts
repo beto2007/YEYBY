@@ -8,6 +8,7 @@ import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
 import { CompaniesRoutingModule } from './companies-routing.module';
 import { CompaniesComponent } from './companies.component';
+import { AddCompanyComponent } from './add-company/add-company.component';
 
 @NgModule({
   imports: [
@@ -19,6 +20,8 @@ import { CompaniesComponent } from './companies.component';
     Angulartics2Module,
     CompaniesRoutingModule,
   ],
-  declarations: [CompaniesComponent],
+  declarations: [CompaniesComponent, AddCompanyComponent],
+  entryComponents: [AddCompanyComponent],
+  exports: [AddCompanyComponent],
 })
 export class CompaniesModule {}
