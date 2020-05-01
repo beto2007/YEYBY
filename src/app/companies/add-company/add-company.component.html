@@ -15,32 +15,57 @@
   <form (ngSubmit)="save()" [formGroup]="myForm" novalidate>
     <ion-list>
       <ion-item lines="inset">
-        <ion-label color="medium" position="stacked">Nombre</ion-label>
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+
+          Nombre
+        </ion-label>
         <ion-input type="text" formControlName="name" autocomplete="name"></ion-input>
       </ion-item>
       <ion-text color="danger" [hidden]="myForm.controls.name.valid || myForm.controls.name.untouched">
         <span class="ion-padding">Nombre es requerido</span>
       </ion-text>
       <ion-item lines="inset">
-        <ion-label color="medium" position="stacked">Teléfono</ion-label>
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Teléfono
+        </ion-label>
         <ion-input type="phone" formControlName="phone" autocomplete="phone"></ion-input>
       </ion-item>
       <ion-text color="danger" [hidden]="myForm.controls.phone.valid || myForm.controls.phone.untouched">
         <span class="ion-padding">Teléfono es requerido</span>
       </ion-text>
       <ion-item lines="inset">
-        <ion-label color="medium" position="stacked">Propietario</ion-label>
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding"></span> </ion-text
+          >Propietario
+        </ion-label>
         <ion-input type="text" formControlName="owner" autocomplete="owner"></ion-input>
       </ion-item>
-      <ion-text color="danger" [hidden]="myForm.controls.owner.valid || myForm.controls.owner.untouched">
+      <!-- <ion-text color="danger" [hidden]="myForm.controls.owner.valid || myForm.controls.owner.untouched">
         <span class="ion-padding">Propietario es requerido</span>
-      </ion-text>
+      </ion-text> -->
       <ion-item lines="inset">
-        <ion-label color="medium" position="stacked">Descripción</ion-label>
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding"></span>
+          </ion-text>
+          Descripción
+        </ion-label>
         <ion-textarea formControlName="description" autocomplete="description" rows="3"></ion-textarea>
       </ion-item>
       <ion-item lines="inset">
-        <ion-label color="medium" position="stacked">Dirección</ion-label>
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Dirección
+        </ion-label>
         <ion-textarea formControlName="streetAddress" autocomplete="streetAddress" rows="3"></ion-textarea>
       </ion-item>
       <ion-text
@@ -50,14 +75,23 @@
         <span class="ion-padding">Dirección es requerido</span>
       </ion-text>
       <ion-item lines="inset">
-        <ion-label color="medium" position="stacked">Referencias</ion-label>
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding"></span>
+          </ion-text>
+          Referencias
+        </ion-label>
         <ion-textarea formControlName="references" autocomplete="references" rows="3"></ion-textarea>
       </ion-item>
-      <ion-text color="danger" [hidden]="myForm.controls.references.valid || myForm.controls.references.untouched">
+      <!-- <ion-text color="danger" [hidden]="myForm.controls.references.valid || myForm.controls.references.untouched">
         <span class="ion-padding">Referencias es requerido</span>
-      </ion-text>
+      </ion-text> -->
     </ion-list>
     <div>
+      <ion-text color="primary">
+        <span class="ion-padding">*Campos requeridos</span>
+      </ion-text>
+
       <ion-button type="submit" [disabled]="myForm.invalid || isLoading" color="primary" expand="block">
         {{ id ? 'Actualizar' : 'Agregar' }}
       </ion-button>

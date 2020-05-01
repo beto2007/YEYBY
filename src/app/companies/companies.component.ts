@@ -1,18 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ModalController, AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { AddCompanyComponent } from './add-company/add-company.component';
-import { from } from 'rxjs';
+import { from, Subscription, forkJoin } from 'rxjs';
+import { map, finalize } from 'rxjs/operators';
+import { Logger, untilDestroyed } from '@core';
 
 @Component({
   selector: 'app-companies',
   templateUrl: './companies.component.html',
   styleUrls: ['./companies.component.scss'],
 })
-export class CompaniesComponent implements OnInit {
+export class CompaniesComponent implements OnInit, OnDestroy {
   public docs: any[];
   isLoading = false;
   limit: number = 10;
+  suscription: Subscription;
 
   constructor(
     private afs: AngularFirestore,
@@ -23,6 +26,7 @@ export class CompaniesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
+  ngOnDestroy() {}
 
   // async  getFirts() {
   //   var first = this.afs.collection("companies").ref.orderBy("nameStr").limit(3);
@@ -42,10 +46,10 @@ export class CompaniesComponent implements OnInit {
 
   async search(ev: any) {
     let searchStr: string = String(ev.target.value);
-    if (searchStr.length > 3) {
+    if (searchStr.length >= 5) {
       this.isLoading = true;
       const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-      from(loadingOverlay.present());
+      loadingOverlay.present();
       try {
         const snap = await this.afs
           .collection('companies')
@@ -68,21 +72,38 @@ export class CompaniesComponent implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.afs
-      .collection('companies', (ref) => ref.orderBy('nameStr', 'asc').limit(100))
-      .snapshotChanges()
-      .subscribe(
-        (snap) => {
-          this.docs = snap.map((element) => {
-            const id: string = element.payload.doc.id;
-            const data: any = element.payload.doc.data();
-            return { id, ...data };
-          });
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+    this.initializeApp();
+  }
+
+  ionViewDidLeave() {
+    this.closeSubscription();
+  }
+
+  async initializeApp() {
+    this.closeSubscription();
+    const snap$ = this.afs.collection('companies', (ref) => ref.orderBy('nameStr', 'asc').limit(100)).snapshotChanges();
+    this.suscription = snap$.subscribe(
+      (snap) => {
+        this.docs = snap.map((element) => {
+          const id: string = element.payload.doc.id;
+          const data: any = element.payload.doc.data();
+          return { id, ...data };
+        });
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  closeSubscription() {
+    try {
+      if (this.suscription) {
+        this.suscription.unsubscribe();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async add(id?: string) {
@@ -117,7 +138,7 @@ export class CompaniesComponent implements OnInit {
   async delete(id: string): Promise<void> {
     this.isLoading = true;
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-    from(loadingOverlay.present());
+    loadingOverlay.present();
     try {
       await this.afs.collection('companies').doc(id).delete();
       this.presentToast('Empresa eliminada correctamente');

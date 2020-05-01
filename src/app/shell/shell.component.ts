@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
-import { ActionSheetButton, ActionSheetOptions, TextFieldTypes } from '@ionic/core';
+import { AlertController, Platform } from '@ionic/angular';
+import { TextFieldTypes } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { I18nService } from '@app/i18n';
@@ -18,7 +18,7 @@ export class ShellComponent {
     { title: 'Repartidores', link: '/home', icon: 'bicycle' },
     { title: 'Clientes', link: '/home', icon: 'person' },
     { title: 'Empresas', link: '/companies', icon: 'briefcase' },
-    { title: 'Configuración', link: '/companies', icon: 'build' },
+    { title: 'Configuración', link: '/home', icon: 'build' },
   ];
 
   constructor(
@@ -26,7 +26,6 @@ export class ShellComponent {
     private translateService: TranslateService,
     private platform: Platform,
     private alertController: AlertController,
-    private actionSheetController: ActionSheetController,
     private authenticationService: AuthenticationService,
     private credentialsService: CredentialsService,
     private i18nService: I18nService

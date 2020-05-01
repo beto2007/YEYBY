@@ -4,12 +4,9 @@
     <ion-row class="ion-justify-content-center ion-no-padding">
       <ion-col size-sm="8" size-lg="6" size-xl="4" class="ion-align-self-center ion-no-padding">
         <div class="login-header ion-text-center">
-          <h1>APP_NAME</h1>
+          <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
+          <h1>YEYBY - Panel Administrativo</h1>
           <h6>v{{ version }}</h6>
-          <!-- <ion-list *ngIf="isWeb" color="primary" lines="none" class="ion-no-padding">
-            <app-language-selector type="select" itemClass="ion-color ion-color-primary item-lines-none">
-            </app-language-selector>
-          </ion-list> -->
         </div>
         <div class="login-container">
           <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
@@ -18,33 +15,33 @@
             </ion-text>
             <ion-list>
               <ion-item lines="inset">
-                <ion-label color="medium" position="floating">Username</ion-label>
+                <ion-label color="medium" position="floating">Email</ion-label>
                 <ion-input type="text" formControlName="username" autocomplete="username"></ion-input>
               </ion-item>
               <ion-text
                 color="danger"
                 [hidden]="loginForm.controls.username.valid || loginForm.controls.username.untouched"
               >
-                <span class="ion-padding">Username is required</span>
+                <span class="ion-padding">Email requerido</span>
               </ion-text>
               <ion-item lines="inset">
-                <ion-label color="medium" position="floating">Password</ion-label>
+                <ion-label color="medium" position="floating">Contraseña</ion-label>
                 <ion-input type="password" formControlName="password" autocomplete="current-password"></ion-input>
               </ion-item>
               <ion-text
                 color="danger"
                 [hidden]="loginForm.controls.password.valid || loginForm.controls.password.untouched"
               >
-                <span class="ion-padding">Password is required</span>
+                <span class="ion-padding">Contraseña requerida</span>
               </ion-text>
               <ion-item class="ion-padding-top" lines="none">
-                <ion-label>Remember me</ion-label>
+                <ion-label>Recordarme</ion-label>
                 <ion-checkbox slot="start" formControlName="remember"></ion-checkbox>
               </ion-item>
             </ion-list>
             <div class="ion-padding-horizontal">
               <ion-button type="submit" [disabled]="loginForm.invalid || isLoading" color="primary" expand="block">
-                Login
+                Ingresar
               </ion-button>
             </div>
           </form>

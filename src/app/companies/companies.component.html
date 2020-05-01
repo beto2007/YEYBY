@@ -4,18 +4,29 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title> <span>Empresas</span></ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-toolbar color="light">
-    <ion-searchbar type="text" debounce="750" (ionChange)="search($event)"></ion-searchbar>
+    <ion-searchbar
+      type="text"
+      debounce="750"
+      (ionChange)="search($event)"
+      (ionCancel)="initializeApp()"
+      (ionClear)="initializeApp()"
+    ></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-toolbar>
-  <ion-buttons>
+  <!-- <ion-buttons>
     <ion-button>
       <ion-icon slot="icon-only" name="options"></ion-icon>
     </ion-button>
-  </ion-buttons>
+  </ion-buttons> -->
 </ion-toolbar>
 
 <ion-content>
@@ -25,12 +36,10 @@
         <ion-card>
           <img src="assets/no-image.png" />
           <ion-card-header>
-            <ion-card-subtitle>{{ item?.category }}</ion-card-subtitle>
+            <ion-card-subtitle>{{ item?.phone }}</ion-card-subtitle>
             <ion-card-title>{{ item?.name }}</ion-card-title>
           </ion-card-header>
-          <ion-card-content>
-            {{ item?.description }}
-          </ion-card-content>
+          <ion-card-content> {{ item?.description | slice: 0:100 }}... </ion-card-content>
           <ion-item>
             <ion-buttons slot="start">
               <ion-button fill="clear" color="medium" (click)="presentAlertConfirm(item)">
@@ -45,13 +54,17 @@
       </ion-col>
       <ion-col *ngIf="!(docs && docs[0])">
         Sin resultados
+        <ion-button (click)="add()" size="small">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Agregar empresa
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="add()">
     <ion-fab-button>
-      <ion-icon name="add-circle-outline"></ion-icon>
+      <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>
