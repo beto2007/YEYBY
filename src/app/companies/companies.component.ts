@@ -12,6 +12,7 @@ import { from } from 'rxjs';
 export class CompaniesComponent implements OnInit {
   public docs: any[];
   isLoading = false;
+  limit: number = 10;
 
   constructor(
     private afs: AngularFirestore,
@@ -23,9 +24,52 @@ export class CompaniesComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  // async  getFirts() {
+  //   var first = this.afs.collection("companies").ref.orderBy("nameStr").limit(3);
+  //   let paginate = first.get()
+  //     .then((snapshot) => {
+  //       console.log("first");
+  //       console.log(snapshot.docs.map(e => e.data().name));
+  //       console.log(snapshot.size);
+  //       let last = snapshot.docs[snapshot.docs.length - 1];
+  //       let next = this.afs.collection('companies').ref.orderBy('nameStr').startAfter(last.data().nameStr).limit(3);
+  //       next.get().then(data => {
+  //         console.log("next");
+  //         console.log(data.docs.map(e => e.data().name));
+  //       });
+  //     });
+  // }
+
+  async search(ev: any) {
+    let searchStr: string = String(ev.target.value);
+    if (searchStr.length > 3) {
+      this.isLoading = true;
+      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+      from(loadingOverlay.present());
+      try {
+        const snap = await this.afs
+          .collection('companies')
+          .ref.orderBy('nameStr', 'asc')
+          .where('search', 'array-contains-any', [searchStr])
+          .limit(20)
+          .get();
+        this.docs = snap.docs.map((element) => {
+          const id: string = element.id;
+          const data: any = element.data();
+          return { id, ...data };
+        });
+      } catch (error) {
+        console.error(error);
+        this.presentToast('Ha ocurrido un error');
+      }
+      this.isLoading = false;
+      loadingOverlay.dismiss();
+    }
+  }
+
   ionViewDidEnter() {
     this.afs
-      .collection('companies', (ref) => ref.orderBy('name', 'asc'))
+      .collection('companies', (ref) => ref.orderBy('nameStr', 'asc').limit(100))
       .snapshotChanges()
       .subscribe(
         (snap) => {
@@ -41,9 +85,10 @@ export class CompaniesComponent implements OnInit {
       );
   }
 
-  async add() {
+  async add(id?: string) {
     const modal = await this.modalController.create({
       component: AddCompanyComponent,
+      componentProps: { id: id },
     });
     return await modal.present();
   }

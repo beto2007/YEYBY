@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, LoadingController, ToastController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { DocumentReference } from '@angular/fire/firestore/interfaces';
+import { DocumentReference } from '@angular/fire/firestore';
 import { from } from 'rxjs';
+import { database } from 'firebase';
 
 @Component({
   selector: 'app-add-company',
@@ -14,6 +15,7 @@ export class AddCompanyComponent implements OnInit {
   error: string | undefined;
   myForm!: FormGroup;
   isLoading = false;
+  id: string | undefined;
 
   constructor(
     private modalController: ModalController,
@@ -25,7 +27,29 @@ export class AddCompanyComponent implements OnInit {
     this.createForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.id) {
+      this.initData(this.id);
+    }
+  }
+
+  async initData(id: string) {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    from(loadingOverlay.present());
+    try {
+      const response = await this.afs.collection('companies').doc(id).ref.get();
+      const data = response.data();
+      if (data) {
+        this.fillForm(data);
+      }
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
 
   private createForm() {
     this.myForm = this.formBuilder.group({
@@ -35,6 +59,17 @@ export class AddCompanyComponent implements OnInit {
       description: [''],
       streetAddress: ['', Validators.required],
       references: ['', Validators.required],
+    });
+  }
+
+  fillForm(data: any) {
+    this.myForm.setValue({
+      name: data && data.name ? data.name : '',
+      phone: data && data.phone ? data.phone : '',
+      owner: data && data.owner ? data.owner : '',
+      description: data && data.description ? data.description : '',
+      streetAddress: data && data.streetAddress ? data.streetAddress : '',
+      references: data && data.references ? data.references : '',
     });
   }
 
@@ -56,6 +91,8 @@ export class AddCompanyComponent implements OnInit {
     from(loadingOverlay.present());
     try {
       let data: any = this.myForm.value;
+      data.nameStr = String(data.name).toLocaleLowerCase();
+      data.date = new Date();
       const response: DocumentReference = await this.afs.collection('companies').add(data);
       if (response.id) {
         this.close();
@@ -69,5 +106,31 @@ export class AddCompanyComponent implements OnInit {
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
+  }
+
+  async update(id: string): Promise<void> {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    from(loadingOverlay.present());
+    try {
+      let data: any = this.myForm.value;
+      data.nameStr = String(data.name).toLocaleLowerCase();
+      await this.afs.collection('companies').doc(id).update(data);
+      this.close();
+      this.presentToast('Empresa actualizada correctamente');
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  save() {
+    if (this.id) {
+      this.update(this.id);
+    } else {
+      this.add();
+    }
   }
 }

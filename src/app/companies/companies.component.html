@@ -6,7 +6,7 @@
     <ion-title> <span>Empresas</span></ion-title>
   </ion-toolbar>
   <ion-toolbar color="light">
-    <ion-searchbar></ion-searchbar>
+    <ion-searchbar type="text" debounce="750" (ionChange)="search($event)"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
@@ -36,24 +36,18 @@
               <ion-button fill="clear" color="medium" (click)="presentAlertConfirm(item)">
                 <ion-icon slot="icon-only" name="trash"></ion-icon>
               </ion-button>
-              <ion-button fill="clear" color="medium">
+              <ion-button fill="clear" color="medium" (click)="add(item.id)">
                 <ion-icon slot="icon-only" name="create"></ion-icon>
               </ion-button>
             </ion-buttons>
           </ion-item>
         </ion-card>
       </ion-col>
+      <ion-col *ngIf="!(docs && docs[0])">
+        Sin resultados
+      </ion-col>
     </ion-row>
   </ion-grid>
-
-  <!-- <ion-list>
-    <ion-item *ngFor="let item of docs">
-      <ion-label>
-        {{ item?.name }}
-      </ion-label>
-      <ion-icon name="ellipsis-vertical" slot="end"></ion-icon>
-    </ion-item>
-  </ion-list> -->
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="add()">
     <ion-fab-button>
