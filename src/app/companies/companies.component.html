@@ -1,18 +1,63 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="light">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title><span>Empresas</span></ion-title>
+    <ion-title> <span>Empresas</span></ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="light">
+    <ion-searchbar></ion-searchbar>
   </ion-toolbar>
 </ion-header>
+
+<ion-toolbar>
+  <ion-buttons>
+    <ion-button>
+      <ion-icon slot="icon-only" name="options"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
 <ion-content>
-  <ion-button (click)="add()" expand="block" fill="clear" shape="round">
-    Agregar empresa
-  </ion-button>
-  <ion-list>
+  <ion-grid>
+    <ion-row>
+      <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of docs">
+        <ion-card>
+          <img src="assets/no-image.png" />
+          <ion-card-header>
+            <ion-card-subtitle>{{ item?.category }}</ion-card-subtitle>
+            <ion-card-title>{{ item?.name }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            {{ item?.description }}
+          </ion-card-content>
+          <ion-item>
+            <ion-buttons slot="start">
+              <ion-button fill="clear" color="medium" (click)="presentAlertConfirm(item)">
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" color="medium">
+                <ion-icon slot="icon-only" name="create"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- <ion-list>
     <ion-item *ngFor="let item of docs">
-      <ion-label>{{ item?.name }}</ion-label>
+      <ion-label>
+        {{ item?.name }}
+      </ion-label>
+      <ion-icon name="ellipsis-vertical" slot="end"></ion-icon>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="add()">
+    <ion-fab-button>
+      <ion-icon name="add-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
