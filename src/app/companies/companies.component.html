@@ -34,7 +34,9 @@
     <ion-row>
       <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of docs">
         <ion-card>
-          <img src="assets/no-image.png" />
+          <img
+            [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
+          />
           <ion-card-header>
             <ion-card-subtitle>{{ item?.phone }}</ion-card-subtitle>
             <ion-card-title>{{ item?.name }}</ion-card-title>

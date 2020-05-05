@@ -19,7 +19,6 @@
           <ion-text color="primary">
             <span class="ion-padding">*</span>
           </ion-text>
-
           Nombre
         </ion-label>
         <ion-input type="text" formControlName="name" autocomplete="name"></ion-input>
@@ -34,22 +33,17 @@
           </ion-text>
           Teléfono
         </ion-label>
-        <ion-input type="phone" formControlName="phone" autocomplete="phone"></ion-input>
+        <ion-input type="number" formControlName="phone" autocomplete="phone"></ion-input>
       </ion-item>
       <ion-text color="danger" [hidden]="myForm.controls.phone.valid || myForm.controls.phone.untouched">
         <span class="ion-padding">Teléfono es requerido</span>
       </ion-text>
       <ion-item lines="inset">
         <ion-label color="medium" position="stacked">
-          <ion-text color="primary">
-            <span class="ion-padding"></span> </ion-text
-          >Propietario
+          <ion-text color="primary"> <span class="ion-padding"></span> </ion-text>Propietario
         </ion-label>
         <ion-input type="text" formControlName="owner" autocomplete="owner"></ion-input>
       </ion-item>
-      <!-- <ion-text color="danger" [hidden]="myForm.controls.owner.valid || myForm.controls.owner.untouched">
-        <span class="ion-padding">Propietario es requerido</span>
-      </ion-text> -->
       <ion-item lines="inset">
         <ion-label color="medium" position="stacked">
           <ion-text color="primary">
@@ -83,15 +77,19 @@
         </ion-label>
         <ion-textarea formControlName="references" autocomplete="references" rows="3"></ion-textarea>
       </ion-item>
-      <!-- <ion-text color="danger" [hidden]="myForm.controls.references.valid || myForm.controls.references.untouched">
-        <span class="ion-padding">Referencias es requerido</span>
-      </ion-text> -->
     </ion-list>
+    <ion-item>
+      <ion-thumbnail slot="start">
+        <ion-img [src]="imageSrc ? imageSrc : 'assets/no-image.jpg'"></ion-img>
+      </ion-thumbnail>
+      <input type="file" (change)="readURL($event)" accept="image/*" />
+    </ion-item>
     <div>
       <ion-text color="primary">
+        <br />
         <span class="ion-padding">*Campos requeridos</span>
+        <br />
       </ion-text>
-
       <ion-button type="submit" [disabled]="myForm.invalid || isLoading" color="primary" expand="block">
         {{ id ? 'Actualizar' : 'Agregar' }}
       </ion-button>

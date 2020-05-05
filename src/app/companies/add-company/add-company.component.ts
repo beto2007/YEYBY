@@ -3,7 +3,7 @@ import { ModalController, LoadingController, ToastController } from '@ionic/angu
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { DocumentReference } from '@angular/fire/firestore';
-import { of } from 'rxjs';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-add-company',
@@ -15,11 +15,17 @@ export class AddCompanyComponent implements OnInit {
   myForm!: FormGroup;
   isLoading = false;
   id: string | undefined;
+  imageSrc: any;
+  thumbnailSrc: any;
+  middleSrc: any;
+  file: File;
+  imagesPath: string[] = [];
 
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
     private afs: AngularFirestore,
+    private afStorage: AngularFireStorage,
     private loadingController: LoadingController,
     private toastController: ToastController
   ) {
@@ -32,6 +38,25 @@ export class AddCompanyComponent implements OnInit {
     }
   }
 
+  async readURL(event: any) {
+    if (event.target.files && event.target.files[0]) {
+      this.file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => (this.imageSrc = reader.result);
+      reader.readAsDataURL(this.file);
+      const toBase64 = (file: any) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (error) => reject(error);
+        });
+      const result: string = String(await toBase64(this.file).catch((e) => Error(e)));
+      this.thumbnailSrc = await this.thumbnailify(result, 100, 100);
+      this.middleSrc = await this.thumbnailify(result, 320, 170);
+    }
+  }
+
   async initData(id: string) {
     this.isLoading = true;
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
@@ -40,6 +65,12 @@ export class AddCompanyComponent implements OnInit {
       const response = await this.afs.collection('companies').doc(id).ref.get();
       const data = response.data();
       if (data) {
+        if (data && data.image) {
+          this.imageSrc = data.image.thumbnail.url;
+          this.imagesPath.push(data.image.main.path);
+          this.imagesPath.push(data.image.thumbnail.path);
+          this.imagesPath.push(data.image.list.path);
+        }
         this.fillForm(data);
       }
     } catch (error) {
@@ -97,6 +128,9 @@ export class AddCompanyComponent implements OnInit {
         String(this.myForm.get('phone').value),
       ]);
       data.date = new Date();
+      if (this.file) {
+        data.image = await this.images();
+      }
       const response: DocumentReference = await this.afs.collection('companies').add(data);
       if (response.id) {
         this.close();
@@ -123,7 +157,11 @@ export class AddCompanyComponent implements OnInit {
         String(this.myForm.get('name').value),
         String(this.myForm.get('phone').value),
       ]);
+      if (this.file) {
+        data.image = await this.images();
+      }
       await this.afs.collection('companies').doc(id).update(data);
+      this.deletePast();
       this.close();
       this.presentToast('Empresa actualizada correctamente');
     } catch (error) {
@@ -132,6 +170,41 @@ export class AddCompanyComponent implements OnInit {
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
+  }
+
+  async images() {
+    let image = {
+      main: {
+        url: '',
+        path: '',
+      },
+      thumbnail: {
+        url: '',
+        path: '',
+      },
+      list: {
+        url: '',
+        path: '',
+      },
+    };
+    const random = new Date().getMilliseconds();
+    const name = random + this.file.name;
+    var storageRef1 = this.afStorage.ref('companies/' + name);
+    const imageResponse1 = await storageRef1.put(this.file);
+    const downloadURL1 = await imageResponse1.ref.getDownloadURL();
+    image.main.url = downloadURL1;
+    image.main.path = 'companies/' + name;
+    var storageRef2 = this.afStorage.ref('companies/thumbnail/' + name);
+    const imageResponse2 = await storageRef2.putString(this.thumbnailSrc, 'data_url');
+    const downloadURL2 = await imageResponse2.ref.getDownloadURL();
+    image.thumbnail.url = downloadURL2;
+    image.thumbnail.path = 'companies/thumbnail/' + name;
+    var storageRef3 = this.afStorage.ref('companies/list/' + name);
+    const imageResponse3 = await storageRef3.putString(this.middleSrc, 'data_url');
+    const downloadURL3 = await imageResponse3.ref.getDownloadURL();
+    image.list.url = downloadURL3;
+    image.list.path = 'companies/list/' + name;
+    return image;
   }
 
   createSearchLabels(searchTerms: string[]): string[] {
@@ -253,5 +326,44 @@ export class AddCompanyComponent implements OnInit {
     } else {
       this.add();
     }
+  }
+
+  async thumbnailify(base64Image: string, targetWidth: number, targetHeight: number) {
+    var img = new Image();
+    const newImage = () =>
+      new Promise((resolve, reject) => {
+        img.onload = () => {
+          var width = img.width,
+            height = img.height,
+            canvas = document.createElement('canvas'),
+            ctx = canvas.getContext('2d');
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
+          ctx.drawImage(
+            img,
+            width > height ? (width - height) / 2 : 0,
+            height > width ? (height - width) / 2 : 0,
+            width > height ? height : width,
+            width > height ? height : width,
+            0,
+            0,
+            targetWidth,
+            targetHeight
+          );
+          resolve(canvas.toDataURL());
+        };
+        img.onerror = (error) => reject(error);
+      });
+    img.src = base64Image;
+    return newImage();
+  }
+
+  async deletePast() {
+    let promises: Promise<any>[] = [];
+    const storageRef = this.afStorage.storage.ref();
+    this.imagesPath.forEach((element) => {
+      promises.push(storageRef.child(element).delete());
+    });
+    await Promise.all(promises);
   }
 }

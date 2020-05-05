@@ -2,9 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ModalController, AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { AddCompanyComponent } from './add-company/add-company.component';
-import { from, Subscription, forkJoin } from 'rxjs';
-import { map, finalize } from 'rxjs/operators';
-import { Logger, untilDestroyed } from '@core';
+import { Subscription } from 'rxjs';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-companies',
@@ -19,6 +18,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
 
   constructor(
     private afs: AngularFirestore,
+    private afStorage: AngularFireStorage,
     private modalController: ModalController,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -26,6 +26,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {}
+
   ngOnDestroy() {}
 
   // async  getFirts() {
@@ -45,7 +46,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
   // }
 
   async search(ev: any) {
-    let searchStr: string = String(ev.target.value);
+    let searchStr: string = String(ev.target.value).toLocaleLowerCase();
     if (searchStr.length >= 5) {
       this.isLoading = true;
       const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
@@ -135,11 +136,38 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
+  async getData(id: string) {
+    let data: any;
+    try {
+      const response = await this.afs.collection('companies').doc(id).ref.get();
+      data = response.data();
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    return data;
+  }
+
+  async deletePast(array: string[]) {
+    let promises: Promise<any>[] = [];
+    const storageRef = this.afStorage.storage.ref();
+    array.forEach((element) => {
+      promises.push(storageRef.child(element).delete());
+    });
+    await Promise.all(promises);
+  }
+
   async delete(id: string): Promise<void> {
     this.isLoading = true;
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
+      const data = await this.getData(id);
+      let imagesPath: string[] = [];
+      imagesPath.push(data.image.main.path);
+      imagesPath.push(data.image.thumbnail.path);
+      imagesPath.push(data.image.list.path);
+      this.deletePast(imagesPath);
       await this.afs.collection('companies').doc(id).delete();
       this.presentToast('Empresa eliminada correctamente');
     } catch (error) {
