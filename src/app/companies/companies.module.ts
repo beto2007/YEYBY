@@ -9,6 +9,7 @@ import { SharedModule } from '@shared';
 import { CompaniesRoutingModule } from './companies-routing.module';
 import { CompaniesComponent } from './companies.component';
 import { AddCompanyComponent } from './add-company/add-company.component';
+import { OptionsCompaniesComponent } from './options-companies/options-companies.component';
 
 @NgModule({
   imports: [
@@ -21,7 +22,7 @@ import { AddCompanyComponent } from './add-company/add-company.component';
     CompaniesRoutingModule,
     ReactiveFormsModule,
   ],
-  declarations: [CompaniesComponent, AddCompanyComponent],
+  declarations: [CompaniesComponent, AddCompanyComponent, OptionsCompaniesComponent],
   entryComponents: [AddCompanyComponent],
   exports: [AddCompanyComponent],
 })

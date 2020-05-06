@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="light">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -21,7 +21,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-toolbar>
+<ion-toolbar color="light">
   <!-- <ion-buttons>
     <ion-button>
       <ion-icon slot="icon-only" name="options"></ion-icon>
@@ -29,29 +29,35 @@
   </ion-buttons> -->
 </ion-toolbar>
 
-<ion-content>
-  <ion-grid>
+<ion-content color="light">
+  <ion-grid fixed>
     <ion-row>
       <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of docs">
         <ion-card>
+          <ion-toolbar>
+            <ion-buttons>
+              <ion-button size="small" (click)="presentPopover($event, item)">
+                <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
           <img
             [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
           />
           <ion-card-header>
-            <ion-card-subtitle>{{ item?.phone }}</ion-card-subtitle>
+            <ion-card-subtitle> <ion-icon name="call" color="medium"></ion-icon> {{ item?.phone }} </ion-card-subtitle>
             <ion-card-title>{{ item?.name }}</ion-card-title>
           </ion-card-header>
-          <ion-card-content> {{ item?.description | slice: 0:100 }}... </ion-card-content>
-          <ion-item>
-            <ion-buttons slot="start">
-              <ion-button fill="clear" color="medium" (click)="presentAlertConfirm(item)">
-                <ion-icon slot="icon-only" name="trash"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="medium" (click)="add(item.id)">
-                <ion-icon slot="icon-only" name="create"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
+          <ion-card-content>
+            <p>
+              <ion-icon slot="start" name="information-circle" color="medium"></ion-icon>
+              {{ item?.description | slice: 0:150 }}...
+            </p>
+            <p>
+              <ion-icon slot="start" name="location" color="medium"></ion-icon>
+              {{ item?.streetAddress | slice: 0:200 }}...
+            </p>
+          </ion-card-content>
         </ion-card>
       </ion-col>
       <ion-col *ngIf="!(docs && docs[0])">

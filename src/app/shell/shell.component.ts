@@ -16,7 +16,7 @@ export class ShellComponent {
   public routes: any[] = [
     { title: 'Inicio', link: '/home', icon: 'home' },
     { title: 'Repartidores', link: '/home', icon: 'bicycle' },
-    { title: 'Clientes', link: '/home', icon: 'person' },
+    { title: 'Clientes', link: '/custumers', icon: 'person' },
     { title: 'Empresas', link: '/companies', icon: 'briefcase' },
     { title: 'Configuración', link: '/home', icon: 'build' },
   ];

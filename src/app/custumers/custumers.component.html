@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title> <span>Clientes</span></ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar color="light">
+    <ion-searchbar
+      type="text"
+      debounce="750"
+      (ionChange)="search($event)"
+      (ionCancel)="initializeApp()"
+      (ionClear)="initializeApp()"
+    ></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-toolbar color="light">
+  <!-- <ion-buttons>
+    <ion-button>
+      <ion-icon slot="icon-only" name="options"></ion-icon>
+    </ion-button>
+  </ion-buttons>  -->
+</ion-toolbar>
+
+<ion-content color="light">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of docs">
+            <ion-avatar slot="start" color="primary">
+              <img
+                [src]="
+                  item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                "
+              />
+            </ion-avatar>
+            <ion-label>
+              <h2>{{ item?.name }}</h2>
+              <h3>
+                <ion-icon slot="start" name="call" color="medium"></ion-icon> <strong>{{ item?.phone }}</strong>
+              </h3>
+              <p>
+                <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                {{ item?.streetAddress | slice: 0:100 }}
+              </p>
+            </ion-label>
+            <ion-buttons slot="end">
+              <ion-button (click)="presentPopover($event, item)">
+                <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="add()">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

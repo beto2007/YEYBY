@@ -1,16 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ModalController, LoadingController, ToastController, PopoverController } from '@ionic/angular';
-import { OptionsCompaniesComponent } from './options-companies/options-companies.component';
+import { OptionsCustumersComponent } from './options-custumers/options-custumers.component';
 import { Subscription } from 'rxjs';
-import { AddCompanyComponent } from './add-company/add-company.component';
+import { AddCustumersComponent } from './add-custumers/add-custumers.component';
 
 @Component({
-  selector: 'app-companies',
-  templateUrl: './companies.component.html',
-  styleUrls: ['./companies.component.scss'],
+  selector: 'app-custumers',
+  templateUrl: './custumers.component.html',
+  styleUrls: ['./custumers.component.scss'],
 })
-export class CompaniesComponent implements OnInit, OnDestroy {
+export class CustumersComponent implements OnInit, OnDestroy {
   public docs: any[];
   isLoading = false;
   limit: number = 10;
@@ -30,7 +30,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
 
   async presentPopover(ev: any, item: any) {
     const popover = await this.popoverController.create({
-      component: OptionsCompaniesComponent,
+      component: OptionsCustumersComponent,
       event: ev,
       translucent: true,
       componentProps: { item: item },
@@ -46,7 +46,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       loadingOverlay.present();
       try {
         const snap = await this.afs
-          .collection('companies')
+          .collection('custumers')
           .ref.orderBy('nameStr', 'asc')
           .where('search', 'array-contains-any', [searchStr])
           .limit(20)
@@ -75,7 +75,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
 
   async initializeApp() {
     this.closeSubscription();
-    const snap$ = this.afs.collection('companies', (ref) => ref.orderBy('nameStr', 'asc').limit(100)).snapshotChanges();
+    const snap$ = this.afs.collection('custumers', (ref) => ref.orderBy('nameStr', 'asc').limit(100)).snapshotChanges();
     this.suscription = snap$.subscribe(
       (snap) => {
         this.docs = snap.map((element) => {
@@ -110,25 +110,9 @@ export class CompaniesComponent implements OnInit, OnDestroy {
 
   async add(id?: string) {
     const modal = await this.modalController.create({
-      component: AddCompanyComponent,
+      component: AddCustumersComponent,
       componentProps: { id: id },
     });
     return await modal.present();
   }
 }
-
-// async  getFirts() {
-//   var first = this.afs.collection("companies").ref.orderBy("nameStr").limit(3);
-//   let paginate = first.get()
-//     .then((snapshot) => {
-//       console.log("first");
-//       console.log(snapshot.docs.map(e => e.data().name));
-//       console.log(snapshot.size);
-//       let last = snapshot.docs[snapshot.docs.length - 1];
-//       let next = this.afs.collection('companies').ref.orderBy('nameStr').startAfter(last.data().nameStr).limit(3);
-//       next.get().then(data => {
-//         console.log("next");
-//         console.log(data.docs.map(e => e.data().name));
-//       });
-//     });
-// }
