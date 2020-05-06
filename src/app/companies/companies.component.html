@@ -42,6 +42,8 @@
             </ion-buttons>
           </ion-toolbar>
           <img
+            [routerLink]="['/companies/' + item.id]"
+            routerDirection="forward"
             [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
           />
           <ion-card-header>

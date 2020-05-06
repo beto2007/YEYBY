@@ -10,6 +10,7 @@ import { CustumersRoutingModule } from './custumers-routing.module';
 import { CustumersComponent } from './custumers.component';
 import { AddCustumersComponent } from './add-custumers/add-custumers.component';
 import { OptionsCustumersComponent } from './options-custumers/options-custumers.component';
+import { DetailCustumersComponent } from './detail-custumers/detail-custumers.component';
 
 @NgModule({
   imports: [
@@ -22,8 +23,8 @@ import { OptionsCustumersComponent } from './options-custumers/options-custumers
     CustumersRoutingModule,
     ReactiveFormsModule,
   ],
-  declarations: [CustumersComponent, AddCustumersComponent, OptionsCustumersComponent],
-  entryComponents: [AddCustumersComponent, OptionsCustumersComponent],
-  exports: [AddCustumersComponent, OptionsCustumersComponent],
+  declarations: [CustumersComponent, AddCustumersComponent, OptionsCustumersComponent, DetailCustumersComponent],
+  entryComponents: [AddCustumersComponent, OptionsCustumersComponent, DetailCustumersComponent],
+  exports: [AddCustumersComponent, OptionsCustumersComponent, DetailCustumersComponent],
 })
 export class CustumersModule {}

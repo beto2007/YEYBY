@@ -42,7 +42,7 @@
                 "
               />
             </ion-avatar>
-            <ion-label>
+            <ion-label [routerLink]="['/custumers/' + item.id]" routerDirection="forward">
               <h2>{{ item?.name }}</h2>
               <h3>
                 <ion-icon slot="start" name="call" color="medium"></ion-icon> <strong>{{ item?.phone }}</strong>

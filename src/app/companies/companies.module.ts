@@ -10,6 +10,7 @@ import { CompaniesRoutingModule } from './companies-routing.module';
 import { CompaniesComponent } from './companies.component';
 import { AddCompanyComponent } from './add-company/add-company.component';
 import { OptionsCompaniesComponent } from './options-companies/options-companies.component';
+import { DetailCompanyComponent } from './detail-company/detail-company.component';
 
 @NgModule({
   imports: [
@@ -22,8 +23,8 @@ import { OptionsCompaniesComponent } from './options-companies/options-companies
     CompaniesRoutingModule,
     ReactiveFormsModule,
   ],
-  declarations: [CompaniesComponent, AddCompanyComponent, OptionsCompaniesComponent],
-  entryComponents: [AddCompanyComponent],
-  exports: [AddCompanyComponent],
+  declarations: [CompaniesComponent, AddCompanyComponent, OptionsCompaniesComponent, DetailCompanyComponent],
+  entryComponents: [AddCompanyComponent, OptionsCompaniesComponent, DetailCompanyComponent],
+  exports: [AddCompanyComponent, OptionsCompaniesComponent, DetailCompanyComponent],
 })
 export class CompaniesModule {}
