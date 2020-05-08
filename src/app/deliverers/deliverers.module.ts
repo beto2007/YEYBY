@@ -11,6 +11,7 @@ import { DeliverersComponent } from './deliverers.component';
 import { AddDelivererComponent } from './add-deliverer/add-deliverer.component';
 import { OptionsDelivererComponent } from './options-deliverer/options-deliverer.component';
 import { DetailDelivererComponent } from './detail-deliverer/detail-deliverer.component';
+import { SortByDelivererComponent } from './sort-by-deliverer/sort-by-deliverer.component';
 
 @NgModule({
   imports: [
@@ -31,8 +32,14 @@ import { DetailDelivererComponent } from './detail-deliverer/detail-deliverer.co
     AddDelivererComponent,
     OptionsDelivererComponent,
     DetailDelivererComponent,
+    SortByDelivererComponent,
   ],
-  entryComponents: [AddDelivererComponent, OptionsDelivererComponent, DetailDelivererComponent],
-  exports: [AddDelivererComponent, OptionsDelivererComponent, DetailDelivererComponent],
+  entryComponents: [
+    AddDelivererComponent,
+    OptionsDelivererComponent,
+    DetailDelivererComponent,
+    SortByDelivererComponent,
+  ],
+  exports: [AddDelivererComponent, OptionsDelivererComponent, DetailDelivererComponent, SortByDelivererComponent],
 })
 export class DeliverersModule {}

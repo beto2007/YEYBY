@@ -13,7 +13,7 @@
   <ion-toolbar color="light">
     <ion-searchbar
       type="text"
-      debounce="750"
+      debounce="1000"
       (ionChange)="search($event)"
       (ionCancel)="initializeApp()"
       (ionClear)="initializeApp()"
@@ -22,11 +22,27 @@
 </ion-header>
 
 <ion-toolbar color="light">
-  <!-- <ion-buttons>
-      <ion-button>
-        <ion-icon slot="icon-only" name="options"></ion-icon>
-      </ion-button>
-    </ion-buttons>  -->
+  <ion-buttons slot="start">
+    <ion-button (click)="sortBy($event)">
+      <ion-icon slot="icon-only" name="options-outline"></ion-icon>
+    </ion-button>
+    <ion-button disabled="true" *ngIf="orderBy === 'folio'">
+      <ion-icon slot="icon-only" name="list-outline"></ion-icon>
+    </ion-button>
+    <ion-button disabled="true" *ngIf="orderBy === 'date'">
+      <ion-icon slot="icon-only" name="calendar-outline"></ion-icon>
+    </ion-button>
+    <ion-button disabled="true" *ngIf="orderBy === 'nameStr'">
+      <ion-icon slot="icon-only" name="text-outline"></ion-icon>
+    </ion-button>
+    <ion-button (click)="orderByDirection = orderByDirection === 'asc' ? 'desc' : 'asc'; initializeApp()">
+      <ion-icon slot="icon-only" [name]="orderByDirection === 'asc' ? 'chevron-down-outline' : 'chevron-up-outline'">
+      </ion-icon>
+    </ion-button>
+  </ion-buttons>
+  <ion-title slot="end">
+    <small>Total de repartidores: {{ total }}</small>
+  </ion-title>
 </ion-toolbar>
 
 <ion-content color="light">
@@ -34,14 +50,14 @@
     <ion-row>
       <ion-col>
         <ion-list>
-          <ion-item *ngFor="let item of docs">
-            <ion-thumbnail slot="start">
+          <ion-item lines="none" *ngFor="let item of docs; let i = index">
+            <ion-avatar slot="start">
               <img
                 [src]="
                   item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
                 "
               />
-            </ion-thumbnail>
+            </ion-avatar>
             <ion-label [routerLink]="['/customers/' + item.id]" routerDirection="forward">
               <h2>{{ item?.name }}</h2>
               <h3>
@@ -59,14 +75,25 @@
               </ion-button>
             </ion-buttons>
           </ion-item>
-          <ion-item *ngIf="!(docs && docs[0])">
+          <ion-item lines="none" *ngIf="!(docs && docs[0])">
             <p>Sin resultados</p>
           </ion-item>
         </ion-list>
       </ion-col>
     </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button fill="clear" expand="block" (click)="pagination('back')" [disabled]="!(noBack == true)">
+          <ion-icon slot="icon-only" name="caret-back-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button fill="clear" expand="block" (click)="pagination('forward')" [disabled]="!(noForward == true)">
+          <ion-icon slot="icon-only" name="caret-forward-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
   </ion-grid>
-
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="add()">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>

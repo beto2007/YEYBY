@@ -4,17 +4,31 @@ import { ModalController, LoadingController, ToastController, PopoverController 
 import { OptionsDelivererComponent } from './options-deliverer/options-deliverer.component';
 import { Subscription } from 'rxjs';
 import { AddDelivererComponent } from './add-deliverer/add-deliverer.component';
+import { SortByDelivererComponent } from './sort-by-deliverer/sort-by-deliverer.component';
 
 @Component({
   selector: 'app-deliverers',
   templateUrl: './deliverers.component.html',
   styleUrls: ['./deliverers.component.scss'],
 })
-export class DeliverersComponent implements OnInit {
+export class DeliverersComponent implements OnInit, OnDestroy {
   public docs: any[];
   isLoading = false;
-  limit: number = 10;
   suscription: Subscription;
+  totalSubs: Subscription;
+  arraySuscription: Subscription[];
+  total: number = 0;
+  orderBy: string = 'nameStr';
+  orderByDirection: any = 'asc';
+  perPage: number = 30;
+  mainCollection: string = 'deliverers';
+  totalNumbers: string = 'metadatas/deliverers';
+  initialCursor: any;
+  nextCursor: any;
+  backCursor1: any;
+  backCursor2: any;
+  noBack: boolean = true;
+  noForward: boolean = true;
 
   constructor(
     private afs: AngularFirestore,
@@ -24,21 +38,9 @@ export class DeliverersComponent implements OnInit {
     private modalController: ModalController
   ) {}
 
-  ngOnInit(): void {}
-
-  ngOnDestroy() {}
-
-  async presentPopover(ev: any, item: any) {
-    const popover = await this.popoverController.create({
-      component: OptionsDelivererComponent,
-      event: ev,
-      translucent: true,
-      componentProps: { item: item },
-    });
-    return await popover.present();
-  }
-
   async search(ev: any) {
+    this.noBack = false;
+    this.noForward = false;
     let searchStr: string = String(ev.target.value).toLocaleLowerCase();
     if (searchStr.length >= 5) {
       this.isLoading = true;
@@ -46,10 +48,10 @@ export class DeliverersComponent implements OnInit {
       loadingOverlay.present();
       try {
         const snap = await this.afs
-          .collection('deliverers')
-          .ref.orderBy('nameStr', 'asc')
+          .collection(this.mainCollection)
+          .ref.orderBy(this.orderBy, this.orderByDirection)
           .where('search', 'array-contains-any', [searchStr])
-          .limit(20)
+          .limit(this.perPage)
           .get();
         this.docs = snap.docs.map((element) => {
           const id: string = element.id;
@@ -65,21 +67,59 @@ export class DeliverersComponent implements OnInit {
     }
   }
 
-  ionViewDidEnter() {
-    this.initializeApp();
+  pagination(direction: string) {
+    this.initializeApp(direction);
   }
 
-  ionViewDidLeave() {
+  async initializeApp(direction?: string) {
     this.closeSubscription();
-  }
-
-  async initializeApp() {
-    this.closeSubscription();
-    const snap$ = this.afs
-      .collection('deliverers', (ref) => ref.orderBy('nameStr', 'asc').limit(100))
-      .snapshotChanges();
-    this.suscription = snap$.subscribe(
-      (snap) => {
+    let snapshotChanges;
+    if (direction && direction === 'forward') {
+      snapshotChanges = this.afs
+        .collection(this.mainCollection, (ref) =>
+          ref.orderBy(this.orderBy, this.orderByDirection).startAfter(this.nextCursor[this.orderBy]).limit(this.perPage)
+        )
+        .snapshotChanges();
+    } else if (direction && direction === 'back') {
+      snapshotChanges = this.afs
+        .collection(this.mainCollection, (ref) =>
+          ref
+            .orderBy(this.orderBy, this.orderByDirection)
+            .startAt(this.backCursor1[this.orderBy])
+            .endBefore(this.backCursor2[this.orderBy])
+            .limit(this.perPage)
+        )
+        .snapshotChanges();
+    } else {
+      snapshotChanges = this.afs
+        .collection(this.mainCollection, (ref) => ref.orderBy(this.orderBy, this.orderByDirection).limit(this.perPage))
+        .snapshotChanges();
+    }
+    this.suscription = snapshotChanges.subscribe(
+      async (snap) => {
+        this.nextCursor = snap[snap.length - 1].payload.doc.data();
+        this.backCursor2 = snap[0].payload.doc.data();
+        const forward = await this.afs
+          .collection(this.mainCollection)
+          .ref.orderBy(this.orderBy, this.orderByDirection)
+          .startAfter(this.nextCursor[this.orderBy])
+          .limit(this.perPage)
+          .get();
+        this.noForward = false;
+        if (!(forward.empty == true)) {
+          this.noForward = true;
+        }
+        const back = await this.afs
+          .collection(this.mainCollection)
+          .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
+          .startAfter(this.backCursor2[this.orderBy])
+          .limit(this.perPage)
+          .get();
+        this.noBack = false;
+        if (!(back.empty == true)) {
+          this.backCursor1 = back.docs[back.docs.length - 1].data();
+          this.noBack = true;
+        }
         this.docs = snap.map((element) => {
           const id: string = element.payload.doc.id;
           const data: any = element.payload.doc.data();
@@ -90,6 +130,55 @@ export class DeliverersComponent implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  ngOnInit(): void {
+    this.totalSubscription();
+  }
+
+  ngOnDestroy() {}
+
+  async presentPopover(ev: any, item: any) {
+    const popover = await this.popoverController.create({
+      component: OptionsDelivererComponent,
+      event: ev,
+      translucent: true,
+      componentProps: { item: item },
+    });
+    return await popover.present();
+  }
+
+  async sortBy(ev: any) {
+    const popover = await this.popoverController.create({
+      component: SortByDelivererComponent,
+      event: ev,
+      translucent: true,
+    });
+    popover.onDidDismiss().then((data) => {
+      if (data && data.data && data.data.filter && data.data.filter != '') {
+        this.orderBy = data.data.filter;
+        this.initializeApp();
+      }
+    });
+    return await popover.present();
+  }
+
+  ionViewDidEnter() {
+    this.initializeApp();
+  }
+
+  ionViewDidLeave() {
+    if (this.totalSubs) {
+      this.totalSubs.unsubscribe();
+    }
+    this.closeSubscription();
+  }
+
+  totalSubscription() {
+    const snap$ = this.afs.doc(this.totalNumbers).valueChanges();
+    this.totalSubs = snap$.subscribe((snap: any) => {
+      this.total = Number(snap.count);
+    });
   }
 
   closeSubscription() {

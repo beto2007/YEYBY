@@ -11,6 +11,7 @@ import { CustomersComponent } from './customers.component';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
 import { OptionsCustomersComponent } from './options-customers/options-customers.component';
 import { DetailCustomersComponent } from './detail-customers/detail-customers.component';
+import { SortByCustomerComponent } from './sort-by-customer/sort-by-customer.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,13 @@ import { DetailCustomersComponent } from './detail-customers/detail-customers.co
     CustomersRoutingModule,
     ReactiveFormsModule,
   ],
-  declarations: [CustomersComponent, AddCustomersComponent, OptionsCustomersComponent, DetailCustomersComponent],
+  declarations: [
+    CustomersComponent,
+    AddCustomersComponent,
+    OptionsCustomersComponent,
+    DetailCustomersComponent,
+    SortByCustomerComponent,
+  ],
   entryComponents: [AddCustomersComponent, OptionsCustomersComponent, DetailCustomersComponent],
   exports: [AddCustomersComponent, OptionsCustomersComponent, DetailCustomersComponent],
 })
