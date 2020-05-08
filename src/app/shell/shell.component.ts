@@ -15,7 +15,7 @@ import { AuthenticationService, CredentialsService } from '@app/auth';
 export class ShellComponent {
   public routes: any[] = [
     { title: 'Inicio', link: '/home', icon: 'home' },
-    { title: 'Repartidores', link: '/home', icon: 'bicycle' },
+    { title: 'Repartidores', link: '/deliverers', icon: 'bicycle' },
     { title: 'Clientes', link: '/customers', icon: 'person' },
     { title: 'Empresas', link: '/companies', icon: 'briefcase' },
     { title: 'Configuración', link: '/home', icon: 'build' },

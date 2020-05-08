@@ -6,11 +6,11 @@ import { DocumentReference } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
-  selector: 'app-add-customers',
-  templateUrl: './add-customers.component.html',
-  styleUrls: ['./add-customers.component.scss'],
+  selector: 'app-add-deliverer',
+  templateUrl: './add-deliverer.component.html',
+  styleUrls: ['./add-deliverer.component.scss'],
 })
-export class AddCustomersComponent implements OnInit {
+export class AddDelivererComponent implements OnInit {
   error: string | undefined;
   myForm!: FormGroup;
   isLoading = false;
@@ -62,7 +62,7 @@ export class AddCustomersComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      const response = await this.afs.collection('customers').doc(id).ref.get();
+      const response = await this.afs.collection('deliverers').doc(id).ref.get();
       const data = response.data();
       if (data) {
         if (data && data.image) {
@@ -129,10 +129,10 @@ export class AddCustomersComponent implements OnInit {
       if (this.file) {
         data.image = await this.images();
       }
-      const response: DocumentReference = await this.afs.collection('customers').add(data);
+      const response: DocumentReference = await this.afs.collection('deliverers').add(data);
       if (response.id) {
         this.close();
-        this.presentToast('Cliente agregado correctamente');
+        this.presentToast('Repartidor agregado correctamente');
       } else {
         this.presentToast('Ha ocurrido un error');
       }
@@ -158,10 +158,10 @@ export class AddCustomersComponent implements OnInit {
       if (this.file) {
         data.image = await this.images();
       }
-      await this.afs.collection('customers').doc(id).update(data);
+      await this.afs.collection('deliverers').doc(id).update(data);
       this.deletePast();
       this.close();
-      this.presentToast('Cliente actualizado correctamente');
+      this.presentToast('Repartidor actualizado correctamente');
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
       console.error(error);
@@ -187,21 +187,21 @@ export class AddCustomersComponent implements OnInit {
     };
     const random = new Date().getMilliseconds();
     const name = random + this.file.name;
-    var storageRef1 = this.afStorage.ref('customers/' + name);
+    var storageRef1 = this.afStorage.ref('deliverers/' + name);
     const imageResponse1 = await storageRef1.put(this.file);
     const downloadURL1 = await imageResponse1.ref.getDownloadURL();
     image.main.url = downloadURL1;
-    image.main.path = 'customers/' + name;
-    var storageRef2 = this.afStorage.ref('customers/thumbnail/' + name);
+    image.main.path = 'deliverers/' + name;
+    var storageRef2 = this.afStorage.ref('deliverers/thumbnail/' + name);
     const imageResponse2 = await storageRef2.putString(this.thumbnailSrc, 'data_url');
     const downloadURL2 = await imageResponse2.ref.getDownloadURL();
     image.thumbnail.url = downloadURL2;
-    image.thumbnail.path = 'customers/thumbnail/' + name;
-    var storageRef3 = this.afStorage.ref('customers/list/' + name);
+    image.thumbnail.path = 'deliverers/thumbnail/' + name;
+    var storageRef3 = this.afStorage.ref('deliverers/list/' + name);
     const imageResponse3 = await storageRef3.putString(this.middleSrc, 'data_url');
     const downloadURL3 = await imageResponse3.ref.getDownloadURL();
     image.list.url = downloadURL3;
-    image.list.path = 'customers/list/' + name;
+    image.list.path = 'deliverers/list/' + name;
     return image;
   }
 

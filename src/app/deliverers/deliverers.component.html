@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title> <span>Clientes</span></ion-title>
+    <ion-title> <span>Repartidores</span></ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/home">
         <ion-icon slot="icon-only" name="home"></ion-icon>
@@ -23,10 +23,10 @@
 
 <ion-toolbar color="light">
   <!-- <ion-buttons>
-    <ion-button>
-      <ion-icon slot="icon-only" name="options"></ion-icon>
-    </ion-button>
-  </ion-buttons>  -->
+      <ion-button>
+        <ion-icon slot="icon-only" name="options"></ion-icon>
+      </ion-button>
+    </ion-buttons>  -->
 </ion-toolbar>
 
 <ion-content color="light">
@@ -35,17 +35,18 @@
       <ion-col>
         <ion-list>
           <ion-item *ngFor="let item of docs">
-            <ion-avatar slot="start" color="primary">
+            <ion-thumbnail slot="start">
               <img
                 [src]="
                   item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
                 "
               />
-            </ion-avatar>
+            </ion-thumbnail>
             <ion-label [routerLink]="['/customers/' + item.id]" routerDirection="forward">
               <h2>{{ item?.name }}</h2>
               <h3>
-                <ion-icon slot="start" name="call" color="medium"></ion-icon> <strong>{{ item?.phone }}</strong>
+                <ion-icon slot="start" name="call" color="medium"></ion-icon>
+                <strong>{{ item?.phone }}</strong>
               </h3>
               <p>
                 <ion-icon slot="start" name="location" color="medium"></ion-icon>

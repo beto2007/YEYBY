@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title
+      ><span>{{ id ? 'Actualizar repartidor' : 'Agregar repartidor' }}</span></ion-title
+    >
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="save()" [formGroup]="myForm" novalidate>
+    <ion-list>
+      <ion-item lines="inset">
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Nombre
+        </ion-label>
+        <ion-input type="text" formControlName="name" autocomplete="name"></ion-input>
+      </ion-item>
+      <ion-text color="danger" [hidden]="myForm.controls.name.valid || myForm.controls.name.untouched">
+        <span class="ion-padding">Nombre es requerido</span>
+      </ion-text>
+      <ion-item lines="inset">
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Teléfono
+        </ion-label>
+        <ion-input type="number" formControlName="phone" autocomplete="phone"></ion-input>
+      </ion-item>
+      <ion-text color="danger" [hidden]="myForm.controls.phone.valid || myForm.controls.phone.untouched">
+        <span class="ion-padding">Teléfono es requerido</span>
+      </ion-text>
+      <ion-item lines="inset">
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary"> <span class="ion-padding"></span> </ion-text> Email
+        </ion-label>
+        <ion-input type="text" formControlName="email" autocomplete="email"></ion-input>
+      </ion-item>
+      <ion-item lines="inset">
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Dirección
+        </ion-label>
+        <ion-textarea formControlName="streetAddress" autocomplete="streetAddress" rows="3"></ion-textarea>
+      </ion-item>
+      <ion-text
+        color="danger"
+        [hidden]="myForm.controls.streetAddress.valid || myForm.controls.streetAddress.untouched"
+      >
+        <span class="ion-padding">Dirección es requerido</span>
+      </ion-text>
+      <ion-item lines="inset">
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding"></span>
+          </ion-text>
+          Referencias
+        </ion-label>
+        <ion-textarea formControlName="references" autocomplete="references" rows="3"></ion-textarea>
+      </ion-item>
+    </ion-list>
+    <ion-item>
+      <ion-thumbnail slot="start">
+        <ion-img [src]="imageSrc ? imageSrc : 'assets/no-image.jpg'"></ion-img>
+      </ion-thumbnail>
+      <input type="file" (change)="readURL($event)" accept="image/*" />
+    </ion-item>
+    <div>
+      <ion-text color="primary">
+        <br />
+        <span class="ion-padding">*Campos requeridos</span>
+        <br />
+      </ion-text>
+      <ion-button type="submit" [disabled]="myForm.invalid || isLoading" color="primary" expand="block">
+        {{ id ? 'Actualizar' : 'Agregar' }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -14,6 +14,7 @@ import { AuthModule } from '@app/auth';
 import { HomeModule } from './home/home.module';
 import { CompaniesModule } from './companies/companies.module';
 import { CustomersModule } from './customers/customers.module';
+import { DeliverersModule } from './deliverers/deliverers.module';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -40,6 +41,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     HomeModule,
     CompaniesModule,
     CustomersModule,
+    DeliverersModule,
     AuthModule,
     Angulartics2Module.forRoot(),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
