@@ -6,11 +6,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-detail-custumers',
-  templateUrl: './detail-custumers.component.html',
-  styleUrls: ['./detail-custumers.component.scss'],
+  selector: 'app-detail-customers',
+  templateUrl: './detail-customers.component.html',
+  styleUrls: ['./detail-customers.component.scss'],
 })
-export class DetailCustumersComponent implements OnInit {
+export class DetailCustomersComponent implements OnInit {
   error: string | undefined;
   isLoading = false;
   id: string | undefined;
@@ -40,7 +40,7 @@ export class DetailCustumersComponent implements OnInit {
   ngOnInit(): void {}
 
   initializeApp(id: string) {
-    this.dataDocument = this.afs.collection('custumers').doc(id);
+    this.dataDocument = this.afs.collection('customers').doc(id);
     this.suscription = this.dataDocument.snapshotChanges().subscribe((snap) => {
       if (snap.payload.exists === true) {
         const data: any = snap.payload.data();

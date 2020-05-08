@@ -8,14 +8,14 @@ import {
 } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
-import { AddCustumersComponent } from '../add-custumers/add-custumers.component';
+import { AddCustomersComponent } from '../add-customers/add-customers.component';
 
 @Component({
-  selector: 'app-options-custumers',
-  templateUrl: './options-custumers.component.html',
-  styleUrls: ['./options-custumers.component.scss'],
+  selector: 'app-options-customers',
+  templateUrl: './options-customers.component.html',
+  styleUrls: ['./options-customers.component.scss'],
 })
-export class OptionsCustumersComponent implements OnInit {
+export class OptionsCustomersComponent implements OnInit {
   isLoading: boolean | undefined;
   item: any;
 
@@ -75,7 +75,7 @@ export class OptionsCustumersComponent implements OnInit {
       if (imagesPath[0]) {
         this.deletePast(imagesPath);
       }
-      await this.afs.collection('custumers').doc(this.item.id).delete();
+      await this.afs.collection('customers').doc(this.item.id).delete();
       this.presentToast('Usuario eliminado correctamente');
       this.dismissPopover();
     } catch (error) {
@@ -89,7 +89,7 @@ export class OptionsCustumersComponent implements OnInit {
   async getData() {
     let data: any;
     try {
-      const response = await this.afs.collection('custumers').doc(this.item.id).ref.get();
+      const response = await this.afs.collection('customers').doc(this.item.id).ref.get();
       data = response.data();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
@@ -117,7 +117,7 @@ export class OptionsCustumersComponent implements OnInit {
 
   async add() {
     const modal = await this.modalController.create({
-      component: AddCustumersComponent,
+      component: AddCustomersComponent,
       componentProps: { id: this.item.id },
     });
     this.dismissPopover();

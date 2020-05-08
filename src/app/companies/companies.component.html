@@ -35,7 +35,10 @@
       <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of docs">
         <ion-card>
           <ion-toolbar>
-            <ion-buttons>
+            <ion-title slot="start">
+              <small>{{ item?.name }}</small></ion-title
+            >
+            <ion-buttons slot="end">
               <ion-button size="small" (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
               </ion-button>

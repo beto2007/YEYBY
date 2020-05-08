@@ -13,7 +13,7 @@ import { SharedModule } from '@shared';
 import { AuthModule } from '@app/auth';
 import { HomeModule } from './home/home.module';
 import { CompaniesModule } from './companies/companies.module';
-import { CustumersModule } from './custumers/custumers.module';
+import { CustomersModule } from './customers/customers.module';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -39,7 +39,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     ShellModule,
     HomeModule,
     CompaniesModule,
-    CustumersModule,
+    CustomersModule,
     AuthModule,
     Angulartics2Module.forRoot(),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route

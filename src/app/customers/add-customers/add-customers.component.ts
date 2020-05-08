@@ -6,11 +6,11 @@ import { DocumentReference } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
-  selector: 'app-add-custumers',
-  templateUrl: './add-custumers.component.html',
-  styleUrls: ['./add-custumers.component.scss'],
+  selector: 'app-add-customers',
+  templateUrl: './add-customers.component.html',
+  styleUrls: ['./add-customers.component.scss'],
 })
-export class AddCustumersComponent implements OnInit {
+export class AddCustomersComponent implements OnInit {
   error: string | undefined;
   myForm!: FormGroup;
   isLoading = false;
@@ -62,7 +62,7 @@ export class AddCustumersComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      const response = await this.afs.collection('custumers').doc(id).ref.get();
+      const response = await this.afs.collection('customers').doc(id).ref.get();
       const data = response.data();
       if (data) {
         if (data && data.image) {
@@ -129,7 +129,7 @@ export class AddCustumersComponent implements OnInit {
       if (this.file) {
         data.image = await this.images();
       }
-      const response: DocumentReference = await this.afs.collection('custumers').add(data);
+      const response: DocumentReference = await this.afs.collection('customers').add(data);
       if (response.id) {
         this.close();
         this.presentToast('Empresa agregada correctamente');
@@ -158,7 +158,7 @@ export class AddCustumersComponent implements OnInit {
       if (this.file) {
         data.image = await this.images();
       }
-      await this.afs.collection('custumers').doc(id).update(data);
+      await this.afs.collection('customers').doc(id).update(data);
       this.deletePast();
       this.close();
       this.presentToast('Empresa actualizada correctamente');
@@ -187,21 +187,21 @@ export class AddCustumersComponent implements OnInit {
     };
     const random = new Date().getMilliseconds();
     const name = random + this.file.name;
-    var storageRef1 = this.afStorage.ref('custumers/' + name);
+    var storageRef1 = this.afStorage.ref('customers/' + name);
     const imageResponse1 = await storageRef1.put(this.file);
     const downloadURL1 = await imageResponse1.ref.getDownloadURL();
     image.main.url = downloadURL1;
-    image.main.path = 'custumers/' + name;
-    var storageRef2 = this.afStorage.ref('custumers/thumbnail/' + name);
+    image.main.path = 'customers/' + name;
+    var storageRef2 = this.afStorage.ref('customers/thumbnail/' + name);
     const imageResponse2 = await storageRef2.putString(this.thumbnailSrc, 'data_url');
     const downloadURL2 = await imageResponse2.ref.getDownloadURL();
     image.thumbnail.url = downloadURL2;
-    image.thumbnail.path = 'custumers/thumbnail/' + name;
-    var storageRef3 = this.afStorage.ref('custumers/list/' + name);
+    image.thumbnail.path = 'customers/thumbnail/' + name;
+    var storageRef3 = this.afStorage.ref('customers/list/' + name);
     const imageResponse3 = await storageRef3.putString(this.middleSrc, 'data_url');
     const downloadURL3 = await imageResponse3.ref.getDownloadURL();
     image.list.url = downloadURL3;
-    image.list.path = 'custumers/list/' + name;
+    image.list.path = 'customers/list/' + name;
     return image;
   }
 
