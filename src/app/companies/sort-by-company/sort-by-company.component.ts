@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-sort-by-company',
@@ -6,7 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sort-by-company.component.scss'],
 })
 export class SortByCompanyComponent implements OnInit {
-  constructor() {}
+  constructor(private popoverController: PopoverController) {}
 
   ngOnInit(): void {}
+
+  dismissPopover() {
+    this.popoverController.dismiss();
+  }
+
+  public filter(filter: string) {
+    this.popoverController.dismiss({
+      filter: filter,
+    });
+  }
 }

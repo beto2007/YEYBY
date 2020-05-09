@@ -13,8 +13,8 @@
   <ion-toolbar color="light">
     <ion-searchbar
       type="text"
-      debounce="750"
-      (ionChange)="search($event)"
+      debounce="1000"
+      (ionChange)="doSearch($event)"
       (ionCancel)="initializeApp()"
       (ionClear)="initializeApp()"
     ></ion-searchbar>
@@ -22,61 +22,282 @@
 </ion-header>
 
 <ion-toolbar color="light">
-  <!-- <ion-buttons>
-    <ion-button>
-      <ion-icon slot="icon-only" name="options"></ion-icon>
+  <ion-buttons slot="start">
+    <ion-button (click)="sortBy($event)" [disabled]="isLoading == true">
+      <ion-icon slot="icon-only" name="options-outline"></ion-icon>
     </ion-button>
-  </ion-buttons> -->
+    <ion-button disabled="true" *ngIf="orderBy === 'folio'" [disabled]="isLoading == true">
+      <ion-icon slot="icon-only" name="list-outline"></ion-icon>
+    </ion-button>
+    <ion-button disabled="true" *ngIf="orderBy === 'date'" [disabled]="isLoading == true">
+      <ion-icon slot="icon-only" name="calendar-outline"></ion-icon>
+    </ion-button>
+    <ion-button disabled="true" *ngIf="orderBy === 'nameStr'" [disabled]="isLoading == true">
+      <ion-icon slot="icon-only" name="text-outline"></ion-icon>
+    </ion-button>
+    <ion-button
+      (click)="orderByDirection = orderByDirection === 'asc' ? 'desc' : 'asc'; initializeApp()"
+      [disabled]="isLoading == true"
+    >
+      <ion-icon slot="icon-only" [name]="orderByDirection === 'asc' ? 'chevron-down-outline' : 'chevron-up-outline'">
+      </ion-icon>
+    </ion-button>
+  </ion-buttons>
+  <ion-title slot="end">
+    <small>Total de empresas: {{ total }}</small>
+  </ion-title>
+  <ion-progress-bar type="indeterminate" color="primary" *ngIf="isLoading == true"> </ion-progress-bar>
 </ion-toolbar>
 
 <ion-content color="light">
   <ion-grid fixed>
     <ion-row>
-      <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of docs">
-        <ion-card>
-          <ion-toolbar>
-            <ion-title slot="start">
-              <small>{{ item?.name }}</small></ion-title
-            >
-            <ion-buttons slot="end">
-              <ion-button size="small" (click)="presentPopover($event, item)">
-                <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-          <img
-            [routerLink]="['/companies/' + item.id]"
-            routerDirection="forward"
-            [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
-          />
-          <ion-card-header>
-            <ion-card-subtitle> <ion-icon name="call" color="medium"></ion-icon> {{ item?.phone }} </ion-card-subtitle>
-            <ion-card-title>{{ item?.name }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p>
-              <ion-icon slot="start" name="information-circle" color="medium"></ion-icon>
-              {{ item?.description | slice: 0:150 }}...
-            </p>
-            <p>
-              <ion-icon slot="start" name="location" color="medium"></ion-icon>
-              {{ item?.streetAddress | slice: 0:200 }}...
-            </p>
-          </ion-card-content>
-        </ion-card>
+      <ion-col>
+        <ion-row *ngIf="arrayDocs">
+          <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of arrayDocs">
+            <ion-card>
+              <ion-toolbar>
+                <ion-title slot="start">
+                  <small>{{ item?.name }}</small></ion-title
+                >
+                <ion-buttons slot="end">
+                  <ion-button size="small" (click)="presentPopover($event, item)">
+                    <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <img
+                [routerLink]="['/companies/' + item.id]"
+                routerDirection="forward"
+                [src]="
+                  item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                "
+              />
+              <ion-card-header>
+                <ion-card-subtitle>
+                  <ion-icon name="call" color="medium"></ion-icon> {{ item?.phone }}
+                </ion-card-subtitle>
+                <ion-card-title>{{ item?.name }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>
+                  <ion-icon slot="start" name="information-circle" color="medium"></ion-icon>
+                  {{ item?.description | slice: 0:150 }}...
+                </p>
+                <p>
+                  <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                  {{ item?.streetAddress | slice: 0:200 }}...
+                </p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == false">
+          <ion-col>
+            Sin resultados
+            <ion-button (click)="add()" size="small">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar empresa
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="!arrayDocs && isLoading == true">
+          <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
+            <ion-card>
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+              <ion-toolbar>
+                <ion-title slot="start">
+                  <small><ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text></small
+                ></ion-title>
+                <ion-buttons slot="end">
+                  <ion-button size="small">
+                    <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              <ion-title slot="start">
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              </ion-title>
+              <ion-card-header>
+                <ion-card-subtitle>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
+            <ion-card>
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+              <ion-toolbar>
+                <ion-title slot="start">
+                  <small><ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text></small
+                ></ion-title>
+                <ion-buttons slot="end">
+                  <ion-button size="small">
+                    <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              <ion-title slot="start">
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              </ion-title>
+              <ion-card-header>
+                <ion-card-subtitle>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
+            <ion-card>
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+              <ion-toolbar>
+                <ion-title slot="start">
+                  <small><ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text></small
+                ></ion-title>
+                <ion-buttons slot="end">
+                  <ion-button size="small">
+                    <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              <ion-title slot="start">
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              </ion-title>
+              <ion-card-header>
+                <ion-card-subtitle>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
+            <ion-card>
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+              <ion-toolbar>
+                <ion-title slot="start">
+                  <small><ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text></small
+                ></ion-title>
+                <ion-buttons slot="end">
+                  <ion-button size="small">
+                    <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              <ion-title slot="start">
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              </ion-title>
+              <ion-card-header>
+                <ion-card-subtitle>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
+            <ion-card>
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+              <ion-toolbar>
+                <ion-title slot="start">
+                  <small><ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text></small
+                ></ion-title>
+                <ion-buttons slot="end">
+                  <ion-button size="small">
+                    <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              <ion-title slot="start">
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              </ion-title>
+              <ion-card-header>
+                <ion-card-subtitle>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-subtitle>
+                <ion-card-title>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
       </ion-col>
-      <ion-col *ngIf="!(docs && docs[0])">
-        Sin resultados
-        <ion-button (click)="add()" size="small">
-          <ion-icon slot="start" name="add"></ion-icon>
-          Agregar empresa
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button color="white" (click)="initializeApp('back')" [disabled]="!back || isLoading == true">
+          <ion-icon slot="icon-only" name="caret-back-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="white" (click)="initializeApp('forward')" [disabled]="!forward || isLoading == true">
+          <ion-icon slot="icon-only" name="caret-forward-outline"></ion-icon>
         </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
-
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="add()">
-    <ion-fab-button>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="add()" [disabled]="isLoading == true">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
