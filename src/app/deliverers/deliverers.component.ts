@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { ModalController, LoadingController, ToastController, PopoverController } from '@ionic/angular';
+import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Query } from '@angular/fire/firestore';
+import { ModalController, ToastController, PopoverController } from '@ionic/angular';
 import { OptionsDelivererComponent } from './options-deliverer/options-deliverer.component';
 import { Subscription } from 'rxjs';
 import { AddDelivererComponent } from './add-deliverer/add-deliverer.component';
@@ -12,124 +12,164 @@ import { SortByDelivererComponent } from './sort-by-deliverer/sort-by-deliverer.
   styleUrls: ['./deliverers.component.scss'],
 })
 export class DeliverersComponent implements OnInit, OnDestroy {
-  public docs: any[];
+  public arrayDocs: any[];
   isLoading = false;
-  suscription: Subscription;
+  subscription: Subscription;
   totalSubs: Subscription;
-  arraySuscription: Subscription[];
   total: number = 0;
   orderBy: string = 'nameStr';
   orderByDirection: any = 'asc';
-  perPage: number = 30;
+  searchOrderBy: string = 'nameStr';
+  searchOorderByDirection: any = 'asc';
+  perPage: number = 10;
   mainCollection: string = 'deliverers';
-  totalNumbers: string = 'metadatas/deliverers';
-  initialCursor: any;
-  nextCursor: any;
-  backCursor1: any;
-  backCursor2: any;
-  noBack: boolean = true;
-  noForward: boolean = true;
+  docNumbers: string = 'metadatas/deliverers';
+  //
+  startAfter: any;
+  endBefore: any;
+  startAt: any;
+  forward: boolean = false;
+  back: boolean = false;
+  ///
+  searchStr: string;
 
   constructor(
     private afs: AngularFirestore,
-    private loadingController: LoadingController,
     private toastController: ToastController,
     private popoverController: PopoverController,
     private modalController: ModalController
   ) {}
 
-  async search(ev: any) {
-    this.noBack = false;
-    this.noForward = false;
-    let searchStr: string = String(ev.target.value).toLocaleLowerCase();
-    if (searchStr.length >= 5) {
-      this.isLoading = true;
-      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-      loadingOverlay.present();
-      try {
-        const snap = await this.afs
-          .collection(this.mainCollection)
-          .ref.orderBy(this.orderBy, this.orderByDirection)
-          .where('search', 'array-contains-any', [searchStr])
-          .limit(this.perPage)
-          .get();
-        this.docs = snap.docs.map((element) => {
-          const id: string = element.id;
-          const data: any = element.data();
-          return { id, ...data };
-        });
-      } catch (error) {
-        console.error(error);
-        this.presentToast('Ha ocurrido un error');
-      }
-      this.isLoading = false;
-      loadingOverlay.dismiss();
+  async doSearch(ev: any) {
+    this.isLoading = true;
+    try {
+      await this.search(ev);
+    } catch (error) {
+      console.error(error);
     }
-  }
-
-  pagination(direction: string) {
-    this.initializeApp(direction);
+    this.isLoading = false;
   }
 
   async initializeApp(direction?: string) {
-    this.closeSubscription();
-    let snapshotChanges;
-    if (direction && direction === 'forward') {
-      snapshotChanges = this.afs
-        .collection(this.mainCollection, (ref) =>
-          ref.orderBy(this.orderBy, this.orderByDirection).startAfter(this.nextCursor[this.orderBy]).limit(this.perPage)
-        )
-        .snapshotChanges();
-    } else if (direction && direction === 'back') {
-      snapshotChanges = this.afs
-        .collection(this.mainCollection, (ref) =>
-          ref
-            .orderBy(this.orderBy, this.orderByDirection)
-            .startAt(this.backCursor1[this.orderBy])
-            .endBefore(this.backCursor2[this.orderBy])
-            .limit(this.perPage)
-        )
-        .snapshotChanges();
-    } else {
-      snapshotChanges = this.afs
-        .collection(this.mainCollection, (ref) => ref.orderBy(this.orderBy, this.orderByDirection).limit(this.perPage))
-        .snapshotChanges();
+    this.isLoading = true;
+    this.searchStr = undefined;
+    try {
+      await this.getDocs(direction);
+    } catch (error) {
+      console.error(error);
     }
-    this.suscription = snapshotChanges.subscribe(
-      async (snap) => {
-        this.nextCursor = snap[snap.length - 1].payload.doc.data();
-        this.backCursor2 = snap[0].payload.doc.data();
-        const forward = await this.afs
-          .collection(this.mainCollection)
-          .ref.orderBy(this.orderBy, this.orderByDirection)
-          .startAfter(this.nextCursor[this.orderBy])
-          .limit(this.perPage)
-          .get();
-        this.noForward = false;
-        if (!(forward.empty == true)) {
-          this.noForward = true;
+    this.isLoading = false;
+  }
+
+  getDocs(direction?: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let collection: AngularFirestoreCollection<any>;
+        let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
+        let query: Query;
+        query = collRef.orderBy(this.orderBy, this.orderByDirection);
+        if (this.startAfter && direction === 'forward') {
+          query = query.startAfter(this.startAfter);
+        } else if (this.startAt && this.endBefore && direction === 'back') {
+          query = query.startAt(this.startAt).endBefore(this.endBefore);
         }
-        const back = await this.afs
-          .collection(this.mainCollection)
-          .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
-          .startAfter(this.backCursor2[this.orderBy])
-          .limit(this.perPage)
-          .get();
-        this.noBack = false;
-        if (!(back.empty == true)) {
-          this.backCursor1 = back.docs[back.docs.length - 1].data();
-          this.noBack = true;
-        }
-        this.docs = snap.map((element) => {
-          const id: string = element.payload.doc.id;
-          const data: any = element.payload.doc.data();
-          return { id, ...data };
-        });
-      },
-      (error) => {
-        console.error(error);
+        collection = this.afs.collection(this.mainCollection, (ref) => query.limit(this.perPage));
+        this.subscription = collection.snapshotChanges().subscribe(
+          async (snap) => {
+            this.startAfter = snap.length > 0 ? snap[snap.length - 1].payload.doc : undefined;
+            this.endBefore = snap.length > 0 ? snap[0].payload.doc : undefined;
+            if (this.startAfter) {
+              this.forward = !(
+                await this.afs
+                  .collection(this.mainCollection)
+                  .ref.orderBy(this.orderBy, this.orderByDirection)
+                  .startAfter(this.startAfter)
+                  .limit(this.perPage)
+                  .get()
+              ).empty;
+            } else {
+              this.forward = false;
+            }
+            let back: any = {};
+            if (this.endBefore) {
+              back = await this.afs
+                .collection(this.mainCollection)
+                .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
+                .startAfter(this.endBefore)
+                .limit(this.perPage)
+                .get();
+            } else {
+              back.empty = true;
+            }
+            this.back = !back.empty;
+            if (this.back == true) {
+              this.startAt = back.docs[back.docs.length - 1];
+            }
+            this.arrayDocs = snap.map((element) => {
+              const id: string = element.payload.doc.id;
+              const data: any = element.payload.doc.data();
+              return { id, ...data };
+            });
+            resolve(this.arrayDocs);
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
       }
-    );
+    });
+  }
+
+  async search(ev: any) {
+    const searchStr: string = String(ev.target.value).toLocaleLowerCase();
+    if (searchStr.length >= 5) {
+      this.searchStr = searchStr;
+      const snap = await this.afs
+        .collection(this.mainCollection)
+        .ref.orderBy(this.searchOrderBy, this.searchOorderByDirection)
+        .where('search', 'array-contains-any', [this.searchStr])
+        .limit(this.perPage)
+        .get();
+      this.startAfter = snap.empty == false ? snap.docs[snap.docs.length - 1] : undefined;
+      this.endBefore = snap.empty == false ? snap.docs[0] : undefined;
+      if (this.startAfter) {
+        this.forward = !(
+          await this.afs
+            .collection(this.mainCollection)
+            .ref.orderBy(this.searchOrderBy, this.searchOorderByDirection)
+            .where('search', 'array-contains-any', [this.searchStr])
+            .startAfter(this.startAfter)
+            .limit(this.perPage)
+            .get()
+        ).empty;
+      } else {
+        this.forward = false;
+      }
+      let back: any = {};
+      if (this.endBefore) {
+        back = await this.afs
+          .collection(this.mainCollection)
+          .ref.orderBy(this.searchOrderBy, this.searchOorderByDirection === 'asc' ? 'desc' : 'asc')
+          .where('search', 'array-contains-any', [this.searchStr])
+          .startAfter(this.endBefore)
+          .limit(this.perPage)
+          .get();
+      } else {
+        back.empty = true;
+      }
+      this.back = !back.empty;
+      if (this.back == true) {
+        this.startAt = back.docs[back.docs.length - 1];
+      }
+      this.arrayDocs = snap.docs.map((element) => {
+        const id: string = element.id;
+        const data: any = element.data();
+        return { id, ...data };
+      });
+      this.isLoading = false;
+    }
   }
 
   ngOnInit(): void {
@@ -168,23 +208,23 @@ export class DeliverersComponent implements OnInit, OnDestroy {
   }
 
   ionViewDidLeave() {
-    if (this.totalSubs) {
-      this.totalSubs.unsubscribe();
-    }
-    this.closeSubscription();
+    this.closeSubscriptions();
   }
 
   totalSubscription() {
-    const snap$ = this.afs.doc(this.totalNumbers).valueChanges();
-    this.totalSubs = snap$.subscribe((snap: any) => {
+    const snap = this.afs.doc(this.docNumbers).valueChanges();
+    this.totalSubs = snap.subscribe((snap: any) => {
       this.total = Number(snap.count);
     });
   }
 
-  closeSubscription() {
+  closeSubscriptions() {
     try {
-      if (this.suscription) {
-        this.suscription.unsubscribe();
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
+      if (this.totalSubs) {
+        this.totalSubs.unsubscribe();
       }
     } catch (error) {
       console.error(error);

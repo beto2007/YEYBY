@@ -14,7 +14,7 @@
     <ion-searchbar
       type="text"
       debounce="1000"
-      (ionChange)="search($event)"
+      (ionChange)="doSearch($event)"
       (ionCancel)="initializeApp()"
       (ionClear)="initializeApp()"
     ></ion-searchbar>
@@ -23,19 +23,22 @@
 
 <ion-toolbar color="light">
   <ion-buttons slot="start">
-    <ion-button (click)="sortBy($event)">
+    <ion-button (click)="sortBy($event)" [disabled]="isLoading == true">
       <ion-icon slot="icon-only" name="options-outline"></ion-icon>
     </ion-button>
-    <ion-button disabled="true" *ngIf="orderBy === 'folio'">
+    <ion-button disabled="true" *ngIf="orderBy === 'folio'" [disabled]="isLoading == true">
       <ion-icon slot="icon-only" name="list-outline"></ion-icon>
     </ion-button>
-    <ion-button disabled="true" *ngIf="orderBy === 'date'">
+    <ion-button disabled="true" *ngIf="orderBy === 'date'" [disabled]="isLoading == true">
       <ion-icon slot="icon-only" name="calendar-outline"></ion-icon>
     </ion-button>
-    <ion-button disabled="true" *ngIf="orderBy === 'nameStr'">
+    <ion-button disabled="true" *ngIf="orderBy === 'nameStr'" [disabled]="isLoading == true">
       <ion-icon slot="icon-only" name="text-outline"></ion-icon>
     </ion-button>
-    <ion-button (click)="orderByDirection = orderByDirection === 'asc' ? 'desc' : 'asc'; initializeApp()">
+    <ion-button
+      (click)="orderByDirection = orderByDirection === 'asc' ? 'desc' : 'asc'; initializeApp()"
+      [disabled]="isLoading == true"
+    >
       <ion-icon slot="icon-only" [name]="orderByDirection === 'asc' ? 'chevron-down-outline' : 'chevron-up-outline'">
       </ion-icon>
     </ion-button>
@@ -43,59 +46,202 @@
   <ion-title slot="end">
     <small>Total de repartidores: {{ total }}</small>
   </ion-title>
+  <ion-progress-bar type="indeterminate" color="primary" *ngIf="isLoading == true"> </ion-progress-bar>
 </ion-toolbar>
 
 <ion-content color="light">
   <ion-grid fixed>
     <ion-row>
       <ion-col>
-        <ion-list>
-          <ion-item lines="none" *ngFor="let item of docs; let i = index">
-            <ion-avatar slot="start">
-              <img
-                [src]="
-                  item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
-                "
-              />
-            </ion-avatar>
-            <ion-label [routerLink]="['/customers/' + item.id]" routerDirection="forward">
-              <h2>{{ item?.name }}</h2>
-              <h3>
-                <ion-icon slot="start" name="call" color="medium"></ion-icon>
-                <strong>{{ item?.phone }}</strong>
-              </h3>
-              <p>
-                <ion-icon slot="start" name="location" color="medium"></ion-icon>
-                {{ item?.streetAddress | slice: 0:100 }}
-              </p>
-            </ion-label>
-            <ion-buttons slot="end">
-              <ion-button (click)="presentPopover($event, item)">
-                <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
-          <ion-item lines="none" *ngIf="!(docs && docs[0])">
-            <p>Sin resultados</p>
-          </ion-item>
-        </ion-list>
+        <div *ngIf="arrayDocs">
+          <ion-list>
+            <ion-list-header *ngIf="searchStr && searchStr.length > 5">
+              <ion-label color="medium">
+                <i
+                  >Resultados de: <strong>"{{ searchStr }}"</strong></i
+                >
+              </ion-label>
+            </ion-list-header>
+            <ion-item lines="none" *ngFor="let item of arrayDocs; let i = index">
+              <ion-avatar slot="start">
+                <img
+                  [src]="
+                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                  "
+                />
+              </ion-avatar>
+              <ion-label [routerLink]="['/customers/' + item.id]" routerDirection="forward">
+                <h2>{{ item?.name }}</h2>
+                <h3>
+                  <ion-icon slot="start" name="call" color="medium"></ion-icon>
+                  <strong>{{ item?.phone }}</strong>
+                </h3>
+                <p>
+                  <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                  {{ item?.streetAddress | slice: 0:100 }}
+                </p>
+              </ion-label>
+              <ion-buttons slot="end">
+                <ion-button (click)="presentPopover($event, item)">
+                  <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+          </ion-list>
+        </div>
+        <div *ngIf="!(arrayDocs && arrayDocs[0])">
+          <ion-text color="medium" class="ion-padding">
+            <br />
+            <i>Sin resultados</i>
+          </ion-text>
+        </div>
+        <div *ngIf="!arrayDocs && isLoading == true">
+          <ion-list>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-avatar slot="start">
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-button fill="clear" expand="block" (click)="pagination('back')" [disabled]="!(noBack == true)">
+        <ion-button color="white" (click)="initializeApp('back')" [disabled]="!back || isLoading == true">
           <ion-icon slot="icon-only" name="caret-back-outline"></ion-icon>
         </ion-button>
-      </ion-col>
-      <ion-col>
-        <ion-button fill="clear" expand="block" (click)="pagination('forward')" [disabled]="!(noForward == true)">
+        <ion-button color="white" (click)="initializeApp('forward')" [disabled]="!forward || isLoading == true">
           <ion-icon slot="icon-only" name="caret-forward-outline"></ion-icon>
         </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="add()">
-    <ion-fab-button>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="add()" [disabled]="isLoading == true">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
