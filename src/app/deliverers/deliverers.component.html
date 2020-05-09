@@ -89,7 +89,7 @@
             </ion-item>
           </ion-list>
         </div>
-        <div *ngIf="!(arrayDocs && arrayDocs[0])">
+        <div *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == false">
           <ion-text color="medium" class="ion-padding">
             <br />
             <i>Sin resultados</i>
