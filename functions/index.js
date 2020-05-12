@@ -25,6 +25,7 @@ const documentCounter = (collectionName) => (change, context) =>
       return t.get(db.collection('metadatas').doc(collectionName)).then((docSnap) =>
         t.set(docSnap.ref, {
           count: ((docSnap.data() && docSnap.data().count) || 0) + 1,
+          autoIncrement: ((docSnap.data() && docSnap.data().autoIncrement) || 0) + 1,
         })
       );
       // on delete
