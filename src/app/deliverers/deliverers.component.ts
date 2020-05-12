@@ -12,26 +12,35 @@ import { SortByDelivererComponent } from './sort-by-deliverer/sort-by-deliverer.
   styleUrls: ['./deliverers.component.scss'],
 })
 export class DeliverersComponent implements OnInit, OnDestroy {
+  public skeleton: any[] = ['', '', '', '', '', ''];
   public arrayDocs: any[];
-  isLoading = false;
-  subscription: Subscription;
-  totalSubs: Subscription;
-  total: number = 0;
-  orderBy: string = 'nameStr';
-  orderByDirection: any = 'asc';
-  searchOrderBy: string = 'nameStr';
-  searchOorderByDirection: any = 'asc';
-  perPage: number = 10;
-  mainCollection: string = 'deliverers';
-  docNumbers: string = 'metadatas/deliverers';
-  //
-  startAfter: any;
-  endBefore: any;
-  startAt: any;
-  forward: boolean = false;
-  back: boolean = false;
-  ///
-  searchStr: string;
+  public isLoading = false;
+  private subscription: Subscription;
+  private totalSubs: Subscription;
+  public total: number = 0;
+  public orderBy: string = 'nameStr';
+  public orderByDirection: any = 'asc';
+  private searchOrderBy: string = 'nameStr';
+  private searchOorderByDirection: any = 'asc';
+  private perPage: number = 10;
+  private mainCollection: string = 'deliverers';
+  private docNumbers: string = 'metadatas/deliverers';
+  private startAfter: any;
+  private endBefore: any;
+  private startAt: any;
+  public forward: boolean = false;
+  public back: boolean = false;
+  private searchStr: string;
+  public title: any = {
+    capitalLetter: {
+      prural: 'Repartidores',
+      singular: 'Repartidor',
+    },
+    lowerCase: {
+      prural: 'repartidores',
+      singular: 'repartidor',
+    },
+  };
 
   constructor(
     private afs: AngularFirestore,

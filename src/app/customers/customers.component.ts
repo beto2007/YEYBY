@@ -12,26 +12,35 @@ import { SortByCustomerComponent } from './sort-by-customer/sort-by-customer.com
   styleUrls: ['./customers.component.scss'],
 })
 export class CustomersComponent implements OnInit, OnDestroy {
+  public skeleton: any[] = ['', '', '', '', '', ''];
   public arrayDocs: any[];
-  isLoading = false;
-  subscription: Subscription;
-  totalSubs: Subscription;
-  total: number = 0;
-  orderBy: string = 'nameStr';
-  orderByDirection: any = 'asc';
-  searchOrderBy: string = 'nameStr';
-  searchOorderByDirection: any = 'asc';
-  perPage: number = 10;
-  mainCollection: string = 'customers';
-  docNumbers: string = 'metadatas/customers';
-  //
-  startAfter: any;
-  endBefore: any;
-  startAt: any;
-  forward: boolean = false;
-  back: boolean = false;
-  ///
-  searchStr: string;
+  public isLoading = false;
+  private subscription: Subscription;
+  private totalSubs: Subscription;
+  public total: number = 0;
+  public orderBy: string = 'nameStr';
+  public orderByDirection: any = 'asc';
+  private searchOrderBy: string = 'nameStr';
+  private searchOorderByDirection: any = 'asc';
+  private perPage: number = 10;
+  private mainCollection: string = 'customers';
+  private docNumbers: string = 'metadatas/customers';
+  private startAfter: any;
+  private endBefore: any;
+  private startAt: any;
+  public forward: boolean = false;
+  public back: boolean = false;
+  private searchStr: string;
+  public title: any = {
+    capitalLetter: {
+      prural: 'Clientes',
+      singular: 'Cliente',
+    },
+    lowerCase: {
+      prural: 'clientes',
+      singular: 'cliente',
+    },
+  };
 
   constructor(
     private afs: AngularFirestore,

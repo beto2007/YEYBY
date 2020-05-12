@@ -34,7 +34,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
   public title: any = {
     capitalLetter: {
       prural: 'Empresas',
-      singular: 'empresas',
+      singular: 'Empresa',
     },
     lowerCase: {
       prural: 'empresas',
