@@ -243,7 +243,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
   async presentToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
-      duration: 2000,
+      duration: 6000,
     });
     toast.present();
   }
