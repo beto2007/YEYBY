@@ -105,7 +105,7 @@
     <ion-row>
       <ion-col>
         <ion-list>
-          <ion-item lines="none" *ngFor="let item of arrayDocs; let i = index">
+          <ion-item *ngFor="let item of arrayDocs; let i = index">
             <ion-avatar slot="start">
               <img
                 [src]="
@@ -123,6 +123,7 @@
                 <ion-icon slot="start" name="location" color="medium"></ion-icon>
                 {{ item?.streetAddress | slice: 0:100 }}
               </p>
+              <p><strong>Folio: </strong> {{ item?.folio }}</p>
             </ion-label>
             <ion-buttons slot="end">
               <ion-button (click)="presentPopover($event, item)">

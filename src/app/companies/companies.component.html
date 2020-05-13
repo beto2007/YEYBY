@@ -81,8 +81,7 @@
           <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
           <ion-toolbar>
             <ion-title slot="start">
-              <small>
-                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
+              <small> <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
             ></ion-title>
             <ion-buttons slot="end">
               <ion-button size="small">
@@ -123,7 +122,7 @@
         <ion-card>
           <ion-toolbar>
             <ion-title slot="start">
-              <small>{{ item?.name }}</small></ion-title
+              <small><strong>Folio: </strong>{{ item?.folio }}</small></ion-title
             >
             <ion-buttons slot="end">
               <ion-button size="small" (click)="presentPopover($event, item)">
