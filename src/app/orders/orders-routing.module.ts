@@ -3,14 +3,14 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { extract } from '@app/i18n';
 import { OrdersComponent } from './orders.component';
-//import { DetailDelivererComponent } from './detail-deliverer/detail-deliverer.component';
+import { DetailOrderComponent } from './detail-order/detail-order.component';
 import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
   Shell.childRoutes([
     { path: '', redirectTo: '/orders', pathMatch: 'full' },
     { path: 'orders', component: OrdersComponent, data: { title: extract('Pedidos') } },
-    //{ path: 'orders/:id', component: DetailDelivererComponent, data: { title: extract('Detalle') } },
+    { path: 'orders/:id', component: DetailOrderComponent, data: { title: extract('Detalle') } },
   ]),
 ];
 

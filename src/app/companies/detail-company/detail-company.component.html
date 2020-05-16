@@ -29,11 +29,156 @@
               </ion-button>
             </ion-card-subtitle>
             <ion-card-title>{{ data?.name }}</ion-card-title>
+            <ion-card-subtitle> Folio: {{ data?.folio }} </ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
             <p><ion-icon name="location"></ion-icon> {{ data?.streetAddress }}</p>
             <p><ion-icon name="walk"></ion-icon> {{ data?.references }}</p>
             <p><ion-icon name="information-circle"></ion-icon> {{ data?.description }}</p>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Días laborales</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-chip
+              *ngFor="let day of data?.days; let i = index"
+              outline
+              [color]="day?.works == true ? 'success' : 'medium'"
+            >
+              <ion-label>
+                <small>{{ day.name }}</small
+                >:
+                <small *ngIf="day.works == true">
+                  {{ beautyDate(day.openingHours) }} - {{ beautyDate(day.closingHours) }}
+                </small>
+                <small *ngIf="day.works == false">
+                  <strong>Cerrado</strong>
+                </small>
+              </ion-label>
+            </ion-chip>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+              <ion-toolbar>
+                <ion-icon name="bookmark" slot="start"></ion-icon>
+                <ion-title>Agregar producto a menú</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button (click)="viewForm = !viewForm">
+                    <ion-icon slot="icon-only" [name]="viewForm == false ? 'chevron-down' : 'chevron-up'"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content *ngIf="viewForm == true">
+            <form (ngSubmit)="save()" [formGroup]="myForm" novalidate>
+              <ion-list>
+                <ion-item lines="inset">
+                  <ion-label color="medium" position="stacked">
+                    <ion-text color="primary">
+                      <span class="ion-padding">*</span>
+                    </ion-text>
+                    Nombre
+                  </ion-label>
+                  <ion-input type="text" formControlName="name" autocomplete="name"></ion-input>
+                </ion-item>
+                <ion-text color="danger" [hidden]="myForm.controls.name.valid || myForm.controls.name.untouched">
+                  <span class="ion-padding">Nombre es requerido</span>
+                </ion-text>
+                <ion-item lines="inset">
+                  <ion-label color="medium" position="stacked">
+                    <ion-text color="primary">
+                      <span class="ion-padding"></span>
+                    </ion-text>
+                    Descripción
+                  </ion-label>
+                  <ion-textarea formControlName="description" autocomplete="description" rows="3"></ion-textarea>
+                </ion-item>
+                <ion-item lines="inset">
+                  <ion-label color="medium" position="stacked">
+                    <ion-text color="primary">
+                      <span class="ion-padding">*</span>
+                    </ion-text>
+                    Precio
+                  </ion-label>
+                  <ion-input type="number" formControlName="price"></ion-input>
+                </ion-item>
+                <ion-text color="danger" [hidden]="myForm.controls.price.valid || myForm.controls.price.untouched">
+                  <span class="ion-padding">Precio es requerido</span>
+                </ion-text>
+                <ion-item lines="inset">
+                  <ion-label color="medium" position="stacked">
+                    <ion-text color="primary">
+                      <span class="ion-padding"></span>
+                    </ion-text>
+                    Observaciones
+                  </ion-label>
+                  <ion-textarea formControlName="observations" rows="2"></ion-textarea>
+                </ion-item>
+              </ion-list>
+              <div>
+                <ion-button type="submit" [disabled]="myForm.invalid || isLoading" color="primary" expand="block">
+                  Agregar
+                </ion-button>
+              </div>
+            </form>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Menú</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item-sliding *ngFor="let item of menu; let i = index">
+                <ion-item>
+                  <ion-icon name="bookmark" slot="start"></ion-icon>
+                  <ion-label class="ion-text-wrap">
+                    <h2>
+                      <strong>
+                        {{ item?.name }}
+                      </strong>
+                    </h2>
+                    <h3>
+                      <strong>
+                        {{ item?.price | currency: 'USD' }}
+                      </strong>
+                    </h3>
+                    <p>{{ item?.description }}</p>
+                    <p>{{ item?.observations }}</p>
+                  </ion-label>
+                  <ion-icon
+                    [name]="item?.active === true ? 'eye' : 'eye-off'"
+                    slot="end"
+                    [color]="item?.active === true ? 'primary' : 'medium'"
+                  ></ion-icon>
+                </ion-item>
+                <ion-item-options side="end">
+                  <ion-item-option
+                    *ngIf="item?.active == false"
+                    (click)="activate(item.id, true)"
+                    fill="clear"
+                    color="medium"
+                    >Activar</ion-item-option
+                  >
+                  <ion-item-option
+                    *ngIf="item?.active == true"
+                    (click)="activate(item.id, false)"
+                    fill="clear"
+                    color="medium"
+                    >Desactivar</ion-item-option
+                  >
+                  <ion-item-option (click)="presentAlertConfirm(item)" fill="clear">Eliminar</ion-item-option>
+                </ion-item-options>
+              </ion-item-sliding>
+            </ion-list>
           </ion-card-content>
         </ion-card>
       </ion-col>

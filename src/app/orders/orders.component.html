@@ -1,1 +1,153 @@
-<p>orders works!</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      <span> {{ title.capitalLetter.prural }} </span></ion-title
+    >
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-toolbar color="light">
+    <ion-searchbar
+      class="ion-margin-top"
+      type="text"
+      debounce="1000"
+      (ionChange)="doSearch($event)"
+      (ionCancel)="initializeApp()"
+      (ionClear)="initializeApp()"
+      enterkeyhint="send"
+      [placeholder]="'Buscar ' + title.lowerCase.singular"
+      animated
+    >
+    </ion-searchbar>
+  </ion-toolbar> -->
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-button (click)="sortBy($event)" [disabled]="isLoading == true">
+        <ion-icon slot="icon-only" *ngIf="orderBy === 'folio'" name="list-outline"></ion-icon>
+        <ion-icon slot="icon-only" *ngIf="orderBy === 'date'" name="calendar-outline"></ion-icon>
+        <ion-icon slot="icon-only" *ngIf="orderBy === 'nameStr'" name="text-outline"></ion-icon>
+      </ion-button>
+      <ion-button
+        (click)="orderByDirection = orderByDirection === 'asc' ? 'desc' : 'asc'; initializeApp()"
+        [disabled]="isLoading == true"
+      >
+        <ion-icon slot="icon-only" [name]="orderByDirection === 'asc' ? 'chevron-down-outline' : 'chevron-up-outline'">
+        </ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title slot="end">
+      <small>Total de {{ title.lowerCase.prural }}: {{ total }}</small>
+    </ion-title>
+    <ion-progress-bar type="indeterminate" color="primary" *ngIf="isLoading == true"> </ion-progress-bar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == false">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col>
+        <ion-text color="medium" class="ion-text-center ion-padding">
+          <h1>
+            <ion-icon class="big-icon" name="search"></ion-icon>
+          </h1>
+          <h3>Sin resultados</h3>
+          <p>
+            No se encontraron resultados de {{ title.lowerCase.prural }}, ¿Desea agrear un
+            {{ title.lowerCase.singular }} nuevo?.
+          </p>
+          <div class="ion-text-center ion-padding">
+            <ion-button>
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar
+            </ion-button>
+          </div>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-content color="light" *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == true">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of skeleton">
+            <ion-avatar slot="start">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <ion-label>
+              <h3>
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              </h3>
+              <p>
+                <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+              </p>
+              <p>
+                <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-content color="light" *ngIf="arrayDocs && arrayDocs[0]">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of arrayDocs; let i = index">
+            <ion-avatar slot="start">
+              <img
+                [src]="
+                  item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                "
+              />
+            </ion-avatar>
+            <ion-label [routerLink]="['/orders/' + item.id]" routerDirection="forward">
+              <h2>{{ item?.name }}</h2>
+              <h3>
+                <ion-icon slot="start" name="call" color="medium"></ion-icon>
+                <strong>{{ item?.phone }}</strong>
+              </h3>
+              <p>
+                <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                {{ item?.streetAddress | slice: 0:100 }}
+              </p>
+              <p><strong>Folio: </strong> {{ item?.folio }}</p>
+            </ion-label>
+            <ion-buttons slot="end">
+              <ion-button (click)="presentPopover($event, item)">
+                <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button color="white" (click)="initializeApp('back')" [disabled]="!back || isLoading == true">
+          <ion-icon slot="icon-only" name="caret-back-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="white" (click)="initializeApp('forward')" [disabled]="!forward || isLoading == true">
+          <ion-icon slot="icon-only" name="caret-forward-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button [disabled]="isLoading == true">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

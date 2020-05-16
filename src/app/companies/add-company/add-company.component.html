@@ -38,7 +38,7 @@
       <ion-text color="danger" [hidden]="myForm.controls.phone.valid || myForm.controls.phone.untouched">
         <span class="ion-padding">Teléfono es requerido</span>
       </ion-text>
-      <ion-item lines="inset">
+      <ion-item lines="none">
         <ion-label color="medium" position="stacked">
           <ion-text color="primary"> <span class="ion-padding"></span> </ion-text>Propietario
         </ion-label>
@@ -78,6 +78,26 @@
         <ion-textarea formControlName="references" autocomplete="references" rows="3"></ion-textarea>
       </ion-item>
     </ion-list>
+    <h3>Días laborales</h3>
+    <div>
+      <ion-chip
+        *ngFor="let day of days; let i = index"
+        (click)="presentPopover($event, day, i)"
+        outline
+        [color]="day?.works == true ? 'success' : 'medium'"
+      >
+        <ion-label>
+          <small>{{ day.name }}</small
+          >:
+          <small *ngIf="day.works == true">
+            {{ beautyDate(day.openingHours) }} - {{ beautyDate(day.closingHours) }}
+          </small>
+          <small *ngIf="day.works == false">
+            <strong>Cerrado</strong>
+          </small>
+        </ion-label>
+      </ion-chip>
+    </div>
     <ion-item>
       <ion-thumbnail slot="start">
         <ion-img [src]="imageSrc ? imageSrc : 'assets/no-image.jpg'"></ion-img>

@@ -5,6 +5,7 @@ import { OptionsCompaniesComponent } from './options-companies/options-companies
 import { Subscription } from 'rxjs';
 import { AddCompanyComponent } from './add-company/add-company.component';
 import { SortByCompanyComponent } from './sort-by-company/sort-by-company.component';
+import { FirebaseService } from '../@shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-companies',
@@ -46,8 +47,13 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     private afs: AngularFirestore,
     private toastController: ToastController,
     private popoverController: PopoverController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private myFire: FirebaseService
   ) {}
+
+  generateOrder(id: string) {
+    this.myFire.createOrder(id, 'company');
+  }
 
   async doSearch(ev: any) {
     this.isLoading = true;

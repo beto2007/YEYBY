@@ -18,7 +18,7 @@ export class ShellComponent {
     { title: 'Repartidores', link: '/deliverers', icon: 'bicycle' },
     { title: 'Clientes', link: '/customers', icon: 'person' },
     { title: 'Empresas', link: '/companies', icon: 'briefcase' },
-    { title: 'Ordenes', link: '/orders', icon: 'document-text' },
+    { title: 'Órdenes', link: '/orders', icon: 'document-text' },
     { title: 'Configuración', link: '/home', icon: 'build' },
   ];
 

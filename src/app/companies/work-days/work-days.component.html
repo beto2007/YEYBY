@@ -1,0 +1,43 @@
+<ion-content class="ion-padding">
+  <h3>{{ day?.name }}</h3>
+  <form (ngSubmit)="save()" [formGroup]="myForm" novalidate>
+    <ion-list>
+      <ion-item>
+        <ion-label color="medium" position="stacked">Abierto</ion-label>
+        <ion-toggle formControlName="works" slot="end"></ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label color="medium" position="stacked">
+          Horario de apertura
+        </ion-label>
+        <ion-datetime
+          formControlName="openingHours"
+          display-format="h:mm A"
+          picker-format="h:mm A"
+          (ionChange)="changeDate($event)"
+        >
+        </ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label color="medium" position="stacked">
+          Horario de cierre
+        </ion-label>
+        <ion-datetime
+          formControlName="closingHours"
+          display-format="h:mm A"
+          picker-format="h:mm A"
+          (ionChange)="changeDate($event)"
+        >
+        </ion-datetime>
+      </ion-item>
+    </ion-list>
+    <div>
+      <ion-text color="danger" *ngIf="!validDate">
+        <small>El horario de cierre debe ser mayor al horario de apertura.</small>
+      </ion-text>
+      <ion-button type="submit" [disabled]="myForm.invalid || isLoading || !validDate" color="primary" expand="block">
+        Ajustar
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

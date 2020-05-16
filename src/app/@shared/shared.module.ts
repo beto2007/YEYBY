@@ -8,5 +8,6 @@ import { LoaderComponent } from './loader/loader.component';
   imports: [IonicModule, CommonModule],
   declarations: [LoaderComponent],
   exports: [LoaderComponent],
+  providers: [],
 })
 export class SharedModule {}

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, LoadingController, ToastController } from '@ionic/angular';
+import { ModalController, LoadingController, ToastController, PopoverController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { DocumentReference } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { WorkDaysComponent } from '../work-days/work-days.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-add-company',
@@ -20,6 +22,57 @@ export class AddCompanyComponent implements OnInit {
   middleSrc: any;
   file: File;
   imagesPath: string[] = [];
+  days: any[] = [
+    {
+      title: 'LU',
+      name: 'Lunes',
+      works: false,
+      openingHours: '2020-05-15T09:00:26.813-05:00',
+      closingHours: '2020-05-15T21:00:26.813-05:00',
+    },
+    {
+      title: 'MA',
+      name: 'Martes',
+      works: false,
+      openingHours: '2020-05-15T09:00:26.813-05:00',
+      closingHours: '2020-05-15T21:00:26.813-05:00',
+    },
+    {
+      title: 'MI',
+      name: 'Miércoles',
+      works: false,
+      openingHours: '2020-05-15T09:00:26.813-05:00',
+      closingHours: '2020-05-15T21:00:26.813-05:00',
+    },
+    {
+      title: 'JU',
+      name: 'Jueves',
+      works: false,
+      openingHours: '2020-05-15T09:00:26.813-05:00',
+      closingHours: '2020-05-15T21:00:26.813-05:00',
+    },
+    {
+      title: 'VI',
+      name: 'Viernes',
+      works: false,
+      openingHours: '2020-05-15T09:00:26.813-05:00',
+      closingHours: '2020-05-15T21:00:26.813-05:00',
+    },
+    {
+      title: 'SA',
+      name: 'Sábado',
+      works: false,
+      openingHours: '2020-05-15T09:00:26.813-05:00',
+      closingHours: '2020-05-15T21:00:26.813-05:00',
+    },
+    {
+      title: 'DO',
+      name: 'Domingo',
+      works: false,
+      openingHours: '2020-05-15T09:00:26.813-05:00',
+      closingHours: '2020-05-15T21:00:26.813-05:00',
+    },
+  ];
 
   constructor(
     private modalController: ModalController,
@@ -27,9 +80,29 @@ export class AddCompanyComponent implements OnInit {
     private afs: AngularFirestore,
     private afStorage: AngularFireStorage,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private popoverController: PopoverController
   ) {
     this.createForm();
+  }
+
+  beautyDate(date: any) {
+    return moment(date).format('HH:mm A');
+  }
+
+  async presentPopover(ev: any, day: any, index: number) {
+    const popover = await this.popoverController.create({
+      component: WorkDaysComponent,
+      componentProps: { day: day },
+      event: ev,
+      translucent: true,
+    });
+    popover.onDidDismiss().then((data) => {
+      if (data && data.data) {
+        this.days[index] = data.data;
+      }
+    });
+    return await popover.present();
   }
 
   ngOnInit(): void {
@@ -64,6 +137,9 @@ export class AddCompanyComponent implements OnInit {
     try {
       const response = await this.afs.collection('companies').doc(id).ref.get();
       const data = response.data();
+      if (data && data.days) {
+        this.days = data.days;
+      }
       if (data) {
         if (data && data.image) {
           this.imageSrc = data.image.thumbnail.url;
@@ -122,6 +198,7 @@ export class AddCompanyComponent implements OnInit {
     try {
       this.createSearchLabels([String(this.myForm.get('name').value), String(this.myForm.get('phone').value)]);
       let data: any = this.myForm.value;
+      data.days = this.days;
       data.nameStr = String(data.name).toLocaleLowerCase();
       data.search = this.createSearchLabels([
         String(this.myForm.get('name').value),
@@ -152,6 +229,7 @@ export class AddCompanyComponent implements OnInit {
     loadingOverlay.present();
     try {
       let data: any = this.myForm.value;
+      data.days = this.days;
       data.nameStr = String(data.name).toLocaleLowerCase();
       data.search = this.createSearchLabels([
         String(this.myForm.get('name').value),

@@ -81,7 +81,8 @@
           <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
           <ion-toolbar>
             <ion-title slot="start">
-              <small> <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
+              <small>
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
             ></ion-title>
             <ion-buttons slot="end">
               <ion-button size="small">
@@ -118,13 +119,16 @@
 <ion-content color="light" *ngIf="arrayDocs && arrayDocs[0]">
   <ion-grid fixed>
     <ion-row>
-      <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of arrayDocs">
+      <ion-col size-xl="4" size-lg="6" size-md="6" size-sm="6" size-xs="12" *ngFor="let item of arrayDocs">
         <ion-card>
           <ion-toolbar>
             <ion-title slot="start">
               <small><strong>Folio: </strong>{{ item?.folio }}</small></ion-title
             >
             <ion-buttons slot="end">
+              <ion-button size="small" (click)="generateOrder(item.id)">
+                <ion-icon slot="icon-only" name="receipt-outline"></ion-icon>
+              </ion-button>
               <ion-button size="small" (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
               </ion-button>
