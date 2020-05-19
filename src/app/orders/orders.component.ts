@@ -41,6 +41,7 @@ export class OrdersComponent implements OnInit {
       singular: 'órden',
     },
   };
+  private status: string = 'created';
 
   constructor(
     private afs: AngularFirestore,
@@ -48,6 +49,11 @@ export class OrdersComponent implements OnInit {
     private popoverController: PopoverController,
     private modalController: ModalController
   ) {}
+
+  segmentChanged(ev: any) {
+    this.status = String(ev.detail.value);
+    this.initializeApp();
+  }
 
   async doSearch(ev: any) {
     this.isLoading = true;
@@ -77,6 +83,7 @@ export class OrdersComponent implements OnInit {
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;
         query = collRef.orderBy(this.orderBy, this.orderByDirection);
+        query = query.where('status', '==', this.status);
         if (this.startAfter && direction === 'forward') {
           query = query.startAfter(this.startAfter);
         } else if (this.startAt && this.endBefore && direction === 'back') {

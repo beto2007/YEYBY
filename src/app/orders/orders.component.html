@@ -12,23 +12,10 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <!-- <ion-toolbar color="light">
-    <ion-searchbar
-      class="ion-margin-top"
-      type="text"
-      debounce="1000"
-      (ionChange)="doSearch($event)"
-      (ionCancel)="initializeApp()"
-      (ionClear)="initializeApp()"
-      enterkeyhint="send"
-      [placeholder]="'Buscar ' + title.lowerCase.singular"
-      animated
-    >
-    </ion-searchbar>
-  </ion-toolbar> -->
   <ion-toolbar color="light">
     <ion-buttons slot="start">
-      <ion-button (click)="sortBy($event)" [disabled]="isLoading == true">
+      <ion-button disabled="true">
+        <!-- <ion-button (click)="sortBy($event)" [disabled]="isLoading == true"> -->
         <ion-icon slot="icon-only" *ngIf="orderBy === 'folio'" name="list-outline"></ion-icon>
         <ion-icon slot="icon-only" *ngIf="orderBy === 'date'" name="calendar-outline"></ion-icon>
         <ion-icon slot="icon-only" *ngIf="orderBy === 'nameStr'" name="text-outline"></ion-icon>
@@ -41,10 +28,23 @@
         </ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title slot="end">
+    <!-- <ion-title slot="end">
       <small>Total de {{ title.lowerCase.prural }}: {{ total }}</small>
-    </ion-title>
+    </ion-title> -->
     <ion-progress-bar type="indeterminate" color="primary" *ngIf="isLoading == true"> </ion-progress-bar>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment value="created" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="in-progress">
+        <ion-label>En progreso</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="created">
+        <ion-label>Creadas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="finished">
+        <ion-label>Terminadas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
@@ -106,23 +106,14 @@
       <ion-col>
         <ion-list>
           <ion-item *ngFor="let item of arrayDocs; let i = index">
-            <ion-avatar slot="start">
-              <img
-                [src]="
-                  item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
-                "
-              />
-            </ion-avatar>
+            <ion-icon slot="start" name="receipt-outline"></ion-icon>
             <ion-label [routerLink]="['/orders/' + item.id]" routerDirection="forward">
-              <h2>{{ item?.name }}</h2>
+              <h2>
+                {{ item?.company?.name }}
+              </h2>
               <h3>
-                <ion-icon slot="start" name="call" color="medium"></ion-icon>
-                <strong>{{ item?.phone }}</strong>
+                {{ item?.customer?.name }}
               </h3>
-              <p>
-                <ion-icon slot="start" name="location" color="medium"></ion-icon>
-                {{ item?.streetAddress | slice: 0:100 }}
-              </p>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
             </ion-label>
             <ion-buttons slot="end">

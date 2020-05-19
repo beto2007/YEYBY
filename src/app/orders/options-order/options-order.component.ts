@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  PopoverController,
-  AlertController,
-  LoadingController,
-  ToastController,
-  ModalController,
-} from '@ionic/angular';
+import { PopoverController, AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-options-order',
@@ -19,70 +14,19 @@ export class OptionsOrderComponent implements OnInit {
   item: any;
 
   constructor(
-    private modalController: ModalController,
+    private router: Router,
     private popoverController: PopoverController,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private toastController: ToastController,
     private afs: AngularFirestore,
-    private afStorage: AngularFireStorage
+    private myFire: FirebaseService
   ) {}
 
   ngOnInit(): void {}
 
   dismissPopover() {
     this.popoverController.dismiss();
-  }
-
-  async presentAlertConfirm() {
-    const alert = await this.alertController.create({
-      header: 'Eliminar repartidor',
-      message: `¿Está seguro de eliminar al repartidor "${this.item.name}"?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: 'Eliminar',
-          handler: () => {
-            this.delete();
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
-  async delete(): Promise<void> {
-    this.isLoading = true;
-    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-    loadingOverlay.present();
-    try {
-      const data = await this.getData();
-      let imagesPath: string[] = [];
-      if (data && data.image && data.image.main && data.image.main.path) {
-        imagesPath.push(data.image.main.path);
-      }
-      if (data && data.image && data.image.thumbnail && data.image.thumbnail.path) {
-        imagesPath.push(data.image.thumbnail.path);
-      }
-      if (data && data.image && data.image.list && data.image.list.path) {
-        imagesPath.push(data.image.list.path);
-      }
-      if (imagesPath[0]) {
-        this.deletePast(imagesPath);
-      }
-      await this.afs.collection('deliverers').doc(this.item.id).delete();
-      this.presentToast('Repartidor eliminado correctamente');
-      this.dismissPopover();
-    } catch (error) {
-      console.error(error);
-      this.presentToast('Ha ocurrido un error');
-    }
-    this.isLoading = false;
-    loadingOverlay.dismiss();
   }
 
   async getData() {
@@ -105,21 +49,122 @@ export class OptionsOrderComponent implements OnInit {
     toast.present();
   }
 
-  async deletePast(array: string[]) {
-    let promises: Promise<any>[] = [];
-    const storageRef = this.afStorage.storage.ref();
-    array.forEach((element) => {
-      promises.push(storageRef.child(element).delete());
-    });
-    await Promise.all(promises);
+  async startOrder() {
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      const canStart = await this.myFire.canStartOrder(this.item.id);
+      if (canStart === true) {
+        this.presentToast('Orden iniciada');
+      } else {
+        this.completeOrderConfirm();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    loadingOverlay.dismiss();
   }
 
-  // async add() {
-  //   const modal = await this.modalController.create({
-  //     component: AddDelivererComponent,
-  //     componentProps: { id: this.item.id },
-  //   });
-  //   this.dismissPopover();
-  //   return await modal.present();
-  // }
+  async cancelOrder() {
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.afs.collection('orders').doc(this.item.id).update({
+        status: 'cancelled',
+      });
+      this.presentToast('Orden cancelada');
+    } catch (error) {
+      console.error(error);
+    }
+    loadingOverlay.dismiss();
+  }
+
+  finalizeOrder() {
+    console.log('Finalizando');
+  }
+
+  async startOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Iniciar orden',
+      message: `¿Está seguro de iniciar la orden con folio: ${this.item.folio}?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Iniciar',
+          handler: () => {
+            this.startOrder();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async cancelOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Cancelar orden',
+      message: `¿Está seguro de cancelar la orden con folio: ${this.item.folio}?`,
+      buttons: [
+        {
+          text: 'Salir',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Cancelar orden',
+          handler: () => {
+            this.cancelOrder();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async finalizeOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Finalizar orden',
+      message: `¿Está seguro de finalizar la orden con folio: ${this.item.folio}?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Finalizar',
+          handler: () => {
+            this.finalizeOrder();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async completeOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Completar orden',
+      message: `La orden con folio: ${this.item.folio} que intenta iniciar, esta incompleta ¿Desea completarla y continuar?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Completar',
+          handler: () => {
+            this.dismissPopover();
+            this.router.navigate(['/orders/' + this.item.id]);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
 }
