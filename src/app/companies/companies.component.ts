@@ -42,6 +42,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       singular: 'empresa',
     },
   };
+  public mode: string = '';
 
   constructor(
     private afs: AngularFirestore,
@@ -260,5 +261,13 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       componentProps: { id: id },
     });
     return await modal.present();
+  }
+
+  closeModal() {
+    this.modalController.dismiss();
+  }
+
+  selectItem(item: any) {
+    this.modalController.dismiss({ item: item });
   }
 }

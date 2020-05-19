@@ -11,6 +11,8 @@ import { ToolsService } from '@shared/services/tools/tools.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { LoadingController, AlertController, ModalController } from '@ionic/angular';
 import { CompaniesComponent } from '@app/companies/companies.component';
+import { CustomersComponent } from '@app/customers/customers.component';
+import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 
 @Component({
   selector: 'app-detail-order',
@@ -166,7 +168,7 @@ export class DetailOrderComponent implements OnInit {
     loadingOverlay.dismiss();
   }
 
-  async addCompnay() {
+  async addCompanyFunc() {
     const modal = await this.modalController.create({
       component: CompaniesComponent,
       componentProps: { mode: 'modal' },
@@ -179,6 +181,32 @@ export class DetailOrderComponent implements OnInit {
     return await modal.present();
   }
 
+  async addCustomerFunc() {
+    const modal = await this.modalController.create({
+      component: CustomersComponent,
+      componentProps: { mode: 'modal' },
+    });
+    modal.onDidDismiss().then((response) => {
+      if (response && response.data && response.data.item && response.data.item.id) {
+        this.updateCustomer(response.data.item);
+      }
+    });
+    return await modal.present();
+  }
+
+  async addDelivererFunc() {
+    const modal = await this.modalController.create({
+      component: DeliverersComponent,
+      componentProps: { mode: 'modal' },
+    });
+    modal.onDidDismiss().then((response) => {
+      if (response && response.data && response.data.item && response.data.item.id) {
+        this.updateDeliverer(response.data.item);
+      }
+    });
+    return await modal.present();
+  }
+
   async updateCompany(company: any): Promise<void> {
     this.isLoading = true;
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
@@ -186,6 +214,40 @@ export class DetailOrderComponent implements OnInit {
     try {
       await this.afs.collection('orders').doc(this.data.id).update({
         company: company,
+      });
+      this.tools.presentToast('Orden actualizada correctamente');
+    } catch (error) {
+      this.tools.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async updateCustomer(customer: any): Promise<void> {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.afs.collection('orders').doc(this.data.id).update({
+        customer: customer,
+      });
+      this.tools.presentToast('Orden actualizada correctamente');
+    } catch (error) {
+      this.tools.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async updateDeliverer(deliverer: any): Promise<void> {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.afs.collection('orders').doc(this.data.id).update({
+        deliverer: deliverer,
       });
       this.tools.presentToast('Orden actualizada correctamente');
     } catch (error) {

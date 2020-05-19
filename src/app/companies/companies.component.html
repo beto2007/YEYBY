@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" *ngIf="!(mode === 'modal'); else isModal">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -12,6 +12,18 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ng-template #isModal>
+    <ion-toolbar color="primary">
+      <ion-title>
+        <span> Seleccionar {{ title.lowerCase.singular }} </span>
+      </ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="closeModal()">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ng-template>
   <ion-toolbar color="light">
     <ion-searchbar
       class="ion-margin-top"
@@ -75,7 +87,7 @@
 
 <ion-content color="light" *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == true">
   <ion-grid fixed>
-    <ion-row>
+    <ion-row *ngIf="!(mode === 'modal'); else isModalSkeleton">
       <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12" *ngFor="let item of skeleton">
         <ion-card>
           <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
@@ -113,12 +125,39 @@
         </ion-card>
       </ion-col>
     </ion-row>
+    <ng-template #isModalSkeleton>
+      <ion-row>
+        <ion-col>
+          <ion-list>
+            <ion-item *ngFor="let item of skeleton">
+              <ion-thumbnail slot="start">
+                <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+              </ion-thumbnail>
+              <ion-label>
+                <h2>
+                  <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+                </h2>
+                <h3>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </h3>
+                <p>
+                  <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+                </p>
+                <p>
+                  <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+                </p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ng-template>
   </ion-grid>
 </ion-content>
 
 <ion-content color="light" *ngIf="arrayDocs && arrayDocs[0]">
   <ion-grid fixed>
-    <ion-row>
+    <ion-row *ngIf="!(mode === 'modal'); else isModalActions">
       <ion-col size-xl="4" size-lg="6" size-md="6" size-sm="6" size-xs="12" *ngFor="let item of arrayDocs">
         <ion-card>
           <ion-toolbar>
@@ -135,11 +174,9 @@
             </ion-buttons>
           </ion-toolbar>
           <img
-            [routerLink]="['/companies/' + item.id]"
-            routerDirection="forward"
             [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
           />
-          <ion-card-header>
+          <ion-card-header [routerLink]="['/companies/' + item.id]" routerDirection="forward">
             <ion-card-subtitle> <ion-icon name="call" color="medium"></ion-icon> {{ item?.phone }} </ion-card-subtitle>
             <ion-card-title>{{ item?.name }}</ion-card-title>
           </ion-card-header>
@@ -156,6 +193,37 @@
         </ion-card>
       </ion-col>
     </ion-row>
+    <ng-template #isModalActions>
+      <ion-row>
+        <ion-col>
+          <ion-list>
+            <ion-item *ngFor="let item of arrayDocs" (click)="selectItem(item)">
+              <ion-thumbnail slot="start">
+                <img
+                  [src]="
+                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                  "
+                />
+              </ion-thumbnail>
+              <ion-label>
+                <h2>{{ item?.name }}</h2>
+                <h3>
+                  <small><strong>Folio: </strong>{{ item?.folio }}</small>
+                </h3>
+                <p>
+                  <ion-icon slot="start" name="information-circle" color="medium"></ion-icon>
+                  {{ item?.description | slice: 0:150 }}...
+                </p>
+                <p>
+                  <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                  {{ item?.streetAddress | slice: 0:200 }}...
+                </p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ng-template>
     <ion-row>
       <ion-col>
         <ion-button color="white" (click)="initializeApp('back')" [disabled]="!back || isLoading == true">

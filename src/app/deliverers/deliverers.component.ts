@@ -41,6 +41,7 @@ export class DeliverersComponent implements OnInit, OnDestroy {
       singular: 'repartidor',
     },
   };
+  public mode: string = '';
 
   constructor(
     private afs: AngularFirestore,
@@ -254,5 +255,13 @@ export class DeliverersComponent implements OnInit, OnDestroy {
       componentProps: { id: id },
     });
     return await modal.present();
+  }
+
+  closeModal() {
+    this.modalController.dismiss();
+  }
+
+  selectItem(item: any) {
+    this.modalController.dismiss({ item: item });
   }
 }

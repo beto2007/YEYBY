@@ -18,7 +18,7 @@
               <ion-toolbar class="ion-no-padding">
                 {{ data?.company?.name }}
                 <ion-buttons slot="end">
-                  <ion-button color="medium" (click)="addCompnay()">
+                  <ion-button color="medium" (click)="addCompanyFunc()">
                     <ion-icon slot="icon-only" name="repeat"></ion-icon>
                   </ion-button>
                 </ion-buttons>
@@ -40,7 +40,7 @@
                 <ion-toolbar class="ion-no-padding">
                   Sin empresa
                   <ion-buttons slot="end">
-                    <ion-button color="medium" (click)="addCompnay()">
+                    <ion-button color="medium" (click)="addCompanyFunc()">
                       <ion-icon slot="icon-only" name="add"></ion-icon>
                     </ion-button>
                   </ion-buttons>
@@ -57,7 +57,7 @@
               <ion-toolbar class="ion-no-padding">
                 {{ data?.customer?.name }}
                 <ion-buttons slot="end">
-                  <ion-button color="medium">
+                  <ion-button color="medium" (click)="addCustomerFunc()">
                     <ion-icon slot="icon-only" name="repeat"></ion-icon>
                   </ion-button>
                 </ion-buttons>
@@ -82,7 +82,7 @@
                 <ion-toolbar class="ion-no-padding">
                   Sin cliente
                   <ion-buttons slot="end">
-                    <ion-button color="medium">
+                    <ion-button color="medium" (click)="addCustomerFunc()">
                       <ion-icon slot="icon-only" name="add"></ion-icon>
                     </ion-button>
                   </ion-buttons>
@@ -99,7 +99,7 @@
               <ion-toolbar class="ion-no-padding">
                 {{ data?.deliverer?.name }}
                 <ion-buttons slot="end">
-                  <ion-button color="medium">
+                  <ion-button color="medium" (click)="addDelivererFunc()">
                     <ion-icon slot="icon-only" name="repeat"></ion-icon>
                   </ion-button>
                 </ion-buttons>
@@ -124,7 +124,7 @@
                 <ion-toolbar class="ion-no-padding">
                   Sin repartidor
                   <ion-buttons slot="end">
-                    <ion-button color="medium">
+                    <ion-button color="medium" (click)="addDelivererFunc()">
                       <ion-icon slot="icon-only" name="add"></ion-icon>
                     </ion-button>
                   </ion-buttons>

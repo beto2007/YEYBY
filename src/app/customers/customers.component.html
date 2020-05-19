@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" *ngIf="!(mode === 'modal'); else isModal">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -12,6 +12,18 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ng-template #isModal>
+    <ion-toolbar color="primary">
+      <ion-title>
+        <span> Seleccionar {{ title.lowerCase.singular }} </span>
+      </ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="closeModal()">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ng-template>
   <ion-toolbar color="light">
     <ion-searchbar
       class="ion-margin-top"
@@ -113,7 +125,11 @@
                 "
               />
             </ion-avatar>
-            <ion-label [routerLink]="['/customers/' + item.id]" routerDirection="forward">
+            <ion-label
+              *ngIf="!(mode === 'modal'); else isModalActions"
+              [routerLink]="['/customers/' + item.id]"
+              routerDirection="forward"
+            >
               <h2>{{ item?.name }}</h2>
               <h3>
                 <ion-icon slot="start" name="call" color="medium"></ion-icon>
@@ -125,6 +141,20 @@
               </p>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
             </ion-label>
+            <ng-template #isModalActions>
+              <ion-label (click)="selectItem(item)">
+                <h2>{{ item?.name }}</h2>
+                <h3>
+                  <ion-icon slot="start" name="call" color="medium"></ion-icon>
+                  <strong>{{ item?.phone }}</strong>
+                </h3>
+                <p>
+                  <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                  {{ item?.streetAddress | slice: 0:100 }}
+                </p>
+                <p><strong>Folio: </strong> {{ item?.folio }}</p>
+              </ion-label>
+            </ng-template>
             <ion-buttons slot="end">
               <ion-button (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
