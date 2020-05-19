@@ -7,9 +7,9 @@ import {
 } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import * as moment from 'moment';
+import { ToolsService } from '@shared/services/tools/tools.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { LoadingController, ToastController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-detail-company',
@@ -38,9 +38,9 @@ export class DetailCompanyComponent implements OnInit {
     private afs: AngularFirestore,
     private aRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private toastController: ToastController,
     private loadingController: LoadingController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private tools: ToolsService
   ) {
     this.createForm();
     this.aRoute.params.subscribe((params) => {
@@ -82,7 +82,7 @@ export class DetailCompanyComponent implements OnInit {
   }
 
   beautyDate(date: any) {
-    return moment(date).format('HH:mm A');
+    return this.tools.dateFormatter(date, 'HH:mm A');
   }
 
   save() {
@@ -103,37 +103,30 @@ export class DetailCompanyComponent implements OnInit {
         .collection('menu')
         .add(data);
       if (response.id) {
-        this.presentToast('Producto agregado correctamente');
+        this.tools.presentToast('Producto agregado correctamente');
         this.myForm.reset();
         this.viewForm = false;
       } else {
-        this.presentToast('Ha ocurrido un error');
+        this.tools.presentToast('Ha ocurrido un error');
       }
     } catch (error) {
-      this.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error');
       console.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
   }
 
-  async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 6000,
-    });
-    toast.present();
-  }
   async delete(id: string): Promise<void> {
     this.isLoading = true;
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
       await this.afs.collection('companies').doc(this.data.id).collection('menu').doc(id).delete();
-      this.presentToast('Producto eliminado correctamente');
+      this.tools.presentToast('Producto eliminado correctamente');
     } catch (error) {
       console.error(error);
-      this.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error');
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -175,9 +168,9 @@ export class DetailCompanyComponent implements OnInit {
           .collection('menu')
           .doc(id)
           .update({ active: Boolean(active) });
-        this.presentToast('Producto actualizado correctamente');
+        this.tools.presentToast('Producto actualizado correctamente');
       } catch (error) {
-        this.presentToast('Ha ocurrido un error');
+        this.tools.presentToast('Ha ocurrido un error');
         console.error(error);
       }
       this.isLoading = false;

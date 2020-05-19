@@ -7,9 +7,10 @@ import {
 } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import * as moment from 'moment';
+import { ToolsService } from '@shared/services/tools/tools.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { LoadingController, ToastController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController, ModalController } from '@ionic/angular';
+import { CompaniesComponent } from '@app/companies/companies.component';
 
 @Component({
   selector: 'app-detail-order',
@@ -38,14 +39,19 @@ export class DetailOrderComponent implements OnInit {
     private afs: AngularFirestore,
     private aRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private toastController: ToastController,
     private loadingController: LoadingController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private tools: ToolsService,
+    private modalController: ModalController
   ) {
     this.createForm();
     this.aRoute.params.subscribe((params) => {
       this.initializeApp(params.id);
     });
+  }
+
+  beautyDate(date: any) {
+    return this.tools.dateFormatter(date, 'HH:mm A');
   }
 
   private createForm() {
@@ -57,10 +63,11 @@ export class DetailOrderComponent implements OnInit {
       active: [true],
     });
   }
+
   ngOnInit(): void {}
 
   initializeApp(id: string) {
-    this.dataDocument = this.afs.collection('companies').doc(id);
+    this.dataDocument = this.afs.collection('orders').doc(id);
     this.suscription = this.dataDocument.snapshotChanges().subscribe((snap) => {
       if (snap.payload.exists === true) {
         const data: any = snap.payload.data();
@@ -68,75 +75,6 @@ export class DetailOrderComponent implements OnInit {
         this.data = { id, ...data };
       }
     });
-    this.menuCollection = this.afs
-      .collection('companies')
-      .doc(id)
-      .collection('menu', (ref) => ref.orderBy('nameStr'));
-    this.suscription = this.menuCollection.snapshotChanges().subscribe((snap) => {
-      this.menu = snap.map((item) => {
-        const data: any = item.payload.doc.data();
-        const id: string = item.payload.doc.id;
-        return { id, ...data };
-      });
-    });
-  }
-
-  beautyDate(date: any) {
-    return moment(date).format('HH:mm A');
-  }
-
-  save() {
-    this.add();
-  }
-
-  async add(): Promise<void> {
-    this.isLoading = true;
-    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-    loadingOverlay.present();
-    try {
-      let data: any = this.myForm.value;
-      data.date = new Date();
-      data.nameStr = String(data.name).toLocaleLowerCase();
-      const response: DocumentReference = await this.afs
-        .collection('companies')
-        .doc(this.data.id)
-        .collection('menu')
-        .add(data);
-      if (response.id) {
-        this.presentToast('Producto agregado correctamente');
-        this.myForm.reset();
-        this.viewForm = false;
-      } else {
-        this.presentToast('Ha ocurrido un error');
-      }
-    } catch (error) {
-      this.presentToast('Ha ocurrido un error');
-      console.error(error);
-    }
-    this.isLoading = false;
-    loadingOverlay.dismiss();
-  }
-
-  async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 6000,
-    });
-    toast.present();
-  }
-  async delete(id: string): Promise<void> {
-    this.isLoading = true;
-    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-    loadingOverlay.present();
-    try {
-      await this.afs.collection('companies').doc(this.data.id).collection('menu').doc(id).delete();
-      this.presentToast('Producto eliminado correctamente');
-    } catch (error) {
-      console.error(error);
-      this.presentToast('Ha ocurrido un error');
-    }
-    this.isLoading = false;
-    loadingOverlay.dismiss();
   }
 
   async presentAlertConfirm(item: any) {
@@ -170,18 +108,91 @@ export class DetailOrderComponent implements OnInit {
         data.date = new Date();
         data.nameStr = String(data.name).toLocaleLowerCase();
         await this.afs
-          .collection('companies')
+          .collection('orders')
           .doc(this.data.id)
           .collection('menu')
           .doc(id)
           .update({ active: Boolean(active) });
-        this.presentToast('Producto actualizado correctamente');
+        this.tools.presentToast('Producto actualizado correctamente');
       } catch (error) {
-        this.presentToast('Ha ocurrido un error');
+        this.tools.presentToast('Ha ocurrido un error');
         console.error(error);
       }
       this.isLoading = false;
       loadingOverlay.dismiss();
     }
+  }
+
+  async delete(id: string): Promise<void> {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.afs.collection('orders').doc(this.data.id).collection('menu').doc(id).delete();
+      this.tools.presentToast('Producto eliminado correctamente');
+    } catch (error) {
+      console.error(error);
+      this.tools.presentToast('Ha ocurrido un error');
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async add(): Promise<void> {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      let data: any = this.myForm.value;
+      data.date = new Date();
+      data.nameStr = String(data.name).toLocaleLowerCase();
+      const response: DocumentReference = await this.afs
+        .collection('orders')
+        .doc(this.data.id)
+        .collection('menu')
+        .add(data);
+      if (response.id) {
+        this.tools.presentToast('Producto agregado correctamente');
+        this.myForm.reset();
+        this.viewForm = false;
+      } else {
+        this.tools.presentToast('Ha ocurrido un error');
+      }
+    } catch (error) {
+      this.tools.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async addCompnay() {
+    const modal = await this.modalController.create({
+      component: CompaniesComponent,
+      componentProps: { mode: 'modal' },
+    });
+    modal.onDidDismiss().then((response) => {
+      if (response && response.data && response.data.item && response.data.item.id) {
+        this.updateCompany(response.data.item);
+      }
+    });
+    return await modal.present();
+  }
+
+  async updateCompany(company: any): Promise<void> {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.afs.collection('orders').doc(this.data.id).update({
+        company: company,
+      });
+      this.tools.presentToast('Orden actualizada correctamente');
+    } catch (error) {
+      this.tools.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
   }
 }
