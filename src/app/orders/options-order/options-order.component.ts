@@ -71,6 +71,7 @@ export class OptionsOrderComponent implements OnInit {
     try {
       await this.afs.collection('orders').doc(this.item.id).update({
         status: 'cancelled',
+        finishDate: new Date(),
       });
       this.presentToast('Orden cancelada');
     } catch (error) {
@@ -79,14 +80,25 @@ export class OptionsOrderComponent implements OnInit {
     loadingOverlay.dismiss();
   }
 
-  finalizeOrder() {
-    console.log('Finalizando');
+  async finalizeOrder() {
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.afs.collection('orders').doc(this.item.id).update({
+        status: 'finished',
+        finishDate: new Date(),
+      });
+      this.presentToast('Orden cancelada');
+    } catch (error) {
+      console.error(error);
+    }
+    loadingOverlay.dismiss();
   }
 
   async startOrderConfirm() {
     const alert = await this.alertController.create({
-      header: 'Iniciar orden',
-      message: `¿Está seguro de iniciar la orden con folio: ${this.item.folio}?`,
+      header: 'Iniciar entrega',
+      message: `¿Está seguro de iniciar la entrega de la orden con folio: ${this.item.folio}?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -127,8 +139,8 @@ export class OptionsOrderComponent implements OnInit {
 
   async finalizeOrderConfirm() {
     const alert = await this.alertController.create({
-      header: 'Finalizar orden',
-      message: `¿Está seguro de finalizar la orden con folio: ${this.item.folio}?`,
+      header: 'Finalizar entrega',
+      message: `¿Está seguro de finalizar la entrega de la orden con folio: ${this.item.folio}?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -149,7 +161,7 @@ export class OptionsOrderComponent implements OnInit {
   async completeOrderConfirm() {
     const alert = await this.alertController.create({
       header: 'Completar orden',
-      message: `La orden con folio: ${this.item.folio} que intenta iniciar, esta incompleta ¿Desea completarla y continuar?`,
+      message: `La orden con folio: ${this.item.folio} que intenta iniciar entrega, esta incompleta ¿Desea completarla y continuar?`,
       buttons: [
         {
           text: 'Cancelar',

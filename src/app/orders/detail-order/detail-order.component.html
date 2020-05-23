@@ -119,9 +119,7 @@
                 <ion-item class="ion-no-padding" [disabled]="!entry.active">
                   <ion-label slot="start">
                     <div class="ion-text-wrap">
-                      <strong>
-                        {{ entry.price | currency: 'USD' }}
-                      </strong>
+                      {{ entry.price | currency: 'USD' }}
                     </div>
                   </ion-label>
                   <ion-label slot="end">
@@ -221,6 +219,7 @@
                   [(ngModel)]="shippingPrice"
                   placeholder="Costo de envío"
                   min="0"
+                  (ionChange)="calculate()"
                 >
                 </ion-input>
               </ion-item>
@@ -398,18 +397,6 @@
     </ion-row>
   </ion-grid>
 
-  <!-- <p>Recoleccion</p>
-  <p>{{pickupLocation}}</p>
-  <p>{{pickupLocationReferences}}</p>
-  <hr>
-
-  <p>Entrega</p>
-  <p>{{deliveryLocation}}</p>
-  <p>{{deliveryLocationReferences}}</p>
-
-
- -->
-
   <ion-fab horizontal="end" vertical="bottom" slot="fixed">
     <ion-fab-button color="light">
       <ion-icon name="chevron-up"></ion-icon>
@@ -418,7 +405,7 @@
       <ion-fab-button color="light" (click)="save()">
         <ion-icon name="save"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button color="light">
+      <ion-fab-button color="light" (click)="startOrder()">
         <ion-icon name="play"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>

@@ -1,17 +1,23 @@
 <ion-list>
   <ion-item button *ngIf="item?.status === 'in-progress'" (click)="finalizeOrderConfirm()">
     <ion-label>
-      Finalizar orden
+      Finalizar entrega
     </ion-label>
-    <ion-icon slot="start" name="play-outline"></ion-icon>
+    <ion-icon slot="start" name="checkmark-outline"></ion-icon>
   </ion-item>
   <ion-item button *ngIf="item?.status === 'created'" (click)="startOrderConfirm()">
     <ion-label>
-      Iniciar orden
+      Iniciar entrega
     </ion-label>
-    <ion-icon slot="start" name="play-outline"></ion-icon>
+    <ion-icon slot="start" name="golf"></ion-icon>
   </ion-item>
-  <ion-item button (click)="cancelOrderConfirm()">
+  <ion-item button (click)="cancelOrderConfirm()" *ngIf="item?.status === 'in-progress'">
+    <ion-label>
+      Cancelar entrega
+    </ion-label>
+    <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+  </ion-item>
+  <ion-item button (click)="cancelOrderConfirm()" *ngIf="item?.status === 'created'">
     <ion-label>
       Cancelar orden
     </ion-label>

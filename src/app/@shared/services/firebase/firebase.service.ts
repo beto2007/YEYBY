@@ -39,6 +39,8 @@ export class FirebaseService {
         customer: data.customer ? data.customer : {},
         deliverer: data.deliverer ? data.deliverer : {},
         date: new Date(),
+        startDate: new Date(),
+        finishDate: new Date(),
         search: [],
         status: 'created',
       });
@@ -66,12 +68,12 @@ export class FirebaseService {
     let ret: boolean = false;
     try {
       const response = await this.afs.collection('orders').doc(id).ref.get();
-      const customer: any | undefined = response.data().customer;
       const company: any | undefined = response.data().company;
       const deliverer: any | undefined = response.data().deliverer;
-      if (customer.id && company.id && deliverer.id) {
+      if (company.id && deliverer.id) {
         await this.afs.collection('orders').doc(id).update({
           status: 'in-progress',
+          startDate: new Date(),
         });
         ret = true;
       } else {
