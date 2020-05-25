@@ -15,7 +15,6 @@
   <ion-toolbar color="light">
     <ion-buttons slot="start">
       <ion-button disabled="true">
-        <!-- <ion-button (click)="sortBy($event)" [disabled]="isLoading == true"> -->
         <ion-icon slot="icon-only" *ngIf="orderBy === 'folio'" name="list-outline"></ion-icon>
         <ion-icon slot="icon-only" *ngIf="orderBy === 'date'" name="calendar-outline"></ion-icon>
         <ion-icon slot="icon-only" *ngIf="orderBy === 'nameStr'" name="text-outline"></ion-icon>
@@ -28,15 +27,12 @@
         </ion-icon>
       </ion-button>
     </ion-buttons>
-    <!-- <ion-title slot="end">
-      <small>Total de {{ title.lowerCase.prural }}: {{ total }}</small>
-    </ion-title> -->
     <ion-progress-bar type="indeterminate" color="primary" *ngIf="isLoading == true"> </ion-progress-bar>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-segment value="created" (ionChange)="segmentChanged($event)">
+    <ion-segment [(ngModel)]="status" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="in-progress">
-        <ion-label>En progreso</ion-label>
+        <ion-label>En entrega</ion-label>
       </ion-segment-button>
       <ion-segment-button value="created">
         <ion-label>Creadas</ion-label>
@@ -57,16 +53,7 @@
             <ion-icon class="big-icon" name="search"></ion-icon>
           </h1>
           <h3>Sin resultados</h3>
-          <p>
-            No se encontraron resultados de {{ title.lowerCase.prural }}, ¿Desea agrear un
-            {{ title.lowerCase.singular }} nuevo?.
-          </p>
-          <div class="ion-text-center ion-padding">
-            <ion-button>
-              <ion-icon slot="start" name="add"></ion-icon>
-              Agregar
-            </ion-button>
-          </div>
+          <p>No se encontraron resultados de {{ title.lowerCase.prural }}.</p>
         </ion-text>
       </ion-col>
     </ion-row>
@@ -107,20 +94,74 @@
         <ion-list>
           <ion-item *ngFor="let item of arrayDocs; let i = index">
             <ion-icon slot="start" name="receipt-outline"></ion-icon>
-            <ion-label [routerLink]="['/orders/' + item.id]" routerDirection="forward">
+            <ion-label [routerLink]="['/orders/' + item.id]" routerDirection="forward" class="ion-text-wrap">
               <h2>
-                {{ item?.company?.name }}
+                <strong>
+                  {{ item?.company?.name }}
+                </strong>
               </h2>
               <h3>
                 {{ item?.customer?.name }}
               </h3>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
+              <div *ngIf="item.status === 'delivered'">
+                <p>
+                  <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
+                </p>
+                <p>
+                  <small> <strong>Entrega: </strong> {{ item?.finishDateStr }} </small>
+                </p>
+              </div>
+              <div *ngIf="item.status === 'in-progress'">
+                <p>
+                  <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
+                </p>
+              </div>
+              <div *ngIf="item.status === 'canceled-delivery'">
+                <p>
+                  <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
+                </p>
+                <p>
+                  <small> <strong>Cancelación: </strong> {{ item?.finishDateStr }} </small>
+                </p>
+              </div>
+              <div *ngIf="item.status === 'cancelled'">
+                <p>
+                  <small> <strong>Creación: </strong> {{ item?.dateStr }} </small>
+                </p>
+                <p>
+                  <small> <strong>Cancelación: </strong> {{ item?.finishDateStr }} </small>
+                </p>
+              </div>
+              <div *ngIf="item.status === 'created'">
+                <p>
+                  <small> <strong>Creación: </strong> {{ item?.dateStr }} </small>
+                </p>
+              </div>
             </ion-label>
-            <ion-buttons slot="end">
+            <ion-buttons
+              slot="end"
+              *ngIf="item.status === 'in-progress' || item.status === 'created'; else orderStatus"
+            >
               <ion-button (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
               </ion-button>
             </ion-buttons>
+            <ng-template #orderStatus>
+              <ion-badge
+                slot="end"
+                class="ion-text-wrap"
+                [color]="
+                  item.status === 'delivered' ? 'success' : item.status === 'canceled-delivery' ? 'danger' : 'primary'
+                "
+              >
+                <small>
+                  {{ item.status === 'cancelled' ? 'Cancelada' : '' }}
+                  {{ item.status === 'canceled-delivery' ? 'Entrega cancelada' : '' }}
+                  {{ item.status === 'delivered' ? 'Entregada' : '' }}
+                </small>
+              </ion-badge>
+            </ng-template>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -136,9 +177,4 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button [disabled]="isLoading == true">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>

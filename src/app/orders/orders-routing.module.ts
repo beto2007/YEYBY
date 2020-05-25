@@ -10,6 +10,7 @@ const routes: Routes = [
   Shell.childRoutes([
     { path: '', redirectTo: '/orders', pathMatch: 'full' },
     { path: 'orders', component: OrdersComponent, data: { title: extract('Pedidos') } },
+    { path: 'orders/type/:type', component: OrdersComponent, data: { title: extract('Pedidos') } },
     { path: 'orders/:id', component: DetailOrderComponent, data: { title: extract('Detalle') } },
   ]),
 ];

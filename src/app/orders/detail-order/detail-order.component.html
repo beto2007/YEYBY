@@ -1,17 +1,40 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar [color]="data?.status !== 'created' ? 'dark' : 'primary'">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title> Detalle de orden</ion-title>
   </ion-toolbar>
+  <ion-toolbar color="success" *ngIf="data?.status === 'in-progress'">
+    <ion-title>
+      <p class="blink">Orden en camino de entrega</p>
+    </ion-title>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content color="light">
+<ion-header translucent *ngIf="data?.status === 'cancelled'">
+  <ion-toolbar color="danger">
+    <ion-title>Orden cancelada</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-header translucent *ngIf="data?.status === 'canceled-delivery'">
+  <ion-toolbar color="danger">
+    <ion-title>Entrega cancelada</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-header translucent *ngIf="data?.status === 'delivered'">
+  <ion-toolbar color="tertiary">
+    <ion-title>Orden entregada</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" *ngIf="data?.status === 'created'">
   <ion-grid fixed>
     <ion-row>
-      <ion-col>
+      <ion-col size="12">
         <ion-text color="primary">
           <h2><ion-icon slot="start" name="location"></ion-icon> Lugar de recolección</h2>
         </ion-text>
@@ -393,21 +416,319 @@
             </ion-card-header>
           </ion-card>
         </ng-template>
+        <ion-button fill="clear" expand="block" (click)="cancelOrderConfirm()">
+          <ion-icon slot="start" name="close"></ion-icon>
+          Cancelar orden
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
-
-  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
-    <ion-fab-button color="light">
-      <ion-icon name="chevron-up"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button color="light" (click)="save()">
-        <ion-icon name="save"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button color="light" (click)="startOrder()">
-        <ion-icon name="play"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
 </ion-content>
+
+<ion-content
+  color="light"
+  *ngIf="
+    data?.status === 'in-progress' ||
+    data?.status === 'cancelled' ||
+    data?.status === 'canceled-delivery' ||
+    data?.status === 'delivered'
+  "
+>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="12">
+        <ion-text color="primary">
+          <h2><ion-icon slot="start" name="location"></ion-icon> Fecha y lugar de recolección</h2>
+        </ion-text>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+              <strong>
+                Fecha
+              </strong>
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div *ngIf="data.status === 'delivered'">
+              <p><strong>Inicio: </strong> {{ data?.startDateStr }}</p>
+              <p><strong>Entrega: </strong> {{ data?.finishDateStr }}</p>
+            </div>
+            <div *ngIf="data.status === 'in-progress'">
+              <p><strong>Inicio: </strong> {{ data?.startDateStr }}</p>
+            </div>
+
+            <div *ngIf="data.status === 'canceled-delivery'">
+              <p><strong>Inicio: </strong> {{ data?.startDateStr }}</p>
+              <p><strong>Cancelación: </strong> {{ data?.finishDateStr }}</p>
+            </div>
+
+            <div *ngIf="data.status === 'cancelled'">
+              <p><strong>Creación: </strong> {{ data?.dateStr }}</p>
+              <p><strong>Cancelación: </strong> {{ data?.finishDateStr }}</p>
+            </div>
+
+            <div *ngIf="data.status === 'created'">
+              <p><strong>Creación: </strong> {{ data?.dateStr }}</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card *ngIf="data?.company?.id">
+          <ion-card-header>
+            <ion-card-title>
+              <strong>
+                {{ data?.company?.name }}
+              </strong>
+            </ion-card-title>
+            <ion-card-subtitle color="medium">
+              <p><strong>Folio: </strong>{{ data?.company?.folio }}</p>
+              <p>{{ data?.company?.phone }}</p>
+              <p>
+                <ion-icon name="location" slot="start"></ion-icon>
+                {{ pickupLocation }}
+              </p>
+              <p>{{ pickupLocationReferences }}</p>
+              <p>{{ data?.company?.description }}</p>
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content> </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+              <strong> Productos </strong>
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <div *ngFor="let entry of menu">
+                <div *ngIf="entry.isChecked">
+                  <ion-item lines="none" class="ion-no-padding">
+                    <ion-label>
+                      <div class="ion-text-wrap">
+                        <strong> &bull; {{ entry.name }} </strong>
+                      </div>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item
+                    *ngIf="entry?.description || entry?.observations"
+                    lines="none"
+                    class="ion-no-padding"
+                    [disabled]="!entry.active"
+                  >
+                    <ion-label>
+                      <div class="ion-text-wrap">
+                        <p *ngIf="entry?.description as data">&bull; {{ data }}</p>
+                        <p *ngIf="entry?.observations as data">&bull; {{ data }}</p>
+                      </div>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item lines="none" class="ion-no-padding" [disabled]="!entry.active">
+                    <ion-label slot="start">
+                      <div class="ion-text-wrap">
+                        {{ entry.price | currency: 'USD' }}
+                      </div>
+                    </ion-label>
+                    <ion-label slot="end">
+                      <div class="ion-text-wrap">
+                        <small>
+                          <strong>
+                            x
+                          </strong>
+                        </small>
+                      </div>
+                    </ion-label>
+                    <ion-label slot="end" class="ion-text-end">
+                      {{ entry.quantity }}
+                    </ion-label>
+                  </ion-item>
+                </div>
+              </div>
+              <div *ngIf="otherProduct.quantity > 0 && otherProduct.price > 0">
+                <ion-item lines="none" class="ion-no-padding">
+                  <ion-label>
+                    <div class="ion-text-wrap">
+                      <strong> &bull; {{ otherProduct.description }} </strong>
+                    </div>
+                  </ion-label>
+                </ion-item>
+                <ion-item lines="none" class="ion-no-padding">
+                  <ion-label slot="start">
+                    <div class="ion-text-wrap">
+                      {{ otherProduct.price | currency: 'USD' }}
+                    </div>
+                  </ion-label>
+                  <ion-label slot="end">
+                    <div class="ion-text-wrap">
+                      <small>
+                        <strong>
+                          x
+                        </strong>
+                      </small>
+                    </div>
+                  </ion-label>
+                  <ion-label slot="end" class="ion-text-end">
+                    {{ otherProduct.quantity }}
+                  </ion-label>
+                </ion-item>
+              </div>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-content>
+            <ion-list>
+              <ion-item lines="none">
+                <ion-label class="ion-text-wrap">
+                  <strong>
+                    Costo de orden
+                  </strong>
+                </ion-label>
+                <ion-label class="ion-text-end">
+                  {{ totalOrder | currency: 'USD' }}
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label class="ion-text-wrap">
+                  <strong>
+                    Costo de envío
+                  </strong>
+                </ion-label>
+                <ion-label slot="end" class="ion-text-end">
+                  {{ shippingPrice | currency: 'USD' }}
+                </ion-label>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-label>
+                  <h1>
+                    <strong>
+                      Total
+                    </strong>
+                  </h1>
+                </ion-label>
+                <ion-label class="ion-text-end">
+                  <h1>
+                    {{ total | currency: 'USD' }}
+                  </h1>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-text color="primary">
+          <h2><ion-icon slot="start" name="golf"></ion-icon> Lugar de entrega</h2>
+        </ion-text>
+
+        <ion-card *ngIf="data?.customer?.id; else detailCustomer">
+          <ion-card-header>
+            <ion-card-title>
+              {{ data?.customer?.name }}
+            </ion-card-title>
+            <ion-card-subtitle>
+              <p><strong>Folio: </strong>{{ data?.customer?.folio }}</p>
+              <p>{{ data?.customer?.phone }}</p>
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <p>
+              <ion-icon name="location" slot="start"></ion-icon>
+              {{ deliveryLocation }}
+            </p>
+            <p>{{ deliveryLocationReferences }}</p>
+          </ion-card-content>
+        </ion-card>
+
+        <ng-template #detailCustomer>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Sin cliente
+              </ion-card-title>
+              <ion-card-subtitle color="medium">Sin información de cliente</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <p *ngIf="noCustomerData === '1'">
+                Se asignará al llegar a empresa
+              </p>
+            </ion-card-content>
+          </ion-card>
+        </ng-template>
+
+        <ion-text color="primary">
+          <h2><ion-icon slot="start" name="bicycle"></ion-icon> Repartidor</h2>
+        </ion-text>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+              {{ data?.deliverer?.name }}
+            </ion-card-title>
+            <ion-card-subtitle>
+              <p><strong>Folio: </strong>{{ data?.deliverer?.folio }}</p>
+              <p>{{ data?.deliverer?.phone }}</p>
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-footer color="light" *ngIf="data?.status === 'created'">
+  <ion-toolbar>
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button color="primary" fill="outline" expand="block" (click)="save(true)" [disabled]="isLoading">
+            <ion-icon slot="start" name="save"></ion-icon>
+            Guardar
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button color="primary" expand="block" (click)="startOrderConfirm()" [disabled]="isLoading">
+            <ion-icon slot="start" name="bicycle"></ion-icon>
+            Iniciar entrega
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>
+
+<ion-footer color="light" *ngIf="data?.status === 'in-progress'">
+  <ion-toolbar>
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button
+            color="primary"
+            expand="block"
+            class="ion-text-wrap"
+            (click)="orderDeliveredConfirm()"
+            [disabled]="isLoading"
+          >
+            <ion-icon slot="end" name="checkmark-circle-outline"></ion-icon>
+            <small>Orden entregada</small>
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button
+            color="primary"
+            fill="outline"
+            expand="block"
+            class="ion-text-wrap"
+            (click)="cancelDeliveryConfirm()"
+            [disabled]="isLoading"
+          >
+            <ion-icon slot="end" name="close-circle-outline"></ion-icon>
+            <small>Cancelar entrega</small>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>

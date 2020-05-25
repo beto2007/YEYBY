@@ -1,7 +1,7 @@
 <ion-list>
-  <ion-item button *ngIf="item?.status === 'in-progress'" (click)="finalizeOrderConfirm()">
+  <ion-item button *ngIf="item?.status === 'in-progress'" (click)="orderDeliveredConfirm()">
     <ion-label>
-      Finalizar entrega
+      Orden entregada
     </ion-label>
     <ion-icon slot="start" name="checkmark-outline"></ion-icon>
   </ion-item>
@@ -11,7 +11,7 @@
     </ion-label>
     <ion-icon slot="start" name="golf"></ion-icon>
   </ion-item>
-  <ion-item button (click)="cancelOrderConfirm()" *ngIf="item?.status === 'in-progress'">
+  <ion-item button (click)="cancelDeliveryConfirm()" *ngIf="item?.status === 'in-progress'">
     <ion-label>
       Cancelar entrega
     </ion-label>

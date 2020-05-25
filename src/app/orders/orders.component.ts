@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Query } from '@angular/fire/firestore';
-import { ModalController, ToastController, PopoverController } from '@ionic/angular';
+import { ToastController, PopoverController } from '@ionic/angular';
 import { OptionsOrderComponent } from './options-order/options-order.component';
 import { Subscription } from 'rxjs';
-//import { AddDelivererComponent } from './add-deliverer/add-deliverer.component';
 import { SortByOrderComponent } from './sort-by-order/sort-by-order.component';
+import { ToolsService } from '@app/@shared/services/tools/tools.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-orders',
@@ -19,10 +20,10 @@ export class OrdersComponent implements OnInit {
   private totalSubs: Subscription;
   public total: number = 0;
   public orderBy: string = 'date';
-  public orderByDirection: any = 'asc';
+  public orderByDirection: any = 'desc';
   private searchOrderBy: string = 'date';
-  private searchOorderByDirection: any = 'asc';
-  private perPage: number = 50;
+  private searchOorderByDirection: any = 'desc';
+  private perPage: number = 5;
   private mainCollection: string = 'orders';
   private docNumbers: string = 'metadatas/orders';
   private startAfter: any;
@@ -41,17 +42,30 @@ export class OrdersComponent implements OnInit {
       singular: 'órden',
     },
   };
-  private status: string = 'created';
+  public status: string = 'created';
 
   constructor(
     private afs: AngularFirestore,
-    private toastController: ToastController,
     private popoverController: PopoverController,
-    private modalController: ModalController
-  ) {}
+    private tools: ToolsService,
+    private aRoute: ActivatedRoute
+  ) {
+    this.aRoute.params.subscribe((params) => {
+      if (
+        params &&
+        params.type &&
+        (params.type === 'in-progress' || params.type === 'created' || params.type === 'finished')
+      ) {
+        this.segmentChanged({ detail: { value: params.type } });
+      }
+    });
+  }
 
   segmentChanged(ev: any) {
     this.status = String(ev.detail.value);
+    this.startAfter = undefined;
+    this.endBefore = undefined;
+    this.startAt = undefined;
     this.initializeApp();
   }
 
@@ -83,7 +97,13 @@ export class OrdersComponent implements OnInit {
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;
         query = collRef.orderBy(this.orderBy, this.orderByDirection);
-        query = query.where('status', '==', this.status);
+        let arrayIn: string[] = [];
+        if (this.status === 'finished') {
+          arrayIn = ['cancelled', 'canceled-delivery', 'delivered'];
+        } else {
+          arrayIn = [this.status];
+        }
+        query = query.where('status', 'in', arrayIn);
         if (this.startAfter && direction === 'forward') {
           query = query.startAfter(this.startAfter);
         } else if (this.startAt && this.endBefore && direction === 'back') {
@@ -99,6 +119,7 @@ export class OrdersComponent implements OnInit {
                 await this.afs
                   .collection(this.mainCollection)
                   .ref.orderBy(this.orderBy, this.orderByDirection)
+                  .where('status', 'in', arrayIn)
                   .startAfter(this.startAfter)
                   .limit(this.perPage)
                   .get()
@@ -111,6 +132,7 @@ export class OrdersComponent implements OnInit {
               back = await this.afs
                 .collection(this.mainCollection)
                 .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
+                .where('status', 'in', arrayIn)
                 .startAfter(this.endBefore)
                 .limit(this.perPage)
                 .get();
@@ -124,6 +146,11 @@ export class OrdersComponent implements OnInit {
             this.arrayDocs = snap.map((element) => {
               const id: string = element.payload.doc.id;
               const data: any = element.payload.doc.data();
+              data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
+              data.startDateStr =
+                data.startDate && data.startDate !== '' ? this.beautyDate(data.startDate.toDate()) : '';
+              data.finishDateStr =
+                data.finishDate && data.finishDate !== '' ? this.beautyDate(data.finishDate.toDate()) : '';
               return { id, ...data };
             });
             resolve(this.arrayDocs);
@@ -182,6 +209,9 @@ export class OrdersComponent implements OnInit {
       this.arrayDocs = snap.docs.map((element) => {
         const id: string = element.id;
         const data: any = element.data();
+        data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
+        data.startDateStr = data.startDate && data.startDate !== '' ? this.beautyDate(data.startDate.toDate()) : '';
+        data.finishDateStr = data.finishDate && data.finishDate !== '' ? this.beautyDate(data.finishDate.toDate()) : '';
         return { id, ...data };
       });
       this.isLoading = false;
@@ -247,19 +277,7 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 6000,
-    });
-    toast.present();
+  beautyDate(date: any) {
+    return this.tools.dateFormatter(date, 'DD/MM/YYYY h:mm A');
   }
-
-  // async add(id?: string) {
-  //   const modal = await this.modalController.create({
-  //     component: AddDelivererComponent,
-  //     componentProps: { id: id },
-  //   });
-  //   return await modal.present();
-  // }
 }

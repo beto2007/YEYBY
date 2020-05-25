@@ -14,7 +14,7 @@ export class FirebaseService {
     private toastController: ToastController
   ) {}
 
-  async createOrder(id: string, type: 'company' | 'customer' | 'deliverer') {
+  public async createOrder(id: string, type: 'company' | 'customer' | 'deliverer') {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
@@ -56,7 +56,7 @@ export class FirebaseService {
     loadingOverlay.dismiss();
   }
 
-  async presentToast(message: string) {
+  public async presentToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
       duration: 6000,
@@ -64,7 +64,43 @@ export class FirebaseService {
     toast.present();
   }
 
-  async canStartOrder(id: string): Promise<boolean> {
+  public async orderDelivered(id: string) {
+    try {
+      await this.afs.collection('orders').doc(id).update({
+        status: 'delivered',
+        finishDate: new Date(),
+      });
+      this.presentToast('¡Orden entregada!');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  public async cancelOrder(id: string) {
+    try {
+      await this.afs.collection('orders').doc(id).update({
+        status: 'cancelled',
+        finishDate: new Date(),
+      });
+      this.presentToast('¡Orden cancelada!');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  public async cancelDelivery(id: string) {
+    try {
+      await this.afs.collection('orders').doc(id).update({
+        status: 'canceled-delivery',
+        finishDate: new Date(),
+      });
+      this.presentToast('¡Entrega cancelada!');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  public async canStartOrder(id: string): Promise<boolean> {
     let ret: boolean = false;
     try {
       const response = await this.afs.collection('orders').doc(id).ref.get();

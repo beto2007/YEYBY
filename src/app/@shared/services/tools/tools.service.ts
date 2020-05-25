@@ -12,10 +12,17 @@ export class ToolsService {
     return moment(date).format(format);
   }
 
-  async presentToast(message: string, duration?: number) {
+  async presentToast(message: string, duration?: number, position?: 'top' | 'middle' | 'bottom') {
     const toast = await this.toastController.create({
       message: message,
-      duration: 6000 | duration,
+      duration: duration | 6000,
+      position: position || 'bottom',
+      buttons: [
+        {
+          text: 'Ok',
+          role: 'cancel',
+        },
+      ],
     });
     toast.present();
   }

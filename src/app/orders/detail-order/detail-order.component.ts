@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToolsService } from '@shared/services/tools/tools.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { LoadingController, AlertController, ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, AlertController, ModalController } from '@ionic/angular';
 import { CompaniesComponent } from '@app/companies/companies.component';
 import { CustomersComponent } from '@app/customers/customers.component';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
@@ -56,8 +56,7 @@ export class DetailOrderComponent implements OnInit {
     private alertController: AlertController,
     private tools: ToolsService,
     private modalController: ModalController,
-    private myFire: FirebaseService,
-    private toastController: ToastController
+    private myFire: FirebaseService
   ) {
     this.createForm1();
     this.createForm2();
@@ -99,7 +98,7 @@ export class DetailOrderComponent implements OnInit {
   }
 
   beautyDate(date: any) {
-    return this.tools.dateFormatter(date, 'HH:mm A');
+    return this.tools.dateFormatter(date, 'DD/MM/YYYY h:mm A');
   }
 
   private createForm1() {
@@ -124,9 +123,9 @@ export class DetailOrderComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  initializeMenu(id: string, data: any) {
+  async initializeMenu(id: string, data: any) {
     this.menuCollection = this.afs.collection('companies').doc(id).collection('menu');
-    this.menuCollection.ref
+    await this.menuCollection.ref
       .orderBy('nameStr', 'asc')
       .get()
       .then((snap) => {
@@ -151,61 +150,91 @@ export class DetailOrderComponent implements OnInit {
       });
   }
 
-  initializeApp(id: string) {
-    this.dataDocument = this.afs.collection('orders').doc(id);
-    this.suscription = this.dataDocument.snapshotChanges().subscribe((snap) => {
-      if (snap.payload.exists === true) {
-        const data: any = snap.payload.data();
-        const id: string = snap.payload.id;
-        let tempData = { id, ...data };
-        if (tempData && tempData.company && tempData.company.id) {
-          this.pickupLocation = tempData.company.streetAddress;
-          this.pickupLocationReferences = tempData.company.references;
-          if (
-            !(
-              this.data &&
-              this.data.company &&
-              tempData &&
-              tempData.company &&
-              tempData.company.id &&
-              this.data.company.id === tempData.company.id
-            )
-          ) {
-            this.initializeMenu(tempData.company.id, tempData);
+  async initializeApp(id: string) {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.getDocData(id);
+    } catch (error) {
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  getDocData(id: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.dataDocument = this.afs.collection('orders').doc(id);
+        this.suscription = this.dataDocument.snapshotChanges().subscribe(
+          async (snap) => {
+            if (snap.payload.exists === true) {
+              const data: any = snap.payload.data();
+              const id: string = snap.payload.id;
+              data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
+              data.startDateStr =
+                data.startDate && data.startDate !== '' ? this.beautyDate(data.startDate.toDate()) : '';
+              data.finishDateStr =
+                data.finishDate && data.finishDate !== '' ? this.beautyDate(data.finishDate.toDate()) : '';
+              let tempData = { id, ...data };
+              if (tempData && tempData.company && tempData.company.id) {
+                this.pickupLocation = tempData.company.streetAddress;
+                this.pickupLocationReferences = tempData.company.references;
+                if (
+                  !(
+                    this.data &&
+                    this.data.company &&
+                    tempData &&
+                    tempData.company &&
+                    tempData.company.id &&
+                    this.data.company.id === tempData.company.id
+                  )
+                ) {
+                  await this.initializeMenu(tempData.company.id, tempData);
+                }
+              }
+              if (tempData && tempData.customer && tempData.customer.id) {
+                this.deliveryLocation = tempData.customer.streetAddress;
+                this.deliveryLocationReferences = tempData.customer.references;
+              } else {
+                switch (this.noCustomerData) {
+                  case '1':
+                    this.deliveryLocation = 'Se asignará al llegar a empresa';
+                    break;
+                }
+                this.deliveryLocationReferences = '';
+              }
+              if (tempData && tempData.order) {
+                this.flagData1 = true;
+                this.flagData2 = true;
+                if (tempData.order) {
+                  this.otherProduct = tempData.order.otherProduct;
+                  this.shippingPrice = tempData.order.shippingPrice;
+                }
+                if (tempData.order.company.pickupType === 'other') {
+                  this.pickupLocation = tempData.order.company.pickupLocation;
+                  this.pickupLocationReferences = tempData.order.company.pickupLocationReferences;
+                  this.pickupType = tempData.order.company.pickupType;
+                }
+                if (tempData.order.customer.deliveryType === 'other') {
+                  this.deliveryLocation = tempData.order.customer.deliveryLocation;
+                  this.deliveryLocationReferences = tempData.order.customer.deliveryLocationReferences;
+                  this.deliveryType = tempData.order.customer.deliveryType;
+                } else {
+                  this.noCustomerData = tempData.order.customer.noCustomerData;
+                }
+              }
+              this.data = tempData;
+              resolve(this.data);
+            }
+          },
+          (error) => {
+            reject(error);
           }
-        }
-        if (tempData && tempData.customer && tempData.customer.id) {
-          this.deliveryLocation = tempData.customer.streetAddress;
-          this.deliveryLocationReferences = tempData.customer.references;
-        } else {
-          switch (this.noCustomerData) {
-            case '1':
-              this.deliveryLocation = 'Se asignará al llegar a empresa';
-              break;
-          }
-          this.deliveryLocationReferences = '';
-        }
-        if (tempData && tempData.order) {
-          this.flagData1 = true;
-          this.flagData2 = true;
-          if (tempData.order) {
-            this.otherProduct = tempData.order.otherProduct;
-            this.shippingPrice = tempData.order.shippingPrice;
-          }
-          if (tempData.order.company.pickupType === 'other') {
-            this.pickupLocation = tempData.order.company.pickupLocation;
-            this.pickupLocationReferences = tempData.order.company.pickupLocationReferences;
-            this.pickupType = tempData.order.company.pickupType;
-          }
-          if (tempData.order.customer.deliveryType === 'other') {
-            this.deliveryLocation = tempData.order.customer.deliveryLocation;
-            this.deliveryLocationReferences = tempData.order.customer.deliveryLocationReferences;
-            this.deliveryType = tempData.order.customer.deliveryType;
-          } else {
-            this.noCustomerData = tempData.order.customer.noCustomerData;
-          }
-        }
-        this.data = tempData;
+        );
+      } catch (error) {
+        reject(error);
       }
     });
   }
@@ -231,12 +260,17 @@ export class DetailOrderComponent implements OnInit {
       component: CompaniesComponent,
       componentProps: { mode: 'modal' },
     });
-    modal.onDidDismiss().then((response) => {
+    modal.onDidDismiss().then(async (response) => {
+      this.isLoading = true;
+      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+      loadingOverlay.present();
       if (response && response.data && response.data.item && response.data.item.id) {
-        this.updateCompany(response.data.item);
-        this.initializeMenu(response.data.item.id, this.data);
+        await this.updateCompany(response.data.item);
+        await this.initializeMenu(response.data.item.id, this.data);
         this.calculate();
       }
+      this.isLoading = false;
+      loadingOverlay.dismiss();
     });
     return await modal.present();
   }
@@ -246,10 +280,15 @@ export class DetailOrderComponent implements OnInit {
       component: CustomersComponent,
       componentProps: { mode: 'modal' },
     });
-    modal.onDidDismiss().then((response) => {
+    modal.onDidDismiss().then(async (response) => {
+      this.isLoading = true;
+      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+      loadingOverlay.present();
       if (response && response.data && response.data.item && response.data.item.id) {
         this.updateCustomer(response.data.item);
       }
+      this.isLoading = false;
+      loadingOverlay.dismiss();
     });
     return await modal.present();
   }
@@ -259,10 +298,15 @@ export class DetailOrderComponent implements OnInit {
       component: DeliverersComponent,
       componentProps: { mode: 'modal' },
     });
-    modal.onDidDismiss().then((response) => {
+    modal.onDidDismiss().then(async (response) => {
+      this.isLoading = true;
+      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+      loadingOverlay.present();
       if (response && response.data && response.data.item && response.data.item.id) {
         this.updateDeliverer(response.data.item);
       }
+      this.isLoading = false;
+      loadingOverlay.dismiss();
     });
     return await modal.present();
   }
@@ -275,9 +319,9 @@ export class DetailOrderComponent implements OnInit {
       await this.afs.collection('orders').doc(this.data.id).update({
         company: company,
       });
-      this.tools.presentToast('Orden actualizada correctamente');
+      this.tools.presentToast('Orden actualizada correctamente', undefined, 'top');
     } catch (error) {
-      this.tools.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error', undefined, 'top');
       console.error(error);
     }
     this.isLoading = false;
@@ -292,9 +336,9 @@ export class DetailOrderComponent implements OnInit {
       await this.afs.collection('orders').doc(this.data.id).update({
         customer: customer,
       });
-      this.tools.presentToast('Orden actualizada correctamente');
+      this.tools.presentToast('Orden actualizada correctamente', undefined, 'top');
     } catch (error) {
-      this.tools.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error', undefined, 'top');
       console.error(error);
     }
     this.isLoading = false;
@@ -309,9 +353,9 @@ export class DetailOrderComponent implements OnInit {
       await this.afs.collection('orders').doc(this.data.id).update({
         deliverer: deliverer,
       });
-      this.tools.presentToast('Orden actualizada correctamente');
+      this.tools.presentToast('Orden actualizada correctamente', undefined, 'top');
     } catch (error) {
-      this.tools.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error', undefined, 'top');
       console.error(error);
     }
     this.isLoading = false;
@@ -326,16 +370,16 @@ export class DetailOrderComponent implements OnInit {
       await this.afs.collection('orders').doc(this.data.id).update({
         customer: {},
       });
-      this.tools.presentToast('Orden actualizada correctamente');
+      this.tools.presentToast('Orden actualizada correctamente', undefined, 'top');
     } catch (error) {
-      this.tools.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error', undefined, 'top');
       console.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
   }
 
-  async save() {
+  async save(message: boolean) {
     this.isLoading = true;
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
@@ -374,21 +418,15 @@ export class DetailOrderComponent implements OnInit {
       await this.afs.collection('orders').doc(this.data.id).update({
         order: order,
       });
-      this.tools.presentToast('Orden actualizada correctamente');
+      if (message == true) {
+        this.tools.presentToast('Orden actualizada correctamente', undefined, 'top');
+      }
     } catch (error) {
-      this.tools.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error', undefined, 'top');
       console.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
-  }
-
-  async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 6000,
-    });
-    toast.present();
   }
 
   async completeOrderConfirm() {
@@ -404,20 +442,145 @@ export class DetailOrderComponent implements OnInit {
     await alert.present();
   }
 
+  async startOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Iniciar entrega',
+      message: `¿Está seguro de iniciar la entrega de la orden con folio: ${this.data.folio}?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Iniciar',
+          handler: () => {
+            this.startOrder();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
   async startOrder() {
+    this.isLoading = true;
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      await this.save();
+      await this.save(false);
       const canStart = await this.myFire.canStartOrder(this.data.id);
       if (canStart === true) {
-        this.presentToast('Orden iniciada');
+        this.tools.presentToast('Orden iniciada', undefined, 'top');
       } else {
         this.completeOrderConfirm();
       }
     } catch (error) {
       console.error(error);
     }
+    this.isLoading = false;
     loadingOverlay.dismiss();
+  }
+
+  async orderDelivered() {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.myFire.orderDelivered(this.data.id);
+    } catch (error) {
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async cancelDelivery() {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.myFire.cancelDelivery(this.data.id);
+    } catch (error) {
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async cancelOrder() {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.myFire.cancelOrder(this.data.id);
+    } catch (error) {
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async cancelOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Cancelar orden',
+      message: `¿Está seguro de cancelar la orden con folio: ${this.data.folio}?`,
+      buttons: [
+        {
+          text: 'Salir',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Cancelar orden',
+          handler: () => {
+            this.cancelOrder();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async cancelDeliveryConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Cancelar entrega',
+      message: `¿Está seguro de cancelar la entrega de la orden con folio: ${this.data.folio}?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Cancelar entrega',
+          handler: () => {
+            this.cancelDelivery();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async orderDeliveredConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Orden entregada',
+      message: `¿La orden con folio: ${this.data.folio}, ha sido entregada?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Orden entregada',
+          handler: () => {
+            this.orderDelivered();
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

@@ -3,6 +3,7 @@ import { PopoverController, AlertController, LoadingController, ToastController 
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { Router } from '@angular/router';
+import { ToolsService } from '@app/@shared/services/tools/tools.service';
 
 @Component({
   selector: 'app-options-order',
@@ -18,7 +19,7 @@ export class OptionsOrderComponent implements OnInit {
     private popoverController: PopoverController,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private tools: ToolsService,
     private afs: AngularFirestore,
     private myFire: FirebaseService
   ) {}
@@ -35,27 +36,20 @@ export class OptionsOrderComponent implements OnInit {
       const response = await this.afs.collection('deliverers').doc(this.item.id).ref.get();
       data = response.data();
     } catch (error) {
-      this.presentToast('Ha ocurrido un error');
+      this.tools.presentToast('Ha ocurrido un error');
       console.error(error);
     }
     return data;
   }
 
-  async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 6000,
-    });
-    toast.present();
-  }
-
   async startOrder() {
+    this.dismissPopover();
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
       const canStart = await this.myFire.canStartOrder(this.item.id);
       if (canStart === true) {
-        this.presentToast('Orden iniciada');
+        this.tools.presentToast('Orden iniciada');
       } else {
         this.completeOrderConfirm();
       }
@@ -66,29 +60,35 @@ export class OptionsOrderComponent implements OnInit {
   }
 
   async cancelOrder() {
+    this.dismissPopover();
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      await this.afs.collection('orders').doc(this.item.id).update({
-        status: 'cancelled',
-        finishDate: new Date(),
-      });
-      this.presentToast('Orden cancelada');
+      await this.myFire.cancelOrder(this.item.id);
     } catch (error) {
       console.error(error);
     }
     loadingOverlay.dismiss();
   }
 
-  async finalizeOrder() {
+  async cancelDelivery() {
+    this.dismissPopover();
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      await this.afs.collection('orders').doc(this.item.id).update({
-        status: 'finished',
-        finishDate: new Date(),
-      });
-      this.presentToast('Orden cancelada');
+      await this.myFire.cancelDelivery(this.item.id);
+    } catch (error) {
+      console.error(error);
+    }
+    loadingOverlay.dismiss();
+  }
+
+  async orderDelivered() {
+    this.dismissPopover();
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.myFire.orderDelivered(this.item.id);
     } catch (error) {
       console.error(error);
     }
@@ -137,10 +137,10 @@ export class OptionsOrderComponent implements OnInit {
     await alert.present();
   }
 
-  async finalizeOrderConfirm() {
+  async cancelDeliveryConfirm() {
     const alert = await this.alertController.create({
-      header: 'Finalizar entrega',
-      message: `¿Está seguro de finalizar la entrega de la orden con folio: ${this.item.folio}?`,
+      header: 'Cancelar entrega',
+      message: `¿Está seguro de cancelar la entrega de la orden con folio: ${this.item.folio}?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -148,9 +148,30 @@ export class OptionsOrderComponent implements OnInit {
           cssClass: 'secondary',
         },
         {
-          text: 'Finalizar',
+          text: 'Cancelar entrega',
           handler: () => {
-            this.finalizeOrder();
+            this.cancelDelivery();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async orderDeliveredConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Orden entregada',
+      message: `¿La orden con folio: ${this.item.folio}, ha sido entregada?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Orden entregada',
+          handler: () => {
+            this.orderDelivered();
           },
         },
       ],
