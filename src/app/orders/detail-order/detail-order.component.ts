@@ -583,4 +583,282 @@ export class DetailOrderComponent implements OnInit {
     });
     await alert.present();
   }
+
+  async sendInformationToDelvererCheck() {
+    const alert = await this.alertController.create({
+      cssClass: 'ion-text-wrap',
+      header: 'Enviar información a repartidor',
+      message: `¿Desea enviar la información de la orden generada al repartidor "${this.data.deliverer.name}"?`,
+      inputs: [
+        // {
+        //   name: 'checkbox1',
+        //   type: 'checkbox',
+        //   label: 'Nombre de la empresa',
+        //   value: 'value1',
+        //   checked: true
+        // },
+
+        {
+          name: 'checkbox2',
+          type: 'checkbox',
+          label: 'Folio de la empresa',
+          value: 'value2',
+          checked: true,
+        },
+
+        {
+          name: 'checkbox3',
+          type: 'checkbox',
+          label: 'Teléfono de la empresa',
+          value: 'value3',
+          checked: true,
+        },
+
+        // {
+        //   name: 'checkbox4',
+        //   type: 'checkbox',
+        //   label: 'Dirección de la empresa',
+        //   value: 'value4',
+        //   checked: true
+        // },
+
+        // {
+        //   name: 'checkbox5',
+        //   type: 'checkbox',
+        //   label: 'Referencias de la empresa',
+        //   value: 'value5',
+        //   checked: true
+        // },
+
+        {
+          name: 'checkbox6',
+          type: 'checkbox',
+          label: 'Nombre de cliente',
+          value: 'value6',
+          checked: true,
+        },
+
+        {
+          name: 'checkbox7',
+          type: 'checkbox',
+          label: 'Folio de cliente',
+          value: 'value7',
+          checked: true,
+        },
+        {
+          name: 'checkbox8',
+          type: 'checkbox',
+          label: 'Teléfono de cliente',
+          value: 'value8',
+          checked: true,
+        },
+        // {
+        //   name: 'checkbox9',
+        //   type: 'checkbox',
+        //   label: 'Dirección de cliente',
+        //   value: 'value9',
+        //   checked: true
+        // },
+        // {
+        //   name: 'checkbox10',
+        //   type: 'checkbox',
+        //   label: 'Referencias de cliente',
+        //   value: 'value10',
+        //   checked: true
+        // }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Enviar',
+          handler: (filters: any[]) => {
+            this.sendInformationToDelverer(
+              this.data.deliverer.phone,
+              this.mapInformation(this.filterInformation(filters))
+            );
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  filterInformation(filters: any[]): any {
+    let order: any = {
+      folio: this.data.folio,
+      date: this.data.startDateStr,
+      company: {
+        name: this.data.company.name,
+        pickupLocation: this.pickupLocation,
+        pickupLocationReferences: this.pickupLocationReferences,
+      },
+      deliverer: {
+        name: this.data.deliverer.name,
+        folio: this.data.deliverer.folio,
+      },
+      customer: {},
+    };
+    let customer: any = {};
+    if (this.data && this.data.customer && this.data.customer.id) {
+      customer = {
+        deliveryLocation: this.deliveryLocation,
+        deliveryLocationReferences: this.deliveryLocationReferences,
+      };
+      customer.exists = true;
+    } else {
+      customer.name = 'Sin cliente';
+      customer.exists = false;
+      if (this.noCustomerData === '1') {
+        customer.deliveryLocation = 'Se asignará al llegar a empresa';
+      }
+    }
+    order.customer = customer;
+    let products: any[] = [];
+    this.totalOrder = 0;
+    this.total = 0;
+    if (this.menu) {
+      products = this.menu.filter((item) => {
+        if (item.active === true && item.isChecked === true && item.quantity > 0) {
+          this.totalOrder = this.totalOrder + item.quantity * item.price;
+          return item;
+        }
+      });
+    }
+    if (this.otherProduct.isChecked === true && this.otherProduct.quantity > 0) {
+      this.totalOrder = this.totalOrder + this.otherProduct.quantity * this.otherProduct.price;
+      products.push(this.otherProduct);
+    }
+    products = products.map((entry) => {
+      const data = {
+        name: entry && entry.name ? entry.name : entry && entry.description ? entry.description : '',
+        observations: entry && entry.observations ? entry.observations : '',
+        price: entry && entry.price ? entry.price : '',
+        quantity: entry && entry.quantity ? entry.quantity : '',
+      };
+      return data;
+    });
+    this.total = this.totalOrder + this.shippingPrice;
+    order.total = this.total;
+    order.totalOrder = this.totalOrder;
+    order.shippingPrice = this.shippingPrice;
+    order.products = products;
+    filters.forEach((element) => {
+      switch (element) {
+        case 'value2':
+          order.company.folio = this.data.company.folio;
+          break;
+        case 'value3':
+          order.company.phone = this.data.company.phone;
+          break;
+        case 'value6':
+          if (customer.exists === true) {
+            order.customer.name = this.data.customer.name;
+          }
+          break;
+        case 'value7':
+          if (customer.exists === true) {
+            order.customer.folio = this.data.customer.folio;
+          }
+          break;
+        case 'value8':
+          if (customer.exists === true) {
+            order.customer.phone = this.data.customer.phone;
+          }
+          break;
+      }
+    });
+    return order;
+  }
+
+  mapInformation(order: any): string {
+    let message: string = '';
+    //Company Info
+    message = message + `Orden: ${order.folio}\n`;
+    message = message + '---------------------------\n';
+    message = message + `Fecha de inicio: ${order.date}\n`;
+    message = message + '\n';
+
+    message = message + `Lugar de recolección\n`;
+    message = message + '---------------------------\n';
+    if (order && order.company && order.company.name) {
+      message = message + `Empresa: ${order.company.name}\n`;
+    }
+    if (order && order.company && order.company.folio) {
+      message = message + `Folio: ${order.company.folio}\n`;
+    }
+    if (order && order.company && order.company.phone) {
+      message = message + `Teléfono: ${order.company.phone}\n`;
+    }
+    if (order && order.company && order.company.pickupLocation) {
+      message = message + `Dirección: ${order.company.pickupLocation}\n`;
+    }
+    if (order && order.company && order.company.pickupLocationReferences) {
+      message = message + `Referencias: ${order.company.pickupLocationReferences}\n`;
+    }
+    message = message + '\n';
+    //Products Info
+    if (order && order.products) {
+      message = message + `Productos:\n`;
+      message = message + '---------------------------\n';
+      let productStr: string = '';
+      Array.from(order.products).forEach((product: any) => {
+        if (product && product.name && product.name !== '') {
+          productStr = productStr + `(${product.quantity}) ${product.name}\n`;
+        }
+        if (product && product.observations && product.observations !== '') {
+          productStr = productStr + `${product.observations}\n`;
+        }
+        if (product && product.price && product.price !== '') {
+          productStr = productStr + `Precio: $${new Intl.NumberFormat('en-IN').format(Number(product.price))}\n`;
+        }
+      });
+      message = message + productStr;
+      message = message + '---------------------------\n';
+      message = message + `Costo de orden: $${new Intl.NumberFormat('en-IN').format(Number(order.totalOrder))}\n`;
+      message = message + `Costo de envío: $${new Intl.NumberFormat('en-IN').format(Number(order.shippingPrice))}\n`;
+      message = message + `Total: $${new Intl.NumberFormat('en-IN').format(Number(order.total))}\n`;
+      message = message + '\n';
+    }
+    //Customer Info
+    message = message + `Lugar de entrega\n`;
+    message = message + '---------------------------\n';
+    if (order && order.customer && order.customer.name) {
+      message = message + `Cliente: ${order.customer.name}\n`;
+    }
+    if (order && order.customer && order.customer.folio) {
+      message = message + `Folio: ${order.customer.folio}\n`;
+    }
+    if (order && order.customer && order.customer.phone) {
+      message = message + `Teléfono: ${order.customer.phone}\n`;
+    }
+    if (order && order.customer && order.customer.deliveryLocation) {
+      message = message + `Dirección: ${order.customer.deliveryLocation}\n`;
+    }
+    if (order && order.customer && order.customer.deliveryLocationReferences) {
+      message = message + `Referencias: ${order.customer.deliveryLocationReferences}\n`;
+    }
+    //Deliverer Info
+    message = message + '\n';
+    message = message + `El que entrega\n`;
+    message = message + '---------------------------\n';
+    if (order && order.deliverer && order.deliverer.name) {
+      message = message + `Repartidor: ${order.deliverer.name}\n`;
+    }
+    if (order && order.deliverer && order.deliverer.folio) {
+      message = message + `Folio: ${order.deliverer.folio}\n`;
+    }
+    console.log(message);
+    return message;
+  }
+
+  sendInformationToDelverer(phone: string, message: string) {
+    var ref = window.open(
+      `https://api.whatsapp.com/send?phone=521${phone}&text=${encodeURIComponent(message)}&source=&data=&app_absent=`,
+      '_whatsapp'
+    );
+  }
 }
