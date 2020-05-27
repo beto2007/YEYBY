@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, LoadingController, ToastController } from '@ionic/angular';
+import { ModalController, LoadingController, ToastController, AlertController } from '@ionic/angular';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-detail-deliverer',
@@ -25,12 +26,10 @@ export class DetailDelivererComponent implements OnInit {
   data: any;
 
   constructor(
-    private modalController: ModalController,
     private afs: AngularFirestore,
     private aRoute: ActivatedRoute,
-    private afStorage: AngularFireStorage,
-    private loadingController: LoadingController,
-    private toastController: ToastController
+    private alertController: AlertController,
+    private myFire: FirebaseService
   ) {
     this.aRoute.params.subscribe((params) => {
       this.initializeApp(params.id);
@@ -48,5 +47,26 @@ export class DetailDelivererComponent implements OnInit {
         this.data = { id, ...data };
       }
     });
+  }
+
+  async generateOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Generar orden',
+      message: `¿Está seguro de generar nueva orden?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Generar orden',
+          handler: () => {
+            this.myFire.createOrder(this.data.id, 'deliverer');
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

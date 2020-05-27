@@ -39,4 +39,9 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="generateOrderConfirm()" [disabled]="isLoading == true">
+      <ion-icon name="receipt-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

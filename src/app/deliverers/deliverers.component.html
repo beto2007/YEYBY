@@ -127,7 +127,7 @@
             </ion-avatar>
             <ion-label
               *ngIf="!(mode === 'modal'); else isModalActions"
-              [routerLink]="['/customers/' + item.id]"
+              [routerLink]="['/deliverers/' + item.id]"
               routerDirection="forward"
             >
               <h2>{{ item?.name }}</h2>
@@ -156,6 +156,9 @@
               </ion-label>
             </ng-template>
             <ion-buttons slot="end">
+              <ion-button size="small" (click)="generateOrderConfirm(item.id)">
+                <ion-icon slot="icon-only" name="receipt-outline"></ion-icon>
+              </ion-button>
               <ion-button (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
               </ion-button>

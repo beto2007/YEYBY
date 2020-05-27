@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Query } from '@angular/fire/firestore';
-import { ModalController, ToastController, PopoverController } from '@ionic/angular';
+import { ModalController, ToastController, PopoverController, AlertController } from '@ionic/angular';
 import { OptionsDelivererComponent } from './options-deliverer/options-deliverer.component';
 import { Subscription } from 'rxjs';
 import { AddDelivererComponent } from './add-deliverer/add-deliverer.component';
 import { SortByDelivererComponent } from './sort-by-deliverer/sort-by-deliverer.component';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-deliverers',
@@ -47,7 +48,9 @@ export class DeliverersComponent implements OnInit, OnDestroy {
     private afs: AngularFirestore,
     private toastController: ToastController,
     private popoverController: PopoverController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private myFire: FirebaseService,
+    private alertController: AlertController
   ) {}
 
   async doSearch(ev: any) {
@@ -263,5 +266,26 @@ export class DeliverersComponent implements OnInit, OnDestroy {
 
   selectItem(item: any) {
     this.modalController.dismiss({ item: item });
+  }
+
+  async generateOrderConfirm(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Generar orden',
+      message: `¿Está seguro de generar nueva orden?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Generar orden',
+          handler: () => {
+            this.myFire.createOrder(id, 'deliverer');
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

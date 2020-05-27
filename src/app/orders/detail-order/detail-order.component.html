@@ -16,12 +16,30 @@
 <ion-header translucent *ngIf="data?.status === 'cancelled'">
   <ion-toolbar color="danger">
     <ion-title>Orden cancelada</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="resetOrderConfirm()" [disabled]="isLoading == true">
+        <ion-icon slot="start" name="reload-outline"></ion-icon>
+        <small
+          >Solicitar <br />
+          nuevamente</small
+        >
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-header translucent *ngIf="data?.status === 'canceled-delivery'">
   <ion-toolbar color="danger">
     <ion-title>Entrega cancelada</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="resetOrderConfirm()" [disabled]="isLoading == true">
+        <ion-icon slot="start" name="reload-outline"></ion-icon>
+        <small
+          >Solicitar <br />
+          nuevamente</small
+        >
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

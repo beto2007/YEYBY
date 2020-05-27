@@ -123,6 +123,43 @@ export class DetailOrderComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  async resetOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Solicitar orden nuevamente',
+      message: `¿Está seguro de solicitar nuevamente esta orden?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Solicitar',
+          handler: () => {
+            this.resetOrder();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async resetOrder() {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.afs.collection('orders').doc(this.data.id).update({
+        status: 'created',
+      });
+      this.tools.presentToast('Orden actualizada correctamente', undefined, 'top');
+    } catch (error) {
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
   async initializeMenu(id: string, data: any) {
     this.menuCollection = this.afs.collection('companies').doc(id).collection('menu');
     await this.menuCollection.ref

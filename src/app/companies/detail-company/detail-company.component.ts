@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { ToolsService } from '@shared/services/tools/tools.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { LoadingController, AlertController } from '@ionic/angular';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-detail-company',
@@ -40,7 +41,8 @@ export class DetailCompanyComponent implements OnInit {
     private formBuilder: FormBuilder,
     private loadingController: LoadingController,
     private alertController: AlertController,
-    private tools: ToolsService
+    private tools: ToolsService,
+    private myFire: FirebaseService
   ) {
     this.createForm();
     this.aRoute.params.subscribe((params) => {
@@ -176,5 +178,26 @@ export class DetailCompanyComponent implements OnInit {
       this.isLoading = false;
       loadingOverlay.dismiss();
     }
+  }
+
+  async generateOrderConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Generar orden',
+      message: `¿Está seguro de generar nueva orden?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Generar orden',
+          handler: () => {
+            this.myFire.createOrder(this.data.id, 'company');
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

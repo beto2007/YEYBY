@@ -31,11 +31,11 @@
   </ion-toolbar>
   <ion-toolbar>
     <ion-segment [(ngModel)]="status" (ionChange)="segmentChanged($event)">
-      <ion-segment-button value="in-progress">
-        <ion-label>En entrega</ion-label>
-      </ion-segment-button>
       <ion-segment-button value="created">
         <ion-label>Creadas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="in-progress">
+        <ion-label>En camino</ion-label>
       </ion-segment-button>
       <ion-segment-button value="finished">
         <ion-label>Terminadas</ion-label>
@@ -95,14 +95,11 @@
           <ion-item *ngFor="let item of arrayDocs; let i = index">
             <ion-icon slot="start" name="receipt-outline"></ion-icon>
             <ion-label [routerLink]="['/orders/' + item.id]" routerDirection="forward" class="ion-text-wrap">
-              <h2>
-                <strong>
-                  {{ item?.company?.name }}
-                </strong>
-              </h2>
-              <h3>
-                {{ item?.customer?.name }}
+              <h3 *ngIf="item?.company?.name as name">
+                <ion-icon name="briefcase"></ion-icon> <strong>{{ name }}</strong>
               </h3>
+              <h3 *ngIf="item?.customer?.name as name"><ion-icon name="person"></ion-icon> {{ name }}</h3>
+              <h3 *ngIf="item?.deliverer?.name as name"><ion-icon name="bicycle"></ion-icon> {{ name }}</h3>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
               <div *ngIf="item.status === 'delivered'">
                 <p>
