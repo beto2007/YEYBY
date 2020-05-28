@@ -63,9 +63,6 @@ export class OrdersComponent implements OnInit {
 
   segmentChanged(ev: any) {
     this.status = String(ev.detail.value);
-    this.startAfter = undefined;
-    this.endBefore = undefined;
-    this.startAt = undefined;
     this.initializeApp();
   }
 

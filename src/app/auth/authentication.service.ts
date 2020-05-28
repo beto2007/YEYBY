@@ -58,6 +58,7 @@ export class AuthenticationService {
   logout(): Observable<boolean> {
     // Customize credentials invalidation here
     this.credentialsService.setCredentials();
+    this.afAuth.signOut();
     return of(true);
   }
 }
