@@ -36,6 +36,20 @@ export class DetailDelivererComponent implements OnInit {
     });
   }
 
+  ionViewDidLeave() {
+    this.closeSubscriptions();
+  }
+
+  closeSubscriptions() {
+    try {
+      if (this.suscription) {
+        this.suscription.unsubscribe();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   ngOnInit(): void {}
 
   initializeApp(id: string) {

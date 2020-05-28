@@ -50,6 +50,23 @@ export class DetailCompanyComponent implements OnInit {
     });
   }
 
+  ionViewDidLeave() {
+    this.closeSubscriptions();
+  }
+
+  closeSubscriptions() {
+    try {
+      if (this.suscription) {
+        this.suscription.unsubscribe();
+      }
+      if (this.suscription2) {
+        this.suscription2.unsubscribe();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   private createForm() {
     this.myForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -74,7 +91,7 @@ export class DetailCompanyComponent implements OnInit {
       .collection('companies')
       .doc(id)
       .collection('menu', (ref) => ref.orderBy('nameStr'));
-    this.suscription = this.menuCollection.snapshotChanges().subscribe((snap) => {
+    this.suscription2 = this.menuCollection.snapshotChanges().subscribe((snap) => {
       this.menu = snap.map((item) => {
         const data: any = item.payload.doc.data();
         const id: string = item.payload.doc.id;

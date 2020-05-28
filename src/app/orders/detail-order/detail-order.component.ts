@@ -65,6 +65,20 @@ export class DetailOrderComponent implements OnInit {
     });
   }
 
+  ionViewDidLeave() {
+    this.closeSubscriptions();
+  }
+
+  closeSubscriptions() {
+    try {
+      if (this.suscription) {
+        this.suscription.unsubscribe();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   pickupLocationChange() {
     if (this.pickupType === 'default') {
       if (this.data && this.data.company && this.data.company.id) {
