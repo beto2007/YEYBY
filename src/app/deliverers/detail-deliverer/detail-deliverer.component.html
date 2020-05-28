@@ -44,9 +44,17 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="generateOrderConfirm()" [disabled]="isLoading == true">
-      <ion-icon name="receipt-outline"></ion-icon>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab-button [disabled]="isLoading == true">
+      <ion-icon name="chevron-up-circle-outline"></ion-icon>
     </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button color="light" (click)="add()">
+        <ion-icon name="create"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="primary" (click)="generateOrderConfirm()">
+        <ion-icon name="receipt-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
   </ion-fab>
 </ion-content>

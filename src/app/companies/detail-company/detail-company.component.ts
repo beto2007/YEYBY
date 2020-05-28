@@ -9,8 +9,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ToolsService } from '@shared/services/tools/tools.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { LoadingController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController, ModalController } from '@ionic/angular';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { AddCompanyComponent } from '../add-company/add-company.component';
 
 @Component({
   selector: 'app-detail-company',
@@ -42,7 +43,8 @@ export class DetailCompanyComponent implements OnInit {
     private loadingController: LoadingController,
     private alertController: AlertController,
     private tools: ToolsService,
-    private myFire: FirebaseService
+    private myFire: FirebaseService,
+    private modalController: ModalController
   ) {
     this.createForm();
     this.aRoute.params.subscribe((params) => {
@@ -216,5 +218,13 @@ export class DetailCompanyComponent implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  async updateCompany() {
+    const modal = await this.modalController.create({
+      component: AddCompanyComponent,
+      componentProps: { id: this.data.id },
+    });
+    return await modal.present();
   }
 }

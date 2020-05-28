@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, LoadingController, ToastController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { AngularFireStorage } from '@angular/fire/storage';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { AddCustomersComponent } from '../add-customers/add-customers.component';
 
 @Component({
   selector: 'app-detail-customers',
@@ -29,7 +29,8 @@ export class DetailCustomersComponent implements OnInit {
     private afs: AngularFirestore,
     private aRoute: ActivatedRoute,
     private alertController: AlertController,
-    private myFire: FirebaseService
+    private myFire: FirebaseService,
+    private modalController: ModalController
   ) {
     this.aRoute.params.subscribe((params) => {
       this.initializeApp(params.id);
@@ -82,5 +83,13 @@ export class DetailCustomersComponent implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  async add() {
+    const modal = await this.modalController.create({
+      component: AddCustomersComponent,
+      componentProps: { id: this.data.id },
+    });
+    return await modal.present();
   }
 }
