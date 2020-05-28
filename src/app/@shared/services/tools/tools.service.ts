@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { ToastController } from '@ionic/angular';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class ToolsService {
     return self.indexOf(value) === index;
   };
 
-  constructor(private toastController: ToastController) {}
+  constructor(private toastController: ToastController, private afStorage: AngularFireStorage) {}
 
   public dateFormatter(date: any, format: string): string {
     return moment(date).format(format);
@@ -75,5 +76,79 @@ export class ToolsService {
     }
     tempArray = tempArray.filter(this.unique);
     return tempArray;
+  }
+
+  async thumbnailify(base64Image: string, targetWidth: number, targetHeight: number) {
+    var img = new Image();
+    const newImage = () =>
+      new Promise((resolve, reject) => {
+        img.onload = () => {
+          var width = img.width,
+            height = img.height,
+            canvas = document.createElement('canvas'),
+            ctx = canvas.getContext('2d');
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
+          ctx.drawImage(
+            img,
+            width > height ? (width - height) / 2 : 0,
+            height > width ? (height - width) / 2 : 0,
+            width > height ? height : width,
+            width > height ? height : width,
+            0,
+            0,
+            targetWidth,
+            targetHeight
+          );
+          resolve(canvas.toDataURL());
+        };
+        img.onerror = (error) => reject(error);
+      });
+    img.src = base64Image;
+    return newImage();
+  }
+
+  async images(file: File, thumbnailSrc: any, middleSrc: any, bucket: string) {
+    let image = {
+      main: {
+        url: '',
+        path: '',
+      },
+      thumbnail: {
+        url: '',
+        path: '',
+      },
+      list: {
+        url: '',
+        path: '',
+      },
+    };
+    const random = new Date().getMilliseconds();
+    const name = random + file.name;
+    var storageRef1 = this.afStorage.ref(bucket + '/' + name);
+    const imageResponse1 = await storageRef1.put(file);
+    const downloadURL1 = await imageResponse1.ref.getDownloadURL();
+    image.main.url = downloadURL1;
+    image.main.path = bucket + '/' + name;
+    var storageRef2 = this.afStorage.ref(bucket + '/thumbnail/' + name);
+    const imageResponse2 = await storageRef2.putString(thumbnailSrc, 'data_url');
+    const downloadURL2 = await imageResponse2.ref.getDownloadURL();
+    image.thumbnail.url = downloadURL2;
+    image.thumbnail.path = bucket + '/thumbnail/' + name;
+    var storageRef3 = this.afStorage.ref(bucket + '/list/' + name);
+    const imageResponse3 = await storageRef3.putString(middleSrc, 'data_url');
+    const downloadURL3 = await imageResponse3.ref.getDownloadURL();
+    image.list.url = downloadURL3;
+    image.list.path = bucket + '/list/' + name;
+    return image;
+  }
+
+  async deletePast(imagesPath: string[]) {
+    let promises: Promise<any>[] = [];
+    const storageRef = this.afStorage.storage.ref();
+    imagesPath.forEach((element) => {
+      promises.push(storageRef.child(element).delete());
+    });
+    await Promise.all(promises);
   }
 }

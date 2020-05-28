@@ -93,7 +93,8 @@
           <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
           <ion-toolbar>
             <ion-title slot="start">
-              <small> <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
+              <small>
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
             ></ion-title>
             <ion-buttons slot="end">
               <ion-button size="small">
@@ -174,6 +175,8 @@
           </ion-toolbar>
           <img
             [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
+            [routerLink]="['/companies/' + item.id]"
+            routerDirection="forward"
           />
           <ion-card-header [routerLink]="['/companies/' + item.id]" routerDirection="forward">
             <ion-card-subtitle> <ion-icon name="call" color="medium"></ion-icon> {{ item?.phone }} </ion-card-subtitle>

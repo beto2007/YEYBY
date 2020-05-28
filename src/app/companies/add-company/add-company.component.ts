@@ -3,7 +3,6 @@ import { ModalController, LoadingController, ToastController, PopoverController 
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { DocumentReference } from '@angular/fire/firestore';
-import { AngularFireStorage } from '@angular/fire/storage';
 import { WorkDaysComponent } from '../work-days/work-days.component';
 import * as moment from 'moment';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
@@ -80,7 +79,6 @@ export class AddCompanyComponent implements OnInit {
     private modalController: ModalController,
     private formBuilder: FormBuilder,
     private afs: AngularFirestore,
-    private afStorage: AngularFireStorage,
     private loadingController: LoadingController,
     private toastController: ToastController,
     private popoverController: PopoverController
@@ -127,8 +125,8 @@ export class AddCompanyComponent implements OnInit {
           reader.onerror = (error) => reject(error);
         });
       const result: string = String(await toBase64(this.file).catch((e) => Error(e)));
-      this.thumbnailSrc = await this.thumbnailify(result, 100, 100);
-      this.middleSrc = await this.thumbnailify(result, 320, 170);
+      this.thumbnailSrc = await this.tools.thumbnailify(result, 100, 100);
+      this.middleSrc = await this.tools.thumbnailify(result, 320, 170);
     }
   }
 
@@ -207,7 +205,7 @@ export class AddCompanyComponent implements OnInit {
       data.search = search;
       data.date = new Date();
       if (this.file) {
-        data.image = await this.images();
+        data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'companies');
       }
       const response: DocumentReference = await this.afs.collection('companies').add(data);
       if (response.id) {
@@ -237,10 +235,12 @@ export class AddCompanyComponent implements OnInit {
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('phone').value)));
       data.search = search;
       if (this.file) {
-        data.image = await this.images();
+        data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'companies');
       }
       await this.afs.collection('companies').doc(id).update(data);
-      this.deletePast();
+      if (this.file) {
+        this.tools.deletePast(this.imagesPath);
+      }
       this.close();
       this.presentToast('Empresa actualizada correctamente');
     } catch (error) {
@@ -251,85 +251,11 @@ export class AddCompanyComponent implements OnInit {
     loadingOverlay.dismiss();
   }
 
-  async images() {
-    let image = {
-      main: {
-        url: '',
-        path: '',
-      },
-      thumbnail: {
-        url: '',
-        path: '',
-      },
-      list: {
-        url: '',
-        path: '',
-      },
-    };
-    const random = new Date().getMilliseconds();
-    const name = random + this.file.name;
-    var storageRef1 = this.afStorage.ref('companies/' + name);
-    const imageResponse1 = await storageRef1.put(this.file);
-    const downloadURL1 = await imageResponse1.ref.getDownloadURL();
-    image.main.url = downloadURL1;
-    image.main.path = 'companies/' + name;
-    var storageRef2 = this.afStorage.ref('companies/thumbnail/' + name);
-    const imageResponse2 = await storageRef2.putString(this.thumbnailSrc, 'data_url');
-    const downloadURL2 = await imageResponse2.ref.getDownloadURL();
-    image.thumbnail.url = downloadURL2;
-    image.thumbnail.path = 'companies/thumbnail/' + name;
-    var storageRef3 = this.afStorage.ref('companies/list/' + name);
-    const imageResponse3 = await storageRef3.putString(this.middleSrc, 'data_url');
-    const downloadURL3 = await imageResponse3.ref.getDownloadURL();
-    image.list.url = downloadURL3;
-    image.list.path = 'companies/list/' + name;
-    return image;
-  }
-
   save() {
     if (this.id) {
       this.update(this.id);
     } else {
       this.add();
     }
-  }
-
-  async thumbnailify(base64Image: string, targetWidth: number, targetHeight: number) {
-    var img = new Image();
-    const newImage = () =>
-      new Promise((resolve, reject) => {
-        img.onload = () => {
-          var width = img.width,
-            height = img.height,
-            canvas = document.createElement('canvas'),
-            ctx = canvas.getContext('2d');
-          canvas.width = targetWidth;
-          canvas.height = targetHeight;
-          ctx.drawImage(
-            img,
-            width > height ? (width - height) / 2 : 0,
-            height > width ? (height - width) / 2 : 0,
-            width > height ? height : width,
-            width > height ? height : width,
-            0,
-            0,
-            targetWidth,
-            targetHeight
-          );
-          resolve(canvas.toDataURL());
-        };
-        img.onerror = (error) => reject(error);
-      });
-    img.src = base64Image;
-    return newImage();
-  }
-
-  async deletePast() {
-    let promises: Promise<any>[] = [];
-    const storageRef = this.afStorage.storage.ref();
-    this.imagesPath.forEach((element) => {
-      promises.push(storageRef.child(element).delete());
-    });
-    await Promise.all(promises);
   }
 }
