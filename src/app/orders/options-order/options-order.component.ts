@@ -47,11 +47,27 @@ export class OptionsOrderComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      const canStart = await this.myFire.canStartOrder(this.item.id);
-      if (canStart === true) {
-        this.tools.presentToast('Orden iniciada');
+      const response = await this.myFire.canStartOrder(this.item.id);
+      if (response.canCreate === true && response.code === 'created') {
+        this.tools.presentToast(response.message);
       } else {
-        this.completeOrderConfirm();
+        switch (response.code) {
+          case 'bussy-deliverer':
+            this.tools.presentToast(response.message);
+            break;
+          case 'closed-company':
+            this.tools.presentToast(response.message);
+            break;
+          case 'no-products':
+            this.tools.presentToast(response.message);
+            break;
+          case 'incomplete-order':
+            this.completeOrderConfirm();
+            break;
+          default:
+            this.tools.presentToast(response.message);
+            break;
+        }
       }
     } catch (error) {
       console.error(error);

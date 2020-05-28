@@ -2,17 +2,24 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseService {
+  private minutesOfDay = (m: any) => {
+    return Number(m.minutes() + m.hours() * 60);
+  };
+
   constructor(
     private router: Router,
     private afs: AngularFirestore,
     private loadingController: LoadingController,
     private toastController: ToastController
-  ) {}
+  ) {
+    moment.locale('es');
+  }
 
   public async createOrder(id: string, type: 'company' | 'customer' | 'deliverer') {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
@@ -100,24 +107,82 @@ export class FirebaseService {
     }
   }
 
-  public async canStartOrder(id: string): Promise<boolean> {
-    let ret: boolean = false;
+  public async canStartOrder(id: string): Promise<{ canCreate: boolean; code: string; message: string }> {
+    let ret: { canCreate: boolean; code: string; message: string } = {
+      canCreate: false,
+      code: 'unidentified-error',
+      message: 'Ha ocurrido un error, por favor inténtelo mas tarde.',
+    };
     try {
       const response = await this.afs.collection('orders').doc(id).ref.get();
       const company: any | undefined = response.data().company;
       const deliverer: any | undefined = response.data().deliverer;
+      const order: any | undefined = response.data().order;
+      // Verificar si tiene empresa y repartidor
       if (company.id && deliverer.id) {
-        await this.afs.collection('orders').doc(id).update({
-          status: 'in-progress',
-          startDate: new Date(),
-        });
-        ret = true;
+        if (
+          (order.products && Array.from(order.products).length > 0) ||
+          (order.otherProduct &&
+            order.otherProduct.isChecked &&
+            order.otherProduct.isChecked === true &&
+            order.otherProduct.quantity > 0 &&
+            order.otherProduct.description &&
+            order.otherProduct.description !== '')
+        ) {
+          // Horario de empresa
+          const days: any[] = Array.from(company.days);
+          const index: number = days
+            .map((item: any) => String(item.name).trim().toLocaleLowerCase())
+            .indexOf(moment().format('dddd').trim().toLocaleLowerCase());
+          if (index > -1) {
+            const day: any = days[index];
+            const currentHour: number = this.minutesOfDay(moment());
+            const openingHours: number = this.minutesOfDay(moment(day.openingHours));
+            const closingHours: number = this.minutesOfDay(moment(day.closingHours));
+            if (day.works == true && currentHour >= openingHours && currentHour <= closingHours) {
+              const data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData> = await this.afs
+                .collection('orders')
+                .ref.where('status', '==', 'in-progress')
+                .where('deliverer.id', '==', deliverer.id)
+                .get();
+              // Revisar si el repartidor esta en una entrega en camino en este momento
+              if (data.empty == true) {
+                await this.afs.collection('orders').doc(id).update({
+                  status: 'in-progress',
+                  startDate: new Date(),
+                });
+                return { canCreate: true, code: 'created', message: 'Orden iniciada.' };
+              } else {
+                return {
+                  canCreate: false,
+                  code: 'bussy-deliverer',
+                  message: 'Orden no iniciada, el repartidor esta en camino de entrega de otra orden.',
+                };
+              }
+            } else {
+              return {
+                canCreate: false,
+                code: 'closed-company',
+                message:
+                  'Orden no iniciada, la hora actual esta fuera de horario laboral de la empresa o no es un día laboral.',
+              };
+            }
+          } else {
+            return { canCreate: true, code: 'created', message: 'Orden iniciada.' };
+          }
+        } else {
+          return {
+            canCreate: false,
+            code: 'no-products',
+            message: 'Orden no iniciada, la orden no tienen productos, por favor completa la orden.',
+          };
+        }
       } else {
-        ret = false;
+        return { canCreate: false, code: 'incomplete-order', message: 'Orden no iniciada, la orden no esta completa.' };
       }
     } catch (error) {
       console.error(error);
-      ret = false;
+      return ret;
     }
     return ret;
   }

@@ -5,6 +5,11 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title> Detalle de orden</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-toolbar color="success" *ngIf="data?.status === 'in-progress'">
     <ion-title>

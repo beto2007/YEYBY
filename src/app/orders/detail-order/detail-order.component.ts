@@ -442,8 +442,8 @@ export class DetailOrderComponent implements OnInit {
     }
     let order: any = {
       company: {
-        pickupLocation: this.pickupLocation,
-        pickupLocationReferences: this.pickupLocationReferences,
+        pickupLocation: this.pickupLocation ? this.pickupLocation : '',
+        pickupLocationReferences: this.pickupLocationReferences ? this.pickupLocationReferences : '',
         pickupType: this.pickupType,
       },
       customer: customer,
@@ -506,11 +506,27 @@ export class DetailOrderComponent implements OnInit {
     loadingOverlay.present();
     try {
       await this.save(false);
-      const canStart = await this.myFire.canStartOrder(this.data.id);
-      if (canStart === true) {
-        this.tools.presentToast('Orden iniciada', undefined, 'top');
+      const response = await this.myFire.canStartOrder(this.data.id);
+      if (response.canCreate === true && response.code === 'created') {
+        this.tools.presentToast(response.message);
       } else {
-        this.completeOrderConfirm();
+        switch (response.code) {
+          case 'bussy-deliverer':
+            this.tools.presentToast(response.message);
+            break;
+          case 'closed-company':
+            this.tools.presentToast(response.message);
+            break;
+          case 'no-products':
+            this.tools.presentToast(response.message);
+            break;
+          case 'incomplete-order':
+            this.completeOrderConfirm();
+            break;
+          default:
+            this.tools.presentToast(response.message);
+            break;
+        }
       }
     } catch (error) {
       console.error(error);
@@ -888,7 +904,6 @@ export class DetailOrderComponent implements OnInit {
     if (order && order.deliverer && order.deliverer.folio) {
       message = message + `Folio: ${order.deliverer.folio}\n`;
     }
-    console.log(message);
     return message;
   }
 
