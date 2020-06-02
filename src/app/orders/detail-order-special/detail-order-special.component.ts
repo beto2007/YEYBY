@@ -11,11 +11,11 @@ import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 
 @Component({
-  selector: 'app-detail-order',
-  templateUrl: './detail-order.component.html',
-  styleUrls: ['./detail-order.component.scss'],
+  selector: 'app-detail-order-special',
+  templateUrl: './detail-order-special.component.html',
+  styleUrls: ['./detail-order-special.component.scss'],
 })
-export class DetailOrderComponent implements OnInit {
+export class DetailOrderSpecialComponent implements OnInit {
   error: string | undefined;
   isLoading = false;
   dataDocument: AngularFirestoreDocument<any>;
@@ -28,7 +28,7 @@ export class DetailOrderComponent implements OnInit {
 
   pickupLocation: string;
   pickupLocationReferences: string;
-  pickupType: string = 'default';
+  pickupType: string = 'other';
 
   deliveryLocation: string;
   deliveryLocationReferences: string;
@@ -47,6 +47,8 @@ export class DetailOrderComponent implements OnInit {
   total: number = 0;
   flagData1: boolean;
   flagData2: boolean;
+  canSelect: boolean = true;
+  checked: boolean = true;
 
   constructor(
     private router: Router,
@@ -64,6 +66,25 @@ export class DetailOrderComponent implements OnInit {
     this.aRoute.params.subscribe((params) => {
       this.initializeApp(params.id);
     });
+  }
+
+  pickupLocationDefault(ev: any) {
+    if (ev && ev.target && ev.target.checked && ev.target.checked === true) {
+      this.changeChecked();
+    } else {
+      this.pickupLocation = '';
+      this.pickupLocationReferences = '';
+      this.canSelect = true;
+    }
+  }
+
+  changeChecked() {
+    this.pickupLocation =
+      this.data && this.data.customer && this.data.customer.streetAddress ? this.data.customer.streetAddress : '';
+    this.pickupLocationReferences =
+      this.data && this.data.customer && this.data.customer.references ? this.data.customer.references : '';
+    this.deliveryType = 'other';
+    this.canSelect = false;
   }
 
   ionViewDidLeave() {
@@ -224,7 +245,7 @@ export class DetailOrderComponent implements OnInit {
             if (snap.payload.exists === true) {
               const data: any = snap.payload.data();
               const id: string = snap.payload.id;
-              if (!(data.type === 'normal-order')) {
+              if (!(data.type === 'special-order')) {
                 this.router.navigate(['/orders']);
               }
               data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
@@ -255,7 +276,7 @@ export class DetailOrderComponent implements OnInit {
               } else {
                 switch (this.noCustomerData) {
                   case '1':
-                    this.deliveryLocation = 'Se asignará al llegar a empresa';
+                    this.deliveryLocation = '';
                     break;
                 }
                 this.deliveryLocationReferences = '';
@@ -264,6 +285,10 @@ export class DetailOrderComponent implements OnInit {
                 this.flagData1 = true;
                 this.flagData2 = true;
                 if (tempData.order) {
+                  this.checked = tempData.order.checked;
+                  if (this.checked == true) {
+                    this.changeChecked();
+                  }
                   this.otherProduct = tempData.order.otherProduct;
                   this.shippingPrice = tempData.order.shippingPrice;
                 }
@@ -282,6 +307,7 @@ export class DetailOrderComponent implements OnInit {
               }
               this.data = tempData;
               this.calculate();
+              this.pickupLocationDefault({ target: { checked: tempData.order.checked } });
               resolve(this.data);
             }
           },
@@ -469,6 +495,7 @@ export class DetailOrderComponent implements OnInit {
       products: products,
       otherProduct: this.otherProduct,
       shippingPrice: this.shippingPrice,
+      checked: this.checked,
     };
     try {
       await this.afs.collection('orders').doc(this.data.id).update({
@@ -525,7 +552,7 @@ export class DetailOrderComponent implements OnInit {
     loadingOverlay.present();
     try {
       await this.save(false);
-      const response = await this.myFire.canStartOrder(this.data.id);
+      const response = await this.myFire.canStartSpecialOrder(this.data.id);
       if (response.canCreate === true && response.code === 'created') {
         this.tools.presentToast(response.message);
       } else {

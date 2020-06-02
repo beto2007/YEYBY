@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { SortByOrderComponent } from './sort-by-order/sort-by-order.component';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute } from '@angular/router';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-orders',
@@ -48,7 +49,8 @@ export class OrdersComponent implements OnInit {
     private afs: AngularFirestore,
     private popoverController: PopoverController,
     private tools: ToolsService,
-    private aRoute: ActivatedRoute
+    private aRoute: ActivatedRoute,
+    private myFire: FirebaseService
   ) {
     this.aRoute.params.subscribe((params) => {
       if (
@@ -276,5 +278,9 @@ export class OrdersComponent implements OnInit {
 
   beautyDate(date: any) {
     return this.tools.dateFormatter(date, 'DD/MM/YYYY h:mm A');
+  }
+
+  generateSpecailOrder() {
+    this.myFire.createSpecialOrder();
   }
 }

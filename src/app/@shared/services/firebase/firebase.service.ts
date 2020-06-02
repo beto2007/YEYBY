@@ -21,6 +21,34 @@ export class FirebaseService {
     moment.locale('es');
   }
 
+  public async createSpecialOrder() {
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      let data: any = {};
+      const response: DocumentReference = await this.afs.collection('orders').add({
+        company: data.company ? data.company : {},
+        customer: data.customer ? data.customer : {},
+        deliverer: data.deliverer ? data.deliverer : {},
+        date: new Date(),
+        startDate: new Date(),
+        finishDate: new Date(),
+        search: [],
+        status: 'created',
+        type: 'special-order',
+      });
+      if (response.id) {
+        this.router.navigate(['/special-orders/' + response.id]);
+      } else {
+        this.presentToast('Ha ocurrido un error');
+      }
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    loadingOverlay.dismiss();
+  }
+
   public async createOrder(id: string, type: 'company' | 'customer' | 'deliverer') {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
@@ -50,6 +78,7 @@ export class FirebaseService {
         finishDate: new Date(),
         search: [],
         status: 'created',
+        type: 'normal-order',
       });
       if (response.id) {
         this.router.navigate(['/orders/' + response.id]);
@@ -175,6 +204,46 @@ export class FirebaseService {
             canCreate: false,
             code: 'no-products',
             message: 'Orden no iniciada, la orden no tienen productos, por favor completa la orden.',
+          };
+        }
+      } else {
+        return { canCreate: false, code: 'incomplete-order', message: 'Orden no iniciada, la orden no esta completa.' };
+      }
+    } catch (error) {
+      console.error(error);
+      return ret;
+    }
+    return ret;
+  }
+
+  public async canStartSpecialOrder(id: string): Promise<{ canCreate: boolean; code: string; message: string }> {
+    let ret: { canCreate: boolean; code: string; message: string } = {
+      canCreate: false,
+      code: 'unidentified-error',
+      message: 'Ha ocurrido un error, por favor inténtelo mas tarde.',
+    };
+    try {
+      const response = await this.afs.collection('orders').doc(id).ref.get();
+      const deliverer: any | undefined = response.data().deliverer;
+      // Verificar si tiene repartidor
+      if (deliverer.id) {
+        const data: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData> = await this.afs
+          .collection('orders')
+          .ref.where('status', '==', 'in-progress')
+          .where('deliverer.id', '==', deliverer.id)
+          .get();
+        // Revisar si el repartidor esta en una entrega en camino en este momento
+        if (data.empty == true) {
+          await this.afs.collection('orders').doc(id).update({
+            status: 'in-progress',
+            startDate: new Date(),
+          });
+          return { canCreate: true, code: 'created', message: 'Orden iniciada.' };
+        } else {
+          return {
+            canCreate: false,
+            code: 'bussy-deliverer',
+            message: 'Orden no iniciada, el repartidor esta en camino de entrega de otra orden.',
           };
         }
       } else {

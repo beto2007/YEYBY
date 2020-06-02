@@ -151,4 +151,11 @@ export class ToolsService {
     });
     await Promise.all(promises);
   }
+
+  sendInformationToDelverer(phone: string, message: string) {
+    var ref = window.open(
+      `https://api.whatsapp.com/send?phone=521${phone}&text=${encodeURIComponent(message)}&source=&data=&app_absent=`,
+      '_whatsapp'
+    );
+  }
 }

@@ -58,6 +58,16 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab-button [disabled]="isLoading == true">
+      <ion-icon name="chevron-up-circle-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button color="primary" (click)="generateSpecailOrder()">
+        <ion-icon name="star-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
 </ion-content>
 
 <ion-content color="light" *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == true">
@@ -93,8 +103,13 @@
       <ion-col>
         <ion-list>
           <ion-item *ngFor="let item of arrayDocs; let i = index">
-            <ion-icon slot="start" name="receipt-outline"></ion-icon>
-            <ion-label [routerLink]="['/orders/' + item.id]" routerDirection="forward" class="ion-text-wrap">
+            <ion-icon slot="start" [name]="item.type === 'special-order' ? 'star-outline' : 'receipt-outline'">
+            </ion-icon>
+            <ion-label
+              [routerLink]="[(item.type === 'normal-order' ? '/orders/' : '/special-orders/') + item.id]"
+              routerDirection="forward"
+              class="ion-text-wrap"
+            >
               <h3 *ngIf="item?.company?.name as name">
                 <ion-icon name="briefcase"></ion-icon> <strong>{{ name }}</strong>
               </h3>
@@ -136,6 +151,11 @@
                 </p>
               </div>
             </ion-label>
+            <!-- <ion-badge slot="end" class="ion-text-wrap" color="light" *ngIf="item.type === 'special-order'">
+              <small>
+                Orden especial <ion-icon name="star"></ion-icon>
+              </small>
+            </ion-badge> -->
             <ion-buttons
               slot="end"
               *ngIf="item.status === 'in-progress' || item.status === 'created'; else orderStatus"
@@ -174,4 +194,14 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab-button [disabled]="isLoading == true">
+      <ion-icon name="chevron-up-circle-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button color="primary" (click)="generateSpecailOrder()">
+        <ion-icon name="star-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
 </ion-content>

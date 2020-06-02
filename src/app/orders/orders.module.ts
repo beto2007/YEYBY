@@ -8,9 +8,10 @@ import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
 import { OrdersRoutingModule } from './orders-routing.module';
 import { OrdersComponent } from './orders.component';
-import { DetailOrderComponent } from './detail-order/detail-order.component';
 import { SortByOrderComponent } from './sort-by-order/sort-by-order.component';
 import { OptionsOrderComponent } from './options-order/options-order.component';
+import { DetailOrderComponent } from './detail-order/detail-order.component';
+import { DetailOrderSpecialComponent } from './detail-order-special/detail-order-special.component';
 
 @NgModule({
   imports: [
@@ -24,7 +25,13 @@ import { OptionsOrderComponent } from './options-order/options-order.component';
     ReactiveFormsModule,
     FormsModule,
   ],
-  declarations: [OrdersComponent, DetailOrderComponent, SortByOrderComponent, OptionsOrderComponent],
+  declarations: [
+    OrdersComponent,
+    DetailOrderComponent,
+    SortByOrderComponent,
+    OptionsOrderComponent,
+    DetailOrderSpecialComponent,
+  ],
   entryComponents: [],
   exports: [],
 })
