@@ -69,6 +69,7 @@ export class DetailOrderSpecialComponent implements OnInit {
   }
 
   pickupLocationDefault(ev: any) {
+    console.log(ev.target.checked);
     if (ev && ev.target && ev.target.checked && ev.target.checked === true) {
       this.changeChecked();
     } else {
@@ -307,7 +308,11 @@ export class DetailOrderSpecialComponent implements OnInit {
               }
               this.data = tempData;
               this.calculate();
-              this.pickupLocationDefault({ target: { checked: tempData.order.checked } });
+              this.pickupLocationDefault({
+                target: {
+                  checked: tempData && tempData.order && tempData.order.checked ? tempData.order.checked : false,
+                },
+              });
               resolve(this.data);
             }
           },
