@@ -16,7 +16,7 @@
       </ion-card-title>
     </ion-card-content>
   </ion-card>
-  <ion-grid fixed>
+  <ion-grid fixed *ngIf="isAdmin === true; else userBlock">
     <ion-row>
       <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
         <ion-button color="primary" expand="block" size="large" routerLink="/customers">
@@ -44,4 +44,15 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ng-template #userBlock>
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col>
+          <ion-col>
+            Mi empresa
+          </ion-col>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
 </ion-content>

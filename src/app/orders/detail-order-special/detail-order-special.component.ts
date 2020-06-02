@@ -69,7 +69,6 @@ export class DetailOrderSpecialComponent implements OnInit {
   }
 
   pickupLocationDefault(ev: any) {
-    console.log(ev.target.checked);
     if (ev && ev.target && ev.target.checked && ev.target.checked === true) {
       this.changeChecked();
     } else {

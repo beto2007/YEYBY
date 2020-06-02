@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { finalize } from 'rxjs/operators';
-import { QuoteService } from './quote.service';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { CredentialsService } from '@app/auth';
 
 @Component({
   selector: 'app-home',
@@ -11,8 +9,17 @@ import { AngularFireAuth } from '@angular/fire/auth';
 export class HomeComponent implements OnInit {
   quote: string | undefined;
   isLoading = false;
+  isAdmin: boolean = false;
 
-  constructor(private quoteService: QuoteService, private afAuth: AngularFireAuth) {}
+  constructor(private credentialsService: CredentialsService) {
+    this.isAdmin =
+      this.credentialsService &&
+      this.credentialsService.credentials &&
+      this.credentialsService.credentials.type &&
+      this.credentialsService.credentials.type === 'admin'
+        ? true
+        : false;
+  }
 
   ngOnInit() {}
 }

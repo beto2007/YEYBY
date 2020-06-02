@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 
 import { Credentials, CredentialsService } from './credentials.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 export interface LoginContext {
   username: string;
@@ -18,7 +19,11 @@ export interface LoginContext {
   providedIn: 'root',
 })
 export class AuthenticationService {
-  constructor(private credentialsService: CredentialsService, private afAuth: AngularFireAuth) {}
+  constructor(
+    private credentialsService: CredentialsService,
+    private afAuth: AngularFireAuth,
+    private afs: AngularFirestore
+  ) {}
 
   /**
    * Authenticates the user.
@@ -28,11 +33,24 @@ export class AuthenticationService {
   async login(context: LoginContext): Promise<Observable<Credentials>> {
     const user = await this.afAuth
       .signInWithEmailAndPassword(String(context.username).toLocaleLowerCase(), context.password)
-      .then((resp) => {
-        return {
-          email: resp.user.email,
-          uid: resp.user.uid,
-        };
+      .then(async (resp) => {
+        return await this.afs
+          .collection('users')
+          .doc(resp.user.uid)
+          .ref.get()
+          .then((resp2) => {
+            const data: any = resp2.data();
+            if (resp2.exists === true) {
+              return {
+                email: resp.user.email,
+                uid: resp.user.uid,
+                status: data.status,
+                type: data.type,
+              };
+            } else {
+              this.logout();
+            }
+          });
       })
       .catch((error) => {
         console.error(error);
@@ -43,6 +61,8 @@ export class AuthenticationService {
       const data = {
         username: user.email,
         uid: user.uid,
+        status: user.status,
+        type: user.type,
       };
       this.credentialsService.setCredentials(data, context.remember);
       return of(data);

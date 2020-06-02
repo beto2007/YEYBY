@@ -13,14 +13,21 @@ import { AuthenticationService, CredentialsService } from '@app/auth';
   styleUrls: ['./shell.component.scss'],
 })
 export class ShellComponent {
-  public routes: any[] = [
-    { title: 'Inicio', link: '/home', icon: 'home' },
-    { title: 'Repartidores', link: '/deliverers', icon: 'bicycle' },
-    { title: 'Clientes', link: '/customers', icon: 'person' },
-    { title: 'Empresas', link: '/companies', icon: 'briefcase' },
-    { title: 'Órdenes', link: '/orders', icon: 'document-text' },
-    { title: 'Configuración', link: '/home', icon: 'build' },
-  ];
+  public routes: any[];
+  public routesPermissions = {
+    admin: [
+      { title: 'Inicio', link: '/home', icon: 'home' },
+      { title: 'Repartidores', link: '/deliverers', icon: 'bicycle' },
+      { title: 'Clientes', link: '/customers', icon: 'person' },
+      { title: 'Empresas', link: '/companies', icon: 'briefcase' },
+      { title: 'Órdenes', link: '/orders', icon: 'document-text' },
+      { title: 'Configuración', link: '/home', icon: 'build' },
+    ],
+    user: [
+      { title: 'Inicio', link: '/home', icon: 'home' },
+      { title: 'Configuración', link: '/home', icon: 'build' },
+    ],
+  };
 
   constructor(
     private router: Router,
@@ -30,7 +37,18 @@ export class ShellComponent {
     private authenticationService: AuthenticationService,
     private credentialsService: CredentialsService,
     private i18nService: I18nService
-  ) {}
+  ) {
+    if (
+      this.credentialsService &&
+      this.credentialsService.credentials &&
+      this.credentialsService.credentials.type &&
+      this.credentialsService.credentials.type === 'admin'
+    ) {
+      this.routes = this.routesPermissions.admin;
+    } else {
+      this.routes = this.routesPermissions.user;
+    }
+  }
 
   async presentAlertConfirm() {
     const alert = await this.alertController.create({

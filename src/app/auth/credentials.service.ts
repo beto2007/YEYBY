@@ -4,6 +4,8 @@ export interface Credentials {
   // Customize received credentials here
   username: string;
   uid: string;
+  status: string;
+  type: string;
 }
 
 const credentialsKey = 'credentials';
@@ -18,6 +20,11 @@ const credentialsKey = 'credentials';
 export class CredentialsService {
   private _credentials: Credentials | null = null;
 
+  private routePermissions = {
+    admin: { routes: ['home', 'special-orders', 'about', 'companies', 'customers', 'deliverers', 'orders'] },
+    user: { routes: ['home', 'about'] },
+  };
+
   constructor() {
     const savedCredentials = sessionStorage.getItem(credentialsKey) || localStorage.getItem(credentialsKey);
     if (savedCredentials) {
@@ -29,8 +36,38 @@ export class CredentialsService {
    * Checks is the user is authenticated.
    * @return True if the user is authenticated.
    */
-  isAuthenticated(): boolean {
-    return !!this.credentials;
+  isAuthenticated(route: string): boolean {
+    const activeUser: boolean =
+      this.credentials &&
+      this.credentials.type &&
+      (this.credentials.type === 'admin' || this.credentials.type === 'user') &&
+      this.credentials &&
+      this.credentials.status &&
+      this.credentials.status === 'active';
+    let activate: boolean[] = [];
+    if (this.credentials && this.credentials.type && this.credentials.type === 'admin') {
+      this.routePermissions.admin.routes.forEach((element: string) => {
+        activate.push(route.includes(element));
+      });
+      const index: number = activate.indexOf(true);
+      if (index > -1 && activeUser) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (this.credentials && this.credentials.type && this.credentials.type === 'user') {
+      this.routePermissions.user.routes.forEach((element: string) => {
+        activate.push(route.includes(element));
+      });
+      const index: number = activate.indexOf(true);
+      if (index > -1 && activeUser) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   /**
