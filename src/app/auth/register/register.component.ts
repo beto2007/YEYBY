@@ -91,24 +91,44 @@ export class RegisterComponent implements OnInit {
                   remember: true,
                 });
                 await this.login.login();
-                console.log('Se creo correctamente');
+                this.tools.presentToast('Registro creado correctamente, bienvenido.', 5000);
               } else {
-                log.debug('no existe se creo el auth');
+                this.tools.presentToast('Ha ocurrido un error, por favor inténtalo más tarde.', 60000);
               }
             } else {
-              log.debug('no existe la empresa(doc)');
+              this.tools.presentToast(
+                'No existe una empresa asociada a este código, por favor contacta a la persona que te envió este código.',
+                60000
+              );
             }
           } else {
-            log.debug('no existe la empresa');
+            this.tools.presentToast(
+              'No existe una empresa asociada a este código, por favor contacta a la persona que te envió este código.',
+              60000
+            );
           }
         } else {
-          log.debug('no existe el doc');
+          this.tools.presentToast(
+            'El código de verifiación ya ha sido utilizado o no existe, por favor contacta a la persona que te envió este código.',
+            60000
+          );
         }
       } else {
-        log.debug('no existe en empresa(Codigo)');
+        this.tools.presentToast(
+          'El código de verifiación ya ha sido utilizado o no existe, por favor contacta a la persona que te envió este código.',
+          60000
+        );
       }
     } catch (error) {
       log.error(error);
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          this.tools.presentToast('El email que intentas registrar esta siendo utlizado por otra cuenta.', 60000);
+          break;
+        default:
+          this.tools.presentToast('Ha ocurrido un error, por favor inténtalo más tarde.', 60000);
+          break;
+      }
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -121,11 +141,11 @@ export class RegisterComponent implements OnInit {
   private createForm() {
     this.registerForm = this.formBuilder.group(
       {
-        email: ['usuario1@yopmail.com', [Validators.required, EmailValidator.isValid]],
-        name: ['Oscar Santos', [Validators.required, NoWhiteSpaceValidator.isValid]],
-        code: ['654312', [Validators.required, NoWhiteSpaceValidator.isValid]],
-        password1: ['123456', [Validators.required, Validators.minLength(6), NoWhiteSpaceValidator.isValid]],
-        password2: ['123456', [Validators.required]],
+        email: ['', [Validators.required, EmailValidator.isValid]],
+        name: ['', [Validators.required, NoWhiteSpaceValidator.isValid]],
+        code: ['', [Validators.required, NoWhiteSpaceValidator.isValid]],
+        password1: ['', [Validators.required, Validators.minLength(6), NoWhiteSpaceValidator.isValid]],
+        password2: ['', [Validators.required]],
       },
       {
         validator: MustMatch('password1', 'password2'),

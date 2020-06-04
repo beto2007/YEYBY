@@ -5,7 +5,12 @@
       <ion-col size-sm="8" size-lg="6" size-xl="4" class="ion-align-self-center ion-no-padding">
         <div class="login-header ion-text-center">
           <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
-          <h1>YEYBY - Panel Administrativo</h1>
+          <h1>YEYBY - Registro de empresa</h1>
+          <h2>¡Bienvenido!</h2>
+          <p>
+            Yeyby te da la bienvenida al registro de tu empresa a nuestra plataforma, para continuar, por favor completa
+            el siguiente formulario:
+          </p>
         </div>
         <div class="login-container">
           <form (ngSubmit)="registration()" [formGroup]="registerForm" novalidate>
@@ -121,6 +126,10 @@
               </ion-button>
             </div>
           </form>
+          <ion-button routerLink="/login" expand="block" fill="clear">
+            <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+            Regresar
+          </ion-button>
         </div>
       </ion-col>
     </ion-row>

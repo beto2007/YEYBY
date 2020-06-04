@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { Credentials, CredentialsService } from './credentials.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { ToolsService } from '@app/@shared/services/tools/tools.service';
 
 export interface LoginContext {
   username: string;
@@ -22,7 +23,8 @@ export class AuthenticationService {
   constructor(
     private credentialsService: CredentialsService,
     private afAuth: AngularFireAuth,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private tools: ToolsService
   ) {}
 
   /**
@@ -53,7 +55,26 @@ export class AuthenticationService {
           });
       })
       .catch((error) => {
-        console.error(error);
+        switch (error.code) {
+          case 'auth/invalid-email':
+            this.tools.presentToast('Email no válido, por favor intenta nuevamente.', 60000);
+            break;
+          case 'auth/user-not-found':
+            this.tools.presentToast('Email o contraseña no válidos, por favor intenta nuevamente.', 60000);
+            break;
+          case 'auth/wrong-password':
+            this.tools.presentToast('Email o contraseña no válidos, por favor intenta nuevamente.', 60000);
+            break;
+          case 'auth/user-disabled':
+            this.tools.presentToast(
+              'La cuenta se encuentra desactivada actualmente, por favor intenta nuevamente.',
+              60000
+            );
+            break;
+          default:
+            this.tools.presentToast('Ha ocurrido un error, por favor inténtalo más tarde.', 60000);
+            break;
+        }
         return error;
       });
     // Replace by proper authentication call

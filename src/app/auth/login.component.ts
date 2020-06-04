@@ -5,11 +5,10 @@ import { LoadingController, Platform } from '@ionic/angular';
 import { map } from 'rxjs/operators';
 import { forkJoin, from } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-
-import { environment } from '@env/environment';
 import { Logger, untilDestroyed } from '@core';
 import { AuthenticationService } from './authentication.service';
-
+import { NoWhiteSpaceValidator } from '@shared/validators/noWhiteSpace.validator';
+import { EmailValidator } from '@shared/validators/email.validator';
 const log = new Logger('Login');
 
 @Component({
@@ -18,8 +17,6 @@ const log = new Logger('Login');
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  version: string | null = environment.version;
-  error: string | undefined;
   loginForm!: FormGroup;
   isLoading = false;
 
@@ -55,12 +52,10 @@ export class LoginComponent implements OnInit, OnDestroy {
       )
       .subscribe(
         (credentials) => {
-          // log.debug(`${credentials.username} successfully logged in`);
           this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
         },
         (error) => {
-          log.debug(`Login error: ${error}`);
-          this.error = error;
+          log.error(error);
         }
       );
   }
@@ -71,8 +66,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private createForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required],
+      username: ['', [Validators.required, EmailValidator.isValid]],
+      password: ['', [Validators.required, Validators.minLength(6), NoWhiteSpaceValidator.isValid]],
       remember: true,
     });
   }
