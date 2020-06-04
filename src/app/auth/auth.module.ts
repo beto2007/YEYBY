@@ -12,5 +12,6 @@ import { RegisterComponent } from './register/register.component';
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, IonicModule, I18nModule, AuthRoutingModule],
   declarations: [LoginComponent, RegisterComponent],
+  providers: [LoginComponent],
 })
 export class AuthModule {}

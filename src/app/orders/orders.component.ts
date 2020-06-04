@@ -16,7 +16,7 @@ import { FirebaseService } from '@app/@shared/services/firebase/firebase.service
 export class OrdersComponent implements OnInit {
   public skeleton: any[] = ['', '', '', '', '', ''];
   public arrayDocs: any[];
-  public isLoading = false;
+  public isLoading: boolean;
   private subscription: Subscription;
   private totalSubs: Subscription;
   public total: number = 0;

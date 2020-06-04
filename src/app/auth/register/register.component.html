@@ -8,18 +8,40 @@
           <h1>YEYBY - Panel Administrativo</h1>
         </div>
         <div class="login-container">
-          <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
-            <ion-text color="danger" [hidden]="!error || loginForm.dirty || isLoading">
-              <span class="ion-padding">Username or password incorrect.</span>
-            </ion-text>
+          <form (ngSubmit)="registration()" [formGroup]="registerForm" novalidate>
             <ion-list>
+              <ion-item lines="inset">
+                <ion-label color="medium" position="floating">Nombre</ion-label>
+                <ion-input type="text" formControlName="name" autocomplete="Nombre"></ion-input>
+              </ion-item>
+              <ion-item lines="inset">
+                <ion-label color="medium" position="floating">Email</ion-label>
+                <ion-input type="text" formControlName="email" autocomplete="Email"></ion-input>
+              </ion-item>
+              <ion-item lines="inset">
+                <ion-label color="medium" position="floating">Código de verificación</ion-label>
+                <ion-input type="number" formControlName="code" autocomplete="Código de verificación"></ion-input>
+              </ion-item>
+              <ion-item lines="inset">
+                <ion-label color="medium" position="floating">Contraseña</ion-label>
+                <ion-input type="password" formControlName="password1" autocomplete="Contraseña"></ion-input>
+              </ion-item>
+              <ion-item lines="inset">
+                <ion-label color="medium" position="floating">Repetir contraseña</ion-label>
+                <ion-input type="password" formControlName="password2" autocomplete="Repetir contraseña"></ion-input>
+              </ion-item>
+            </ion-list>
+            <!-- <ion-text color="danger" [hidden]="!error || registerForm.dirty || isLoading">
+              <span class="ion-padding">Username or password incorrect.</span>
+            </ion-text> -->
+            <!-- <ion-list>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Email</ion-label>
                 <ion-input type="text" formControlName="username" autocomplete="username"></ion-input>
               </ion-item>
               <ion-text
                 color="danger"
-                [hidden]="loginForm.controls.username.valid || loginForm.controls.username.untouched"
+                [hidden]="registerForm.controls.username.valid || registerForm.controls.username.untouched"
               >
                 <span class="ion-padding">Email requerido</span>
               </ion-text>
@@ -29,7 +51,7 @@
               </ion-item>
               <ion-text
                 color="danger"
-                [hidden]="loginForm.controls.password.valid || loginForm.controls.password.untouched"
+                [hidden]="registerForm.controls.password.valid || registerForm.controls.password.untouched"
               >
                 <span class="ion-padding">Contraseña requerida</span>
               </ion-text>
@@ -37,10 +59,10 @@
                 <ion-label>Recordarme</ion-label>
                 <ion-checkbox slot="start" formControlName="remember"></ion-checkbox>
               </ion-item>
-            </ion-list>
+            </ion-list> -->
             <div class="ion-padding-horizontal">
-              <ion-button type="submit" [disabled]="loginForm.invalid || isLoading" color="primary" expand="block">
-                Ingresar
+              <ion-button type="submit" [disabled]="registerForm.invalid || isLoading" color="primary" expand="block">
+                Registro
               </ion-button>
             </div>
           </form>

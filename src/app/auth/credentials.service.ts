@@ -8,7 +8,7 @@ export interface Credentials {
   type: string;
 }
 
-const credentialsKey = 'credentials';
+const credentialsKey = 'YEYBYCREDENTIALS';
 
 /**
  * Provides storage for authentication credentials.
