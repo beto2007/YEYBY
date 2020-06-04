@@ -191,6 +191,12 @@
               <ion-icon slot="start" name="location" color="medium"></ion-icon>
               {{ item?.streetAddress | slice: 0:200 }}...
             </p>
+            <div *ngIf="item?.user as user">
+              <ion-chip>
+                <ion-icon name="person"></ion-icon>
+                <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              </ion-chip>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>

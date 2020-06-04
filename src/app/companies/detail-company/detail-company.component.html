@@ -40,6 +40,9 @@
             <p><ion-icon name="location"></ion-icon> {{ data?.streetAddress }}</p>
             <p><ion-icon name="walk"></ion-icon> {{ data?.references }}</p>
             <p><ion-icon name="information-circle"></ion-icon> {{ data?.description }}</p>
+            <div *ngIf="data?.user as user">
+              <p><ion-icon name="person"></ion-icon> {{ user?.name }} (Propietario)</p>
+            </div>
           </ion-card-content>
         </ion-card>
 
@@ -198,10 +201,10 @@
       <ion-fab-button color="light" (click)="updateCompany()">
         <ion-icon name="create"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button color="light" (click)="code()">
+      <ion-fab-button color="light" (click)="code()" *ngIf="isAdmin === true">
         <ion-icon name="person"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button color="primary" (click)="generateOrderConfirm()">
+      <ion-fab-button color="primary" (click)="generateOrderConfirm()" *ngIf="isAdmin === true">
         <ion-icon name="receipt-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>

@@ -13,6 +13,7 @@ import { LoadingController, AlertController, ModalController } from '@ionic/angu
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { AddCompanyComponent } from '../add-company/add-company.component';
 import { Logger } from '@core';
+import { CredentialsService } from '@app/auth';
 const log = new Logger('Login');
 
 @Component({
@@ -37,6 +38,7 @@ export class DetailCompanyComponent implements OnInit {
   data: any;
   myForm!: FormGroup;
   viewForm: boolean = false;
+  isAdmin: boolean = false;
 
   constructor(
     private afs: AngularFirestore,
@@ -46,8 +48,16 @@ export class DetailCompanyComponent implements OnInit {
     private alertController: AlertController,
     private tools: ToolsService,
     private myFire: FirebaseService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private credentialsService: CredentialsService
   ) {
+    this.isAdmin =
+      this.credentialsService &&
+      this.credentialsService.credentials &&
+      this.credentialsService.credentials.type &&
+      this.credentialsService.credentials.type === 'admin'
+        ? true
+        : false;
     this.createForm();
     this.aRoute.params.subscribe((params) => {
       this.initializeApp(params.id);
@@ -84,10 +94,13 @@ export class DetailCompanyComponent implements OnInit {
 
   initializeApp(id: string) {
     this.dataDocument = this.afs.collection('companies').doc(id);
-    this.suscription = this.dataDocument.snapshotChanges().subscribe((snap) => {
+    this.suscription = this.dataDocument.snapshotChanges().subscribe(async (snap) => {
       if (snap.payload.exists === true) {
-        const data: any = snap.payload.data();
+        let data: any = snap.payload.data();
         const id: string = snap.payload.id;
+        if (data.user) {
+          data.user = (await this.afs.collection('users').doc(data.user).ref.get()).data();
+        }
         this.data = { id, ...data };
       }
     });

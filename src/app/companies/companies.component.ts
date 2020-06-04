@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { AddCompanyComponent } from './add-company/add-company.component';
 import { SortByCompanyComponent } from './sort-by-company/sort-by-company.component';
 import { FirebaseService } from '../@shared/services/firebase/firebase.service';
+import { CredentialsService } from '@app/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-companies',
@@ -43,6 +45,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     },
   };
   public mode: string = '';
+  isAdmin: boolean = false;
 
   constructor(
     private afs: AngularFirestore,
@@ -50,8 +53,21 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     private popoverController: PopoverController,
     private modalController: ModalController,
     private myFire: FirebaseService,
-    private alertController: AlertController
-  ) {}
+    private alertController: AlertController,
+    private credentialsService: CredentialsService,
+    private router: Router
+  ) {
+    this.isAdmin =
+      this.credentialsService &&
+      this.credentialsService.credentials &&
+      this.credentialsService.credentials.type &&
+      this.credentialsService.credentials.type === 'admin'
+        ? true
+        : false;
+    if (!this.isAdmin === true) {
+      this.router.navigate(['/']);
+    }
+  }
 
   async generateOrderConfirm(id: string) {
     const alert = await this.alertController.create({
@@ -197,9 +213,9 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       if (this.back == true) {
         this.startAt = back.docs[back.docs.length - 1];
       }
-      this.arrayDocs = snap.docs.map((element) => {
+      this.arrayDocs = snap.docs.map(async (element) => {
         const id: string = element.id;
-        const data: any = element.data();
+        let data: any = element.data();
         return { id, ...data };
       });
       this.isLoading = false;

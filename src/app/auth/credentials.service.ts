@@ -22,7 +22,7 @@ export class CredentialsService {
 
   private routePermissions = {
     admin: { routes: ['home', 'special-orders', 'about', 'companies', 'customers', 'deliverers', 'orders'] },
-    user: { routes: ['home', 'about'] },
+    user: { routes: ['home', 'about', 'companies'] },
   };
 
   constructor() {

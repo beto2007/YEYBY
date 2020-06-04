@@ -6,7 +6,7 @@
     <ion-title><span>Inicio</span></ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content color="light">
   <ion-card class="ion-text-center" color="dark">
     <br />
     <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
@@ -47,10 +47,46 @@
   <ng-template #userBlock>
     <ion-grid fixed>
       <ion-row>
-        <ion-col>
-          <ion-col>
-            Mi empresa
-          </ion-col>
+        <ion-col size-xl="4" size-lg="6" size-md="6" size-sm="6" size-xs="12" *ngFor="let item of companies">
+          <ion-card>
+            <ion-toolbar>
+              <ion-title slot="start">
+                <small><strong>Folio: </strong>{{ item?.folio }}</small></ion-title
+              >
+              <ion-buttons slot="end">
+                <!-- <ion-button size="small" (click)="presentPopover($event, item)">
+                  <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                </ion-button> -->
+              </ion-buttons>
+            </ion-toolbar>
+            <img
+              [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
+              [routerLink]="['/companies/' + item.id]"
+              routerDirection="forward"
+            />
+            <ion-card-header [routerLink]="['/companies/' + item.id]" routerDirection="forward">
+              <ion-card-subtitle>
+                <ion-icon name="call" color="medium"></ion-icon> {{ item?.phone }}
+              </ion-card-subtitle>
+              <ion-card-title>{{ item?.name }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>
+                <ion-icon slot="start" name="information-circle" color="medium"></ion-icon>
+                {{ item?.description | slice: 0:150 }}...
+              </p>
+              <p>
+                <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                {{ item?.streetAddress | slice: 0:200 }}...
+              </p>
+              <div *ngIf="item?.user as user">
+                <ion-chip>
+                  <ion-icon name="person"></ion-icon>
+                  <ion-icon name="checkmark-circle" color="success"></ion-icon>
+                </ion-chip>
+              </div>
+            </ion-card-content>
+          </ion-card>
         </ion-col>
       </ion-row>
     </ion-grid>
