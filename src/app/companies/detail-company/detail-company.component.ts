@@ -12,6 +12,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { LoadingController, AlertController, ModalController } from '@ionic/angular';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { AddCompanyComponent } from '../add-company/add-company.component';
+import { Logger } from '@core';
+const log = new Logger('Login');
 
 @Component({
   selector: 'app-detail-company',
@@ -226,5 +228,50 @@ export class DetailCompanyComponent implements OnInit {
       componentProps: { id: this.data.id },
     });
     return await modal.present();
+  }
+
+  async code() {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      const response1 = (await this.afs.collection('invites').doc(this.data.id).ref.get()).data();
+      const response2 = (await this.afs.collection('companies').doc(this.data.id).ref.get()).data();
+      if (response1 && response2 && response1.status === 'assigned' && response2.user) {
+        this.tools.presentToast(`La empresa '${this.data.name}' ya cuenta con un usuario asignado.`);
+      } else {
+        if (response1 && response1.code && response1.status === 'pending') {
+          this.presentCode(response1.code);
+        } else {
+          const code: string = this.tools.randomNumber(6);
+          const response = await this.afs.collection('invites').doc(this.data.id).set({
+            code: code,
+            date: new Date(),
+            company: this.data.id,
+            status: 'pending',
+          });
+          this.presentCode(code);
+        }
+      }
+    } catch (error) {
+      log.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async presentCode(code: string) {
+    const alert = await this.alertController.create({
+      header: 'Código de asignación de usuario',
+      subHeader: `Empresa: ${this.data.name}`,
+      message: `Código: ${code}`,
+      buttons: [
+        {
+          text: 'Ok',
+          role: 'cancel',
+        },
+      ],
+    });
+    await alert.present();
   }
 }

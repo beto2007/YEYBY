@@ -161,7 +161,6 @@ export class AddCompanyComponent implements OnInit {
     this.myForm = this.formBuilder.group({
       name: ['', Validators.required],
       phone: ['', Validators.required],
-      owner: [''],
       description: [''],
       streetAddress: ['', Validators.required],
       references: [''],
@@ -172,7 +171,6 @@ export class AddCompanyComponent implements OnInit {
     this.myForm.setValue({
       name: data && data.name ? data.name : '',
       phone: data && data.phone ? data.phone : '',
-      owner: data && data.owner ? data.owner : '',
       description: data && data.description ? data.description : '',
       streetAddress: data && data.streetAddress ? data.streetAddress : '',
       references: data && data.references ? data.references : '',

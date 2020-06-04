@@ -9,6 +9,9 @@ import {
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { AddCompanyComponent } from '../add-company/add-company.component';
+import { ToolsService } from '@app/@shared/services/tools/tools.service';
+import { Logger } from '@core';
+const log = new Logger('Login');
 
 @Component({
   selector: 'app-options-companies',
@@ -26,7 +29,8 @@ export class OptionsCompaniesComponent implements OnInit {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private afs: AngularFirestore,
-    private afStorage: AngularFireStorage
+    private afStorage: AngularFireStorage,
+    private tools: ToolsService
   ) {}
 
   ngOnInit(): void {}
@@ -50,6 +54,52 @@ export class OptionsCompaniesComponent implements OnInit {
           handler: () => {
             this.delete();
           },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async code() {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      const response1 = (await this.afs.collection('invites').doc(this.item.id).ref.get()).data();
+      const response2 = (await this.afs.collection('companies').doc(this.item.id).ref.get()).data();
+      if (response1 && response2 && response1.status === 'assigned' && response2.user) {
+        this.tools.presentToast(`La empresa '${this.item.name}' ya cuenta con un usuario asignado.`);
+      } else {
+        if (response1 && response1.code && response1.status === 'pending') {
+          this.presentCode(response1.code);
+        } else {
+          const code: string = this.tools.randomNumber(6);
+          const response = await this.afs.collection('invites').doc(this.item.id).set({
+            code: code,
+            date: new Date(),
+            company: this.item.id,
+            status: 'pending',
+          });
+          this.presentCode(code);
+        }
+      }
+    } catch (error) {
+      log.error(error);
+    }
+    this.dismissPopover();
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async presentCode(code: string) {
+    const alert = await this.alertController.create({
+      header: 'Código de asignación de usuario',
+      subHeader: `Empresa: ${this.item.name}`,
+      message: `Código: ${code}`,
+      buttons: [
+        {
+          text: 'Ok',
+          role: 'cancel',
         },
       ],
     });
