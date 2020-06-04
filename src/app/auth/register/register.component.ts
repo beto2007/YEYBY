@@ -1,17 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { LoadingController, Platform } from '@ionic/angular';
-import { map } from 'rxjs/operators';
-import { forkJoin, from } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 import { environment } from '@env/environment';
-import { Logger, untilDestroyed } from '@core';
-import { AuthenticationService } from '../authentication.service';
+import { Logger } from '@core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { LoginComponent } from '../login.component';
+import { NoWhiteSpaceValidator } from '@shared/validators/noWhiteSpace.validator';
+import { EmailValidator } from '@shared/validators/email.validator';
+import { MustMatch } from '@shared/helpers/must-match.validator';
 const log = new Logger('Login');
 
 @Component({
@@ -21,18 +19,14 @@ const log = new Logger('Login');
 })
 export class RegisterComponent implements OnInit {
   version: string | null = environment.version;
-  error: string | undefined;
   registerForm!: FormGroup;
   isLoading = false;
 
   constructor(
-    private router: Router,
     private login: LoginComponent,
-    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private platform: Platform,
     private loadingController: LoadingController,
-    private authenticationService: AuthenticationService,
     private afs: AngularFirestore,
     private afAuth: AngularFireAuth,
     private tools: ToolsService
@@ -118,30 +112,6 @@ export class RegisterComponent implements OnInit {
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
-    // this.isLoading = true;
-    // const login$ = this.authenticationService.login(this.registerForm.value);
-    // const loadingOverlay = await this.loadingController.create({});
-    // const loading$ = from(loadingOverlay.present());
-    // forkJoin([login$, loading$])
-    //   .pipe(
-    //     map(([credentials, ...rest]) => credentials),
-    //     finalize(() => {
-    //       this.registerForm.markAsPristine();
-    //       this.isLoading = false;
-    //       loadingOverlay.dismiss();
-    //     }),
-    //     untilDestroyed(this)
-    //   )
-    //   .subscribe(
-    //     (credentials) => {
-    //       // log.debug(`${credentials.username} successfully logged in`);
-    //       this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
-    //     },
-    //     (error) => {
-    //       log.debug(`Login error: ${error}`);
-    //       this.error = error;
-    //     }
-    //   );
   }
 
   get isWeb(): boolean {
@@ -149,12 +119,17 @@ export class RegisterComponent implements OnInit {
   }
 
   private createForm() {
-    this.registerForm = this.formBuilder.group({
-      email: ['usuario1@yopmail.com', Validators.required],
-      name: ['Oscar Santos', Validators.required],
-      code: ['678904', Validators.required],
-      password1: ['123456', Validators.required],
-      password2: ['123456', Validators.required],
-    });
+    this.registerForm = this.formBuilder.group(
+      {
+        email: ['usuario1@yopmail.com', [Validators.required, EmailValidator.isValid]],
+        name: ['Oscar Santos', [Validators.required, NoWhiteSpaceValidator.isValid]],
+        code: ['654312', [Validators.required, NoWhiteSpaceValidator.isValid]],
+        password1: ['123456', [Validators.required, Validators.minLength(6), NoWhiteSpaceValidator.isValid]],
+        password2: ['123456', [Validators.required]],
+      },
+      {
+        validator: MustMatch('password1', 'password2'),
+      }
+    );
   }
 }

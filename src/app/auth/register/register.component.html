@@ -14,54 +14,109 @@
                 <ion-label color="medium" position="floating">Nombre</ion-label>
                 <ion-input type="text" formControlName="name" autocomplete="Nombre"></ion-input>
               </ion-item>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('name').touched && registerForm.get('name').getError('required')"
+              >
+                <span padding translate>Nombre requerido</span>
+              </ion-text>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('name').touched && registerForm.get('name').getError('whitespace')"
+              >
+                <span padding translate>Nombre no válido</span>
+              </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Email</ion-label>
                 <ion-input type="text" formControlName="email" autocomplete="Email"></ion-input>
               </ion-item>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('email').touched && registerForm.get('email').getError('required')"
+              >
+                <span padding translate>Email requerido</span>
+              </ion-text>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('email').touched && registerForm.get('email').getError('invalidEmail')"
+              >
+                <span padding translate>Email no válido</span>
+              </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Código de verificación</ion-label>
                 <ion-input type="number" formControlName="code" autocomplete="Código de verificación"></ion-input>
               </ion-item>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('code').touched && registerForm.get('code').getError('required')"
+              >
+                <span padding translate>Código de verificación requerido</span>
+              </ion-text>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('code').touched && registerForm.get('code').getError('whitespace')"
+              >
+                <span padding translate>Código no válido</span>
+              </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Contraseña</ion-label>
                 <ion-input type="password" formControlName="password1" autocomplete="Contraseña"></ion-input>
               </ion-item>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('password1').touched && registerForm.get('password1').getError('required')"
+              >
+                <span padding translate>Contraseña requerida</span>
+              </ion-text>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('password1').touched && registerForm.get('password1').getError('minlength')"
+              >
+                <span padding translate>La contraseña debe tener al menos 6 carácteres</span>
+              </ion-text>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('password1').touched && registerForm.get('password1').getError('whitespace')"
+              >
+                <span padding translate>Contraseña no válida</span>
+              </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Repetir contraseña</ion-label>
                 <ion-input type="password" formControlName="password2" autocomplete="Repetir contraseña"></ion-input>
               </ion-item>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('password2').touched && registerForm.get('password2').getError('required')"
+              >
+                <span padding translate>Debes repetir la contraseña</span>
+              </ion-text>
+              <ion-text
+                color="danger"
+                class="ion-padding ion-text-padding"
+                *ngIf="registerForm.get('password2').touched && registerForm.get('password2').getError('mustMatch')"
+              >
+                <span padding translate>Las contraseñas deben de coincidir</span>
+              </ion-text>
             </ion-list>
-            <!-- <ion-text color="danger" [hidden]="!error || registerForm.dirty || isLoading">
-              <span class="ion-padding">Username or password incorrect.</span>
-            </ion-text> -->
-            <!-- <ion-list>
-              <ion-item lines="inset">
-                <ion-label color="medium" position="floating">Email</ion-label>
-                <ion-input type="text" formControlName="username" autocomplete="username"></ion-input>
-              </ion-item>
-              <ion-text
-                color="danger"
-                [hidden]="registerForm.controls.username.valid || registerForm.controls.username.untouched"
-              >
-                <span class="ion-padding">Email requerido</span>
-              </ion-text>
-              <ion-item lines="inset">
-                <ion-label color="medium" position="floating">Contraseña</ion-label>
-                <ion-input type="password" formControlName="password" autocomplete="current-password"></ion-input>
-              </ion-item>
-              <ion-text
-                color="danger"
-                [hidden]="registerForm.controls.password.valid || registerForm.controls.password.untouched"
-              >
-                <span class="ion-padding">Contraseña requerida</span>
-              </ion-text>
-              <ion-item class="ion-padding-top" lines="none">
-                <ion-label>Recordarme</ion-label>
-                <ion-checkbox slot="start" formControlName="remember"></ion-checkbox>
-              </ion-item>
-            </ion-list> -->
             <div class="ion-padding-horizontal">
-              <ion-button type="submit" [disabled]="registerForm.invalid || isLoading" color="primary" expand="block">
+              <ion-button
+                type="submit"
+                [disabled]="
+                  registerForm.invalid || registerForm.value.password1 !== registerForm.value.password2 || isLoading
+                "
+                color="primary"
+                expand="block"
+              >
                 Registro
               </ion-button>
             </div>
