@@ -1,1 +1,136 @@
-<p>reports works!</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title> Reporte de repartidor por día</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col>
+        <div *ngIf="deliverer; else selectDeliverer">
+          <ion-card>
+            <ion-card-header>
+              <ion-toolbar class="ion-no-padding">
+                <h2>{{ deliverer?.name }}</h2>
+                <ion-buttons slot="end">
+                  <ion-button color="medium" (click)="addDelivererFunc()">
+                    <ion-icon slot="icon-only" name="repeat-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label>
+                <p><strong>Folio: </strong> {{ deliverer?.folio }}</p>
+              </ion-label>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle>{{ today }}</ion-card-subtitle>
+              <ion-card-title color="success"><strong>Total:</strong> {{ total | currency: 'USD' }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label>
+                <p>
+                  <strong>{{ arrayDocs.length }}</strong> Entregas el día de hoy
+                </p>
+                <p>
+                  <ion-text color="danger"><sub>*</sub></ion-text> Las órdenes entregadas del día de hoy, son tomadas en
+                  cuenta desde las 12:00 am a 11:59 pm.
+                </p>
+              </ion-label>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Detalle de órdenes {{ today1 }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list>
+                <ion-item *ngFor="let item of arrayDocs; let i = index">
+                  <ion-icon slot="start" [name]="item.type === 'special-order' ? 'star-outline' : 'receipt-outline'">
+                  </ion-icon>
+                  <ion-label
+                    [routerLink]="[(item.type === 'normal-order' ? '/orders/' : '/special-orders/') + item.id]"
+                    routerDirection="forward"
+                    class="ion-text-wrap"
+                  >
+                    <h3 *ngIf="item?.company?.name as name">
+                      <ion-icon name="briefcase"></ion-icon> <strong>{{ name }}</strong>
+                    </h3>
+                    <h3 *ngIf="item?.customer?.name as name"><ion-icon name="person"></ion-icon> {{ name }}</h3>
+                    <div *ngIf="item.status === 'delivered'">
+                      <p>
+                        <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
+                      </p>
+                      <p>
+                        <small> <strong>Entrega: </strong> {{ item?.finishDateStr }} </small>
+                      </p>
+                    </div>
+                    <div *ngIf="item.status === 'in-progress'">
+                      <p>
+                        <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
+                      </p>
+                    </div>
+                    <div *ngIf="item.status === 'canceled-delivery'">
+                      <p>
+                        <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
+                      </p>
+                      <p>
+                        <small> <strong>Cancelación: </strong> {{ item?.finishDateStr }} </small>
+                      </p>
+                    </div>
+                    <div *ngIf="item.status === 'cancelled'">
+                      <p>
+                        <small> <strong>Creación: </strong> {{ item?.dateStr }} </small>
+                      </p>
+                      <p>
+                        <small> <strong>Cancelación: </strong> {{ item?.finishDateStr }} </small>
+                      </p>
+                    </div>
+                    <div *ngIf="item.status === 'created'">
+                      <p>
+                        <small> <strong>Creación: </strong> {{ item?.dateStr }} </small>
+                      </p>
+                    </div>
+                  </ion-label>
+                  <ion-chip slot="end">
+                    <ion-label>{{ item?.order?.shippingPrice | currency: 'USD' }}</ion-label>
+                  </ion-chip>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <ng-template #selectDeliverer>
+          <ion-card>
+            <ion-card-header>
+              <ion-toolbar class="ion-no-padding">
+                <h2>Seleccionar repartidor</h2>
+                <ion-buttons slot="end">
+                  <ion-button color="medium" (click)="addDelivererFunc()">
+                    <ion-icon slot="icon-only" name="add"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+            </ion-card-header>
+            <ion-card-content>
+              Para continuar selecciona un repartidor
+            </ion-card-content>
+          </ion-card>
+        </ng-template>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

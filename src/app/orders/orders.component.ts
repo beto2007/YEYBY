@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Query } from '@angular/fire/firestore';
-import { ToastController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { OptionsOrderComponent } from './options-order/options-order.component';
 import { Subscription } from 'rxjs';
 import { SortByOrderComponent } from './sort-by-order/sort-by-order.component';
