@@ -49,16 +49,6 @@
       <ion-row>
         <ion-col size-xl="4" size-lg="6" size-md="6" size-sm="6" size-xs="12" *ngFor="let item of companies">
           <ion-card>
-            <ion-toolbar>
-              <ion-title slot="start">
-                <small><strong>Folio: </strong>{{ item?.folio }}</small></ion-title
-              >
-              <ion-buttons slot="end">
-                <!-- <ion-button size="small" (click)="presentPopover($event, item)">
-                  <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
-                </ion-button> -->
-              </ion-buttons>
-            </ion-toolbar>
             <img
               [src]="item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'"
               [routerLink]="['/companies/' + item.id]"
@@ -79,12 +69,6 @@
                 <ion-icon slot="start" name="location" color="medium"></ion-icon>
                 {{ item?.streetAddress | slice: 0:200 }}...
               </p>
-              <div *ngIf="item?.user as user">
-                <ion-chip>
-                  <ion-icon name="person"></ion-icon>
-                  <ion-icon name="checkmark-circle" color="success"></ion-icon>
-                </ion-chip>
-              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>

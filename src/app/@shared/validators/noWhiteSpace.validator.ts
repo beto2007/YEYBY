@@ -4,6 +4,6 @@ export class NoWhiteSpaceValidator {
   static isValid(control: FormControl) {
     const isWhitespace = (String(control.value) || '').trim().length === 0;
     const isValid = !isWhitespace;
-    return isValid ? null : { whitespace: true };
+    return isValid || String(control.value) === '' ? null : { whitespace: true };
   }
 }

@@ -60,6 +60,33 @@ export class LoginComponent implements OnInit, OnDestroy {
       );
   }
 
+  async loginNoredirect() {
+    this.isLoading = true;
+    const login$ = this.authenticationService.login(this.loginForm.value);
+    const loadingOverlay = await this.loadingController.create({});
+    const loading$ = from(loadingOverlay.present());
+    return forkJoin([login$, loading$])
+      .pipe(
+        map(([credentials, ...rest]) => credentials),
+        finalize(() => {
+          this.loginForm.markAsPristine();
+          this.isLoading = false;
+          loadingOverlay.dismiss();
+          return true;
+        }),
+        untilDestroyed(this)
+      )
+      .subscribe(
+        (credentials) => {
+          log.debug('login Correcto');
+        },
+        (error) => {
+          log.error(error);
+          return false;
+        }
+      );
+  }
+
   get isWeb(): boolean {
     return !this.platform.is('cordova');
   }

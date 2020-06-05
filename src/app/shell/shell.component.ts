@@ -21,11 +21,12 @@ export class ShellComponent {
       { title: 'Clientes', link: '/customers', icon: 'person' },
       { title: 'Empresas', link: '/companies', icon: 'briefcase' },
       { title: 'Órdenes', link: '/orders', icon: 'document-text' },
-      //{ title: 'Configuración', link: '/home', icon: 'build' },
+      { title: 'Reportes de repartidores', link: '/reports', icon: 'calculator-outline' },
+      { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
     user: [
       { title: 'Inicio', link: '/home', icon: 'home' },
-      //{ title: 'Configuración', link: '/home', icon: 'build' },
+      { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
   };
 

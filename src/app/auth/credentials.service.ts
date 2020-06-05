@@ -21,8 +21,20 @@ export class CredentialsService {
   private _credentials: Credentials | null = null;
 
   private routePermissions = {
-    admin: { routes: ['home', 'special-orders', 'about', 'companies', 'customers', 'deliverers', 'orders'] },
-    user: { routes: ['home', 'about', 'companies'] },
+    admin: {
+      routes: [
+        'home',
+        'profile',
+        'reports',
+        'special-orders',
+        'about',
+        'companies',
+        'customers',
+        'deliverers',
+        'orders',
+      ],
+    },
+    user: { routes: ['home', 'profile', 'about', 'companies'] },
   };
 
   constructor() {

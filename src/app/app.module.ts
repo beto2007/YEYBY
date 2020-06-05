@@ -6,7 +6,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 import { Angulartics2Module } from 'angulartics2';
-
 import { environment } from '@env/environment';
 import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
@@ -16,10 +15,11 @@ import { CompaniesModule } from './companies/companies.module';
 import { CustomersModule } from './customers/customers.module';
 import { DeliverersModule } from './deliverers/deliverers.module';
 import { OrdersModule } from './orders/orders.module';
+import { ProfileModule } from './user/profile/profile.module';
+import { ReportsModule } from './reports/reports.module';
 import { ShellModule } from './shell/shell.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-
 import { firebaseConfig } from '../environments/firebaseConfig';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -44,6 +44,8 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     CustomersModule,
     DeliverersModule,
     OrdersModule,
+    ProfileModule,
+    ReportsModule,
     AuthModule,
     Angulartics2Module.forRoot(),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
