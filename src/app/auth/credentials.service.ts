@@ -20,23 +20,6 @@ const credentialsKey = 'YEYBYCREDENTIALS';
 export class CredentialsService {
   private _credentials: Credentials | null = null;
 
-  private routePermissions = {
-    admin: {
-      routes: [
-        'home',
-        'profile',
-        'reports',
-        'special-orders',
-        'about',
-        'companies',
-        'customers',
-        'deliverers',
-        'orders',
-      ],
-    },
-    user: { routes: ['home', 'profile', 'about', 'companies'] },
-  };
-
   constructor() {
     const savedCredentials = sessionStorage.getItem(credentialsKey) || localStorage.getItem(credentialsKey);
     if (savedCredentials) {
@@ -48,38 +31,12 @@ export class CredentialsService {
    * Checks is the user is authenticated.
    * @return True if the user is authenticated.
    */
-  isAuthenticated(route: string): boolean {
-    const activeUser: boolean =
-      this.credentials &&
-      this.credentials.type &&
-      (this.credentials.type === 'admin' || this.credentials.type === 'user') &&
-      this.credentials &&
-      this.credentials.status &&
-      this.credentials.status === 'active';
-    let activate: boolean[] = [];
-    if (this.credentials && this.credentials.type && this.credentials.type === 'admin') {
-      this.routePermissions.admin.routes.forEach((element: string) => {
-        activate.push(route.includes(element));
-      });
-      const index: number = activate.indexOf(true);
-      if (index > -1 && activeUser) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if (this.credentials && this.credentials.type && this.credentials.type === 'user') {
-      this.routePermissions.user.routes.forEach((element: string) => {
-        activate.push(route.includes(element));
-      });
-      const index: number = activate.indexOf(true);
-      if (index > -1 && activeUser) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+  isAuthenticated(access: string[]): boolean {
+    const index = access.indexOf(this.credentials.type);
+    if (this.credentials.uid && index > -1) {
+      return true;
     }
+    return false;
   }
 
   /**
@@ -99,7 +56,6 @@ export class CredentialsService {
    */
   setCredentials(credentials?: Credentials, remember?: boolean) {
     this._credentials = credentials || null;
-
     if (credentials) {
       const storage = remember ? localStorage : sessionStorage;
       storage.setItem(credentialsKey, JSON.stringify(credentials));

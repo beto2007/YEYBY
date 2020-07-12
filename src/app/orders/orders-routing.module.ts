@@ -8,13 +8,16 @@ import { DetailOrderSpecialComponent } from './detail-order-special/detail-order
 import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
-  Shell.childRoutes([
-    { path: '', redirectTo: '/orders', pathMatch: 'full' },
-    { path: 'orders', component: OrdersComponent, data: { title: extract('Pedidos') } },
-    { path: 'orders/type/:type', component: OrdersComponent, data: { title: extract('Pedidos') } },
-    { path: 'orders/:id', component: DetailOrderComponent, data: { title: extract('Detalle') } },
-    { path: 'special-orders/:id', component: DetailOrderSpecialComponent, data: { title: extract('Detalle') } },
-  ]),
+  Shell.childRoutes(
+    [
+      { path: '', redirectTo: '/orders', pathMatch: 'full' },
+      { path: 'orders', component: OrdersComponent, data: { title: extract('Pedidos') } },
+      { path: 'orders/type/:type', component: OrdersComponent, data: { title: extract('Pedidos') } },
+      { path: 'orders/:id', component: DetailOrderComponent, data: { title: extract('Detalle') } },
+      { path: 'special-orders/:id', component: DetailOrderSpecialComponent, data: { title: extract('Detalle') } },
+    ],
+    ['admin']
+  ),
 ];
 
 @NgModule({

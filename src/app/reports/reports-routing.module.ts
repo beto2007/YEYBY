@@ -5,10 +5,13 @@ import { ReportsComponent } from './reports.component';
 import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
-  Shell.childRoutes([
-    { path: '', redirectTo: '/reports', pathMatch: 'full' },
-    { path: 'reports', component: ReportsComponent, data: { title: extract('Reportes') } },
-  ]),
+  Shell.childRoutes(
+    [
+      { path: '', redirectTo: '/reports', pathMatch: 'full' },
+      { path: 'reports', component: ReportsComponent, data: { title: extract('Reportes') } },
+    ],
+    ['admin']
+  ),
 ];
 
 @NgModule({

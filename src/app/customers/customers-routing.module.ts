@@ -7,11 +7,14 @@ import { DetailCustomersComponent } from './detail-customers/detail-customers.co
 import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
-  Shell.childRoutes([
-    { path: '', redirectTo: '/customers', pathMatch: 'full' },
-    { path: 'customers', component: CustomersComponent, data: { title: extract('Clientes') } },
-    { path: 'customers/:id', component: DetailCustomersComponent, data: { title: extract('Detalle') } },
-  ]),
+  Shell.childRoutes(
+    [
+      { path: '', redirectTo: '/customers', pathMatch: 'full' },
+      { path: 'customers', component: CustomersComponent, data: { title: extract('Clientes') } },
+      { path: 'customers/:id', component: DetailCustomersComponent, data: { title: extract('Detalle') } },
+    ],
+    ['admin']
+  ),
 ];
 
 @NgModule({

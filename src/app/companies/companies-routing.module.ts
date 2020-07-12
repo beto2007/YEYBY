@@ -7,11 +7,14 @@ import { DetailCompanyComponent } from './detail-company/detail-company.componen
 import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
-  Shell.childRoutes([
-    { path: '', redirectTo: '/companies', pathMatch: 'full' },
-    { path: 'companies', component: CompaniesComponent, data: { title: extract('Empresas') } },
-    { path: 'companies/:id', component: DetailCompanyComponent, data: { title: extract('Detalle') } },
-  ]),
+  Shell.childRoutes(
+    [
+      { path: '', redirectTo: '/companies', pathMatch: 'full' },
+      { path: 'companies', component: CompaniesComponent, data: { title: extract('Empresas') } },
+      { path: 'companies/:id', component: DetailCompanyComponent, data: { title: extract('Detalle') } },
+    ],
+    ['admin', 'company']
+  ),
 ];
 
 @NgModule({
