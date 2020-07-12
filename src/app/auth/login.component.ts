@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       )
       .subscribe(
         (credentials) => {
-          this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
+          this.router.navigate(['/']);
         },
         (error) => {
           log.error(error);

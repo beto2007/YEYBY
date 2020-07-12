@@ -22,6 +22,7 @@ export class ShellComponent {
       { title: 'Empresas', link: '/companies', icon: 'briefcase' },
       { title: 'Órdenes', link: '/orders', icon: 'document-text' },
       { title: 'Reportes de repartidores', link: '/reports', icon: 'calculator-outline' },
+      { title: 'Crear órden', link: '/create-order', icon: 'receipt-outline' },
       { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
     company: [
@@ -30,6 +31,7 @@ export class ShellComponent {
     ],
     secretary: [
       { title: 'Inicio', link: '/home', icon: 'home' },
+      { title: 'Crear órden', link: '/create-order', icon: 'receipt-outline' },
       { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
   };
@@ -96,7 +98,7 @@ export class ShellComponent {
   }
 
   private logout() {
-    this.authenticationService.logout().subscribe(() => this.router.navigate(['/login'], { replaceUrl: true }));
+    this.authenticationService.logout().subscribe(() => this.router.navigate(['/login']));
   }
 
   get isWeb(): boolean {

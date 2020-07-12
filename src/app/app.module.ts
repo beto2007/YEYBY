@@ -24,6 +24,7 @@ import { firebaseConfig } from '../environments/firebaseConfig';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { CreateOrderByStepsModule } from './create-order-by-steps/create-order-by-steps.module';
 
 @NgModule({
   imports: [
@@ -46,6 +47,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     OrdersModule,
     ProfileModule,
     ReportsModule,
+    CreateOrderByStepsModule,
     AuthModule,
     Angulartics2Module.forRoot(),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
