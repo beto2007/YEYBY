@@ -11,23 +11,17 @@ import { Subscription } from 'rxjs';
 export class HomeComponent implements OnInit {
   quote: string | undefined;
   isLoading = false;
-  isAdmin: boolean = false;
+  userType: string | 'admin' | 'company';
   collection: AngularFirestoreCollection;
   subscription: Subscription;
   companies: any[];
 
   constructor(private credentialsService: CredentialsService, private afs: AngularFirestore) {
-    this.isAdmin =
-      this.credentialsService &&
-      this.credentialsService.credentials &&
-      this.credentialsService.credentials.type &&
-      this.credentialsService.credentials.type === 'admin'
-        ? true
-        : false;
+    this.userType = this.credentialsService.credentials.type;
   }
 
   ngOnInit() {
-    if (this.isAdmin === false) {
+    if (this.userType === 'company') {
       this.getMyCompanies();
     }
   }

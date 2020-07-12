@@ -32,8 +32,8 @@ export class CredentialsService {
    * @return True if the user is authenticated.
    */
   isAuthenticated(access: string[]): boolean {
-    const index = access.indexOf(this.credentials.type);
-    if (this.credentials.uid && index > -1) {
+    const index = access.indexOf(this.credentials && this.credentials.type ? this.credentials.type : undefined);
+    if (this.credentials && this.credentials.uid && index > -1) {
       return true;
     }
     return false;

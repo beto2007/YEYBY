@@ -11,7 +11,7 @@ export class SessionGuard implements CanActivate {
   constructor(private router: Router, private credentialsService: CredentialsService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (!this.credentialsService.credentials.uid) {
+    if (!(this.credentialsService && this.credentialsService.credentials && this.credentialsService.credentials.uid)) {
       return true;
     }
     log.debug('Authenticated, redirecting...');

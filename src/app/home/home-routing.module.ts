@@ -10,7 +10,7 @@ const routes: Routes = [
       { path: '', redirectTo: '/home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent, data: { title: extract('Home') } },
     ],
-    ['admin', 'company']
+    ['admin', 'company', 'secretary']
   ),
 ];
 

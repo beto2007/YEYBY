@@ -11,7 +11,13 @@ export class AuthenticationGuard implements CanActivate {
   constructor(private router: Router, private credentialsService: CredentialsService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.credentialsService.isAuthenticated(route.routeConfig.data.access)) {
+    if (
+      this.credentialsService.isAuthenticated(
+        route && route.routeConfig && route.routeConfig.data && route.routeConfig.data.access
+          ? route.routeConfig.data.access
+          : []
+      )
+    ) {
       return true;
     }
     log.debug('Not authenticated, redirecting and adding redirect url...');

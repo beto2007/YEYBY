@@ -24,7 +24,11 @@ export class ShellComponent {
       { title: 'Reportes de repartidores', link: '/reports', icon: 'calculator-outline' },
       { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
-    user: [
+    company: [
+      { title: 'Inicio', link: '/home', icon: 'home' },
+      { title: 'Configuración', link: '/profile', icon: 'build' },
+    ],
+    secretary: [
       { title: 'Inicio', link: '/home', icon: 'home' },
       { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
@@ -46,8 +50,20 @@ export class ShellComponent {
       this.credentialsService.credentials.type === 'admin'
     ) {
       this.routes = this.routesPermissions.admin;
-    } else {
-      this.routes = this.routesPermissions.user;
+    } else if (
+      this.credentialsService &&
+      this.credentialsService.credentials &&
+      this.credentialsService.credentials.type &&
+      this.credentialsService.credentials.type === 'company'
+    ) {
+      this.routes = this.routesPermissions.company;
+    } else if (
+      this.credentialsService &&
+      this.credentialsService.credentials &&
+      this.credentialsService.credentials.type &&
+      this.credentialsService.credentials.type === 'secretary'
+    ) {
+      this.routes = this.routesPermissions.secretary;
     }
   }
 
