@@ -1,0 +1,52 @@
+ion-slides {
+  height: 100%;
+  text-align: left;
+}
+
+img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.swiper-slide {
+  display: block;
+}
+
+.swiper-slide h2 {
+}
+
+.swiper-slide img {
+}
+
+b {
+  font-weight: 500;
+}
+
+p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ion-color-step-600, #60646b);
+}
+
+p b {
+  color: var(--ion-text-color, #000000);
+}
+
+.my-item-light {
+  --border-radius: 5px;
+  --border-color: #000000;
+  --background: var(--ion-color-primary) url("../../assets/img/pattern-2.png") scroll;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-dark {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: #000000 url("../../assets/img/pattern.png") scroll;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}

@@ -8,6 +8,7 @@ import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
 import { CreateOrderByStepsRoutingModule } from './create-order-by-steps-routing.module';
 import { CreateOrderByStepsComponent } from './create-order-by-steps.component';
+import { CustomersModule } from '../customers/customers.module';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import { CreateOrderByStepsComponent } from './create-order-by-steps.component';
     Angulartics2Module,
     CreateOrderByStepsRoutingModule,
     ReactiveFormsModule,
+    CustomersModule,
   ],
   declarations: [CreateOrderByStepsComponent],
 })
