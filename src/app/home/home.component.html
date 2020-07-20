@@ -7,16 +7,20 @@
   </ion-toolbar>
 </ion-header>
 <ion-content color="light">
-  <ion-card class="ion-text-center" color="dark">
-    <br />
-    <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
-    <ion-card-content>
-      <ion-card-title>
-        <span>YEYBY - Panel Administrativo</span>
-      </ion-card-title>
-    </ion-card-content>
-  </ion-card>
   <ion-grid fixed *ngIf="userType === 'admin'">
+    <ion-row>
+      <ion-col size="12">
+        <ion-card class="ion-text-center" color="dark">
+          <br />
+          <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
+          <ion-card-content>
+            <ion-card-title>
+              <span>YEYBY - Panel Administrativo</span>
+            </ion-card-title>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
     <ion-row>
       <ion-col size-xl=" 4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
         <ion-button color="primary" expand="block" size="large" routerLink="/customers">
