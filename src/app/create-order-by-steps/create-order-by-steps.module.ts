@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 import { Angulartics2Module } from 'angulartics2';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoreModule } from '@core';
 import { SharedModule } from '@shared';
 import { CreateOrderByStepsRoutingModule } from './create-order-by-steps-routing.module';
@@ -19,6 +19,7 @@ import { CustomersModule } from '../customers/customers.module';
     IonicModule,
     Angulartics2Module,
     CreateOrderByStepsRoutingModule,
+    FormsModule,
     ReactiveFormsModule,
     CustomersModule,
   ],

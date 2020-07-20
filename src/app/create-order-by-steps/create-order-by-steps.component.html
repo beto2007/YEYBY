@@ -10,220 +10,497 @@
   <ion-grid fixed>
     <ion-row>
       <ion-col size="12">
-        <ion-slides #sliderRef [pager]="true" (ionSlideDidChange)="ionSlideDidChange($event)">
-          <ion-slide>
-            <ion-card>
-              <ion-card-header color="dark" class="ion-text-start">
-                <ion-card-title>Selecciona el tipo de operacion</ion-card-title>
-              </ion-card-header>
-              <ion-card-content class="ion-no-padding">
-                <ion-grid>
-                  <ion-row>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-item lines="full" button (click)="next()" mode="md" class="ion-margin-bottom my-item-light">
-                        <ion-icon color="dark" name="receipt-outline" slot="start" size="large"> </ion-icon>
-                        <ion-label class="ion-text-wrap">
-                          <h2>
-                            <strong>Generar órden</strong>
-                          </h2>
-                          <p>
-                            Se creará una órden con alguno de los restaurantes registrados en Yeyby.
-                          </p>
-                        </ion-label>
-                        <ion-icon color="dark" name="add" slot="end"></ion-icon>
-                      </ion-item>
-                    </ion-col>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-item lines="full" button (click)="next()" mode="md" class="ion-margin-bottom my-item-dark">
-                        <ion-icon color="primary" name="bicycle-outline" slot="start" size="large"> </ion-icon>
-                        <ion-label class="ion-text-wrap">
-                          <h2>
-                            <strong>Generar envío</strong>
-                          </h2>
-                          <p>Se creará una envío a alguno de nuestros clientes. <br />.</p>
-                        </ion-label>
-                        <ion-icon color="primary" name="add" slot="end"></ion-icon>
-                      </ion-item>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-card-content>
-            </ion-card>
-          </ion-slide>
-          <ion-slide>
-            <ion-card>
-              <ion-card-header color="dark" class="ion-text-start">
-                <ion-card-title>Seleccionar cliente</ion-card-title>
-              </ion-card-header>
-              <ion-card-content class="ion-no-padding">
-                <ion-grid>
-                  <ion-row>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-item
-                        lines="full"
-                        button
-                        (click)="selectCustomer()"
-                        mode="md"
-                        class="ion-margin-bottom my-item-dark"
-                      >
-                        <ion-icon color="primary" name="people-outline" slot="start" size="large"> </ion-icon>
-                        <ion-label class="ion-text-wrap">
-                          <h2>
-                            <strong>Buscar cliente</strong>
-                          </h2>
-                          <p>
-                            Buscar en clientes ya registrados en Yeyby.
-                          </p>
-                        </ion-label>
-                        <ion-icon color="primary" name="search" slot="end"></ion-icon>
-                      </ion-item>
-                    </ion-col>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-item
-                        lines="full"
-                        button
-                        (click)="createCustomer()"
-                        mode="md"
-                        class="ion-margin-bottom my-item-light"
-                      >
-                        <ion-icon color="dark" name="person-add-outline" slot="start" size="large"> </ion-icon>
-                        <ion-label class="ion-text-wrap">
-                          <h2>
-                            <strong>Agregar cliente</strong>
-                          </h2>
-                          <p>
-                            Agregar un cliente nuevo.
-                          </p>
-                        </ion-label>
-                        <ion-icon color="dark" name="add" slot="end"></ion-icon>
-                      </ion-item>
-                    </ion-col>
-                  </ion-row>
-                  <ion-row>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-item lines="none">
-                        <ion-avatar slot="start">
-                          <img src="../../assets/no-image.png" />
-                        </ion-avatar>
-                        <ion-label>
-                          <h2>Sin cliente asignado</h2>
-                        </ion-label>
-                      </ion-item>
-                    </ion-col>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-button
-                        (click)="next()"
-                        expand="block"
-                        color="success"
-                        class="ion-margin-bottom"
-                        size="large"
-                      >
-                        Continuar
-                        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
-                      </ion-button>
-                    </ion-col>
-                  </ion-row>
-                  <ion-row>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-button (click)="back()" expand="block" shape="outline" class="ion-margin-bottom">
-                        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-                        Regresar
-                      </ion-button>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-card-content>
-            </ion-card>
-          </ion-slide>
-          <ion-slide>
-            <ion-card>
-              <ion-card-header color="dark" class="ion-text-start">
-                <ion-card-title>Seleccionar empresa</ion-card-title>
-              </ion-card-header>
-              <ion-card-content class="ion-no-padding">
-                <ion-grid>
-                  <ion-row>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-item
-                        lines="full"
-                        button
-                        (click)="selectCompany()"
-                        mode="md"
-                        class="ion-margin-bottom my-item-dark"
-                      >
-                        <ion-icon color="primary" name="fast-food-outline" slot="start" size="large"> </ion-icon>
-                        <ion-label class="ion-text-wrap">
-                          <h2>
-                            <strong>Buscar empresa</strong>
-                          </h2>
-                          <p>
-                            Buscar empresas registradas en Yeyby.
-                          </p>
-                        </ion-label>
-                        <ion-icon color="primary" name="search" slot="end"></ion-icon>
-                      </ion-item>
-                    </ion-col>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-button
-                        (click)="next()"
-                        expand="block"
-                        color="success"
-                        class="ion-margin-bottom"
-                        size="large"
-                      >
-                        Continuar
-                        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
-                      </ion-button>
-                    </ion-col>
-                  </ion-row>
-                  <ion-row>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-item lines="none">
-                        <ion-thumbnail slot="start">
-                          <img src="../../assets/no-image.png" />
-                        </ion-thumbnail>
-                        <ion-label>
-                          <h2>Sin empresa asignada</h2>
-                        </ion-label>
-                      </ion-item>
-                    </ion-col>
-                    <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
-                      <ion-button (click)="back()" expand="block" shape="outline" class="ion-margin-bottom">
-                        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-                        Regresar
-                      </ion-button>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-card-content>
-            </ion-card>
-          </ion-slide>
-          <ion-slide>
-            <ion-card>
-              <ion-card-header>
-                <ion-card-subtitle>Destination</ion-card-subtitle>
-                <ion-card-title>Madison, WI</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the
-                Wisconsin Territory in 1836.
-              </ion-card-content>
-            </ion-card>
-          </ion-slide>
-          <ion-slide>
-            <ion-card>
-              <ion-card-header>
-                <ion-card-subtitle>Destination</ion-card-subtitle>
-                <ion-card-title>Madison, WI</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the
-                Wisconsin Territory in 1836.
-              </ion-card-content>
-            </ion-card>
-          </ion-slide>
-        </ion-slides>
+        <!-- paso 1 // seleccionar el tipo de opreacion -->
+        <div *ngIf="step === 1">
+          <ion-card>
+            <ion-card-header color="dark" class="ion-text-start">
+              <ion-card-title>Selecciona el tipo de operacion</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-item
+                      lines="full"
+                      button
+                      (click)="step1('orden')"
+                      mode="md"
+                      class="ion-margin-bottom my-item-light"
+                    >
+                      <ion-icon color="dark" name="receipt-outline" slot="start" size="large"> </ion-icon>
+                      <ion-label class="ion-text-wrap">
+                        <h2>
+                          <strong>Generar órden</strong>
+                        </h2>
+                        <p>
+                          Se creará una órden con alguno de los restaurantes registrados en Yeyby.
+                        </p>
+                      </ion-label>
+                      <ion-icon color="dark" name="add" slot="end"></ion-icon>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-item
+                      lines="full"
+                      button
+                      (click)="step1('envio')"
+                      mode="md"
+                      class="ion-margin-bottom my-item-dark"
+                    >
+                      <ion-icon color="primary" name="bicycle-outline" slot="start" size="large"> </ion-icon>
+                      <ion-label class="ion-text-wrap">
+                        <h2>
+                          <strong>Generar envío</strong>
+                        </h2>
+                        <p>Se creará una envío a alguno de nuestros clientes.</p>
+                      </ion-label>
+                      <ion-icon color="primary" name="add" slot="end"></ion-icon>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <!-- paso 2 // seleccionar usuario-->
+        <div *ngIf="step === 2">
+          <ion-card>
+            <ion-card-header color="dark" class="ion-text-start">
+              <ion-card-title>Seleccionar cliente</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-item
+                      lines="full"
+                      button
+                      (click)="selectCustomer()"
+                      mode="md"
+                      class="ion-margin-bottom my-item-dark"
+                    >
+                      <ion-icon color="primary" name="people-outline" slot="start" size="large"> </ion-icon>
+                      <ion-label class="ion-text-wrap">
+                        <h2>
+                          <strong>Buscar cliente</strong>
+                        </h2>
+                        <p>
+                          Buscar en clientes ya registrados en Yeyby.
+                        </p>
+                      </ion-label>
+                      <ion-icon color="primary" name="search" slot="end"></ion-icon>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-item
+                      lines="full"
+                      button
+                      (click)="createCustomer()"
+                      mode="md"
+                      class="ion-margin-bottom my-item-light"
+                    >
+                      <ion-icon color="dark" name="person-add-outline" slot="start" size="large"> </ion-icon>
+                      <ion-label class="ion-text-wrap">
+                        <h2>
+                          <strong>Agregar cliente</strong>
+                        </h2>
+                        <p>
+                          Agregar un cliente nuevo.
+                        </p>
+                      </ion-label>
+                      <ion-icon color="dark" name="add" slot="end"></ion-icon>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="customer">
+                  <ion-col size="12">
+                    <ion-item lines="none">
+                      <ion-avatar slot="start">
+                        <img
+                          [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/no-image.png'"
+                        />
+                      </ion-avatar>
+                      <ion-label>
+                        <h2>{{ customer?.name ? customer?.name : 'Sin cliente asignado' }}</h2>
+                        <p><strong>Folio:</strong> {{ customer?.folio ? customer?.folio : '' }}</p>
+                      </ion-label>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button (click)="back()" expand="block" shape="outline" class="ion-margin-bottom">
+                      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+                      Regresar
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button
+                      (click)="step2()"
+                      color="success"
+                      expand="block"
+                      class="ion-margin-bottom"
+                      *ngIf="customer"
+                      [disabled]="!customer"
+                    >
+                      Continuar
+                      <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <!-- paso 3 // seleccionar empresa-->
+        <div *ngIf="step === 3">
+          <ion-card>
+            <ion-card-header color="dark" class="ion-text-start">
+              <ion-card-title>Seleccionar empresa</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-item
+                      lines="full"
+                      button
+                      (click)="selectCompany()"
+                      mode="md"
+                      class="ion-margin-bottom my-item-dark"
+                    >
+                      <ion-icon color="primary" name="fast-food-outline" slot="start" size="large"> </ion-icon>
+                      <ion-label class="ion-text-wrap">
+                        <h2>
+                          <strong>Buscar empresa</strong>
+                        </h2>
+                        <p>
+                          Buscar empresas registradas en Yeyby.
+                        </p>
+                      </ion-label>
+                      <ion-icon color="primary" name="search" slot="end"></ion-icon>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="company">
+                  <ion-col size="12">
+                    <ion-item lines="none">
+                      <ion-thumbnail slot="start">
+                        <img
+                          [src]="company?.image?.main?.url ? company?.image?.main?.url : '../../assets/no-image.png'"
+                        />
+                      </ion-thumbnail>
+                      <ion-label>
+                        <h2>{{ company?.name ? company?.name : 'Sin empresa asignada' }}</h2>
+                        <p><strong>Folio:</strong> {{ company?.folio ? company?.folio : '' }}</p>
+                      </ion-label>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button (click)="back()" expand="block" shape="outline" class="ion-margin-bottom">
+                      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+                      Regresar
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button
+                      (click)="step3()"
+                      color="success"
+                      expand="block"
+                      class="ion-margin-bottom"
+                      *ngIf="company"
+                      [disabled]="!company"
+                    >
+                      Continuar
+                      <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <!-- paso 4 // seleccionar menu-->
+        <div *ngIf="step === 4">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                <strong> Seleccionar productos </strong>
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list>
+                <div *ngFor="let entry of menu">
+                  <ion-item lines="none" class="ion-no-padding">
+                    <ion-label>
+                      <div class="ion-text-wrap">
+                        <strong> &bull; {{ entry.name }} </strong>
+                      </div>
+                    </ion-label>
+                    <ion-checkbox
+                      slot="end"
+                      [disabled]="!entry.active"
+                      [(ngModel)]="entry.isChecked"
+                      (ionChange)="calculate()"
+                    ></ion-checkbox>
+                  </ion-item>
+                  <ion-item
+                    *ngIf="entry?.description || entry?.observations"
+                    lines="none"
+                    class="ion-no-padding"
+                    [disabled]="!entry.active"
+                  >
+                    <ion-label>
+                      <div class="ion-text-wrap">
+                        <p *ngIf="entry?.description as data">&bull; {{ data }}</p>
+                        <p *ngIf="entry?.observations as data">&bull; {{ data }}</p>
+                      </div>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item class="ion-no-padding" [disabled]="!entry.active">
+                    <ion-label slot="start">
+                      <div class="ion-text-wrap">
+                        {{ entry.price | currency: 'USD' }}
+                      </div>
+                    </ion-label>
+                    <ion-label slot="end">
+                      <div class="ion-text-wrap">
+                        <small>
+                          <strong>
+                            x
+                          </strong>
+                        </small>
+                      </div>
+                    </ion-label>
+                    <ion-input
+                      slot="end"
+                      class="ion-text-end"
+                      type="number"
+                      [(ngModel)]="entry.quantity"
+                      placeholder="Cantidad"
+                      min="1"
+                      max="10"
+                      (ionChange)="calculate()"
+                    ></ion-input>
+                  </ion-item>
+                </div>
+                <ion-item lines="none" class="ion-no-padding">
+                  <ion-label>
+                    <div class="ion-text-wrap">
+                      <strong>
+                        &bull; Otro
+                      </strong>
+                    </div>
+                  </ion-label>
+                  <ion-checkbox slot="end" [(ngModel)]="otherProduct.isChecked" (ionChange)="calculate()">
+                  </ion-checkbox>
+                </ion-item>
+                <ion-item class="ion-no-padding">
+                  <ion-input
+                    slot="start"
+                    type="number"
+                    placeholder="Precio"
+                    min="1"
+                    [(ngModel)]="otherProduct.price"
+                    (ionChange)="calculate()"
+                  >
+                  </ion-input>
+                  <ion-label slot="end">
+                    <div class="ion-text-wrap">
+                      <small>
+                        <strong>
+                          x
+                        </strong>
+                      </small>
+                    </div>
+                  </ion-label>
+                  <ion-input
+                    slot="end"
+                    class="ion-text-end"
+                    type="number"
+                    placeholder="Cantidad"
+                    min="1"
+                    max="10"
+                    [(ngModel)]="otherProduct.quantity"
+                    (ionChange)="calculate()"
+                  >
+                  </ion-input>
+                </ion-item>
+                <ion-item class="ion-no-padding" lines="none">
+                  <ion-label position="stacked"> </ion-label>
+                  <ion-textarea rows="3" placeholder="Describe el producto" [(ngModel)]="otherProduct.description">
+                  </ion-textarea>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-content>
+              <ion-list>
+                <ion-item lines="none">
+                  <ion-label class="ion-text-wrap">
+                    <strong>
+                      Costo de orden
+                    </strong>
+                  </ion-label>
+                  <ion-label class="ion-text-end">
+                    {{ totalOrder | currency: 'USD' }}
+                  </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label class="ion-text-wrap">
+                    <strong>
+                      Costo de envío
+                    </strong>
+                  </ion-label>
+                  <ion-input
+                    slot="end"
+                    class="ion-text-end"
+                    type="number"
+                    [(ngModel)]="shippingPrice"
+                    placeholder="Costo de envío"
+                    min="0"
+                    (ionChange)="calculate()"
+                  >
+                  </ion-input>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label>
+                    <h1>
+                      <strong>
+                        Total
+                      </strong>
+                    </h1>
+                  </ion-label>
+                  <ion-label class="ion-text-end">
+                    <h1>
+                      {{ total | currency: 'USD' }}
+                    </h1>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <!-- paso 5 // seleccionar lugar de entrega-->
+        <div *ngIf="step === 5">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Lugar de entrega
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list>
+                <ion-radio-group [(ngModel)]="deliveryAddress">
+                  <ion-item>
+                    <ion-label>
+                      <div class="ion-text-wrap">
+                        {{ customer?.streetAddress }}
+                      </div>
+                    </ion-label>
+                    <ion-radio slot="start" value="default"></ion-radio>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label>Otro</ion-label>
+                    <ion-radio slot="start" value="other"></ion-radio>
+                  </ion-item>
+                </ion-radio-group>
+              </ion-list>
+              <div *ngIf="deliveryAddress === 'other'">
+                <ion-item>
+                  <ion-label position="stacked">Agregar lugar de entrega</ion-label>
+                  <ion-textarea
+                    rows="3"
+                    [(ngModel)]="deliveryLocation"
+                    placeholder="Especifique el lugar de entrega..."
+                  >
+                  </ion-textarea>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">Agregar referencia</ion-label>
+                  <ion-textarea
+                    rows="3"
+                    [(ngModel)]="deliveryLocationReferences"
+                    placeholder="Agregar alguna referencia al lugar de entrega..."
+                  ></ion-textarea>
+                </ion-item>
+              </div>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button (click)="back()" expand="block" shape="outline" class="ion-margin-bottom">
+                      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+                      Regresar
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button
+                      (click)="step5()"
+                      color="success"
+                      expand="block"
+                      class="ion-margin-bottom"
+                      [disabled]="!company"
+                    >
+                      Continuar
+                      <ion-icon slot="end" name="checkmark-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <!-- paso 5 // seleccionar lugar de entrega-->
+        <div *ngIf="step === 6">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Resumen
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              dasjd ashdkjha skdjha jkshdjahs dkjhaskj dhaskjd haskjdhk jashdkj kjasdha shdkjahsdkj haskdjhask jasdhk
+              ashdkjhasadas d
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button (click)="back()" expand="block" shape="outline" class="ion-margin-bottom">
+                      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+                      Regresar
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+                    <ion-button (click)="finalize()" color="success" expand="block" class="ion-margin-bottom">
+                      Finalizar
+                      <ion-icon slot="end" name="checkmark-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>
+
+<ion-footer *ngIf="step === 4">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="back()" color="danger">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="step4()" color="success">
+        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+        Continuar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

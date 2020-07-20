@@ -20,6 +20,7 @@ export class AddCustomersComponent implements OnInit {
   middleSrc: any;
   file: File;
   imagesPath: string[] = [];
+  returnValue: boolean;
 
   constructor(
     private tools: ToolsService,
@@ -109,8 +110,8 @@ export class AddCustomersComponent implements OnInit {
     toast.present();
   }
 
-  close() {
-    this.modalController.dismiss({ modification: false });
+  close(data?: any) {
+    this.modalController.dismiss(data);
   }
 
   async add(): Promise<void> {
@@ -130,7 +131,10 @@ export class AddCustomersComponent implements OnInit {
       }
       const response: DocumentReference = await this.afs.collection('customers').add(data);
       if (response.id) {
-        this.close();
+        const response2 = await response.get();
+        const data = response2.data();
+        const id = response2.id;
+        this.close({ item: { id, ...data } });
         this.presentToast('Cliente agregado correctamente');
       } else {
         this.presentToast('Ha ocurrido un error');
