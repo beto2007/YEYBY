@@ -11,7 +11,6 @@ import { AngularFirestore } from '@angular/fire/firestore';
   styleUrls: ['./create-order-by-steps.component.scss'],
 })
 export class CreateOrderByStepsComponent implements OnInit {
-  // @ViewChild('sliderRef', { static: false }) slides: IonSlides;
   isLoading: boolean = false;
   customer: any;
   company: any;
@@ -30,6 +29,7 @@ export class CreateOrderByStepsComponent implements OnInit {
   deliveryAddress: string = 'default';
   deliveryLocation: string = '';
   public step: number = 1;
+  public type: 'orden' | 'envio';
 
   constructor(
     private afs: AngularFirestore,
@@ -46,7 +46,7 @@ export class CreateOrderByStepsComponent implements OnInit {
   }
 
   public step1(type: 'orden' | 'envio') {
-    console.log('type: ' + type);
+    this.type = type;
     this.step = 2;
   }
 
@@ -90,8 +90,6 @@ export class CreateOrderByStepsComponent implements OnInit {
     this.step = 1;
   }
 
-  ionSlideDidChange(e: any) {}
-
   public async selectCompany(): Promise<void> {
     const modal = await this.modalController.create({
       component: CompaniesComponent,
@@ -106,7 +104,7 @@ export class CreateOrderByStepsComponent implements OnInit {
         const menu = await this.afs.collection('companies').doc(this.company.id).collection('menu').ref.get();
         this.menu = menu.docs.map((element) => {
           let data = element.data();
-          data.quantity = 1;
+          data.quantity = 0;
           const id = element.id;
           return { id, ...data };
         });

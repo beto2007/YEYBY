@@ -1,36 +1,10 @@
-ion-slides {
-  height: 100%;
-  text-align: left;
-}
-
-img {
-  width: 100% !important;
-  height: 100% !important;
+.logo {
   display: block;
-}
-
-.swiper-slide {
-  display: block;
-}
-
-.swiper-slide h2 {
-}
-
-.swiper-slide img {
-}
-
-b {
-  font-weight: 500;
-}
-
-p {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--ion-color-step-600, #60646b);
-}
-
-p b {
-  color: var(--ion-text-color, #000000);
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .my-item-light {
@@ -49,4 +23,20 @@ p b {
   --color: #ffffff;
   --padding-top: 15px;
   --padding-bottom: 15px;
+}
+
+.button-yeiby {
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  height: auto !important;
+}
+
+.button-yeiby-no-shadow {
+  --box-shadow: none;
+}
+
+.button-yeiby-no-padding {
+  --padding-end: 0px !important;
+  --padding-start: 0px !important;
+  --margin: 0 !important;
 }
