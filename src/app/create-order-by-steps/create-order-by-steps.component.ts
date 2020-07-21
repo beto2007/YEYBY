@@ -15,6 +15,7 @@ export class CreateOrderByStepsComponent implements OnInit {
   customer: any;
   company: any;
   menu: any[];
+  companyMenu: any[];
   address: any;
   public otherProduct = {
     isChecked: false,
@@ -26,7 +27,7 @@ export class CreateOrderByStepsComponent implements OnInit {
   total: number = 0;
   public shippingPrice: number = 30;
   deliveryLocationReferences: string = '';
-  deliveryAddress: string = 'default';
+  deliveryAddress: string;
   deliveryLocation: string = '';
   public step: number = 1;
   public type: 'orden' | 'envio';
@@ -73,6 +74,7 @@ export class CreateOrderByStepsComponent implements OnInit {
   reset() {
     this.customer = undefined;
     this.company = undefined;
+    this.companyMenu = undefined;
     this.menu = undefined;
     this.address = undefined;
     this.otherProduct = {
@@ -102,7 +104,7 @@ export class CreateOrderByStepsComponent implements OnInit {
       if (response && response.data && response.data.item && response.data.item.id) {
         this.company = response.data.item;
         const menu = await this.afs.collection('companies').doc(this.company.id).collection('menu').ref.get();
-        this.menu = menu.docs.map((element) => {
+        this.companyMenu = menu.docs.map((element) => {
           let data = element.data();
           data.quantity = 0;
           const id = element.id;
@@ -157,10 +159,17 @@ export class CreateOrderByStepsComponent implements OnInit {
   calculate() {
     this.totalOrder = 0;
     this.total = 0;
-    if (this.menu) {
-      this.menu.forEach((item) => {
+
+    if (this.companyMenu) {
+      this.companyMenu.forEach((item) => {
         if (item.active === true && item.isChecked === true && item.quantity > 0) {
           this.totalOrder = this.totalOrder + item.quantity * item.price;
+        }
+      });
+      this.menu = [];
+      this.menu = this.companyMenu.filter((item) => {
+        if (item && item.active && item.active === true && item.quantity && item.quantity > 0) {
+          return item;
         }
       });
     }
@@ -168,5 +177,19 @@ export class CreateOrderByStepsComponent implements OnInit {
       this.totalOrder = this.totalOrder + this.otherProduct.quantity * this.otherProduct.price;
     }
     this.total = this.totalOrder + this.shippingPrice;
+  }
+
+  change(event: any) {
+    if (event && event.target && event.target.value && event.target.value === 'default') {
+      this.address = {
+        references: this.customer.references,
+        streetAddress: this.customer.streetAddress,
+      };
+    } else if (event && event.target && event.target.value && event.target.value === 'other') {
+      this.address = {
+        references: this.deliveryLocationReferences,
+        streetAddress: this.deliveryLocation,
+      };
+    }
   }
 }

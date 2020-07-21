@@ -40,3 +40,18 @@
   --padding-start: 0px !important;
   --margin: 0 !important;
 }
+
+.yeyby-wrap {
+  display: block;
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+.divider {
+  display: block;
+  height: 40px;
+  border-right: 3px dashed var(--ion-color-success);
+  width: 50%;
+  margin: 5px 1.5px;
+}
