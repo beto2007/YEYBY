@@ -26,6 +26,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { CreateOrderByStepsModule } from './create-order-by-steps/create-order-by-steps.module';
 import { FinishedOrdersModule } from './finished-orders/finished-orders.module';
+import { PendingOrdersModule } from './pending-orders/pending-orders.module';
 
 @NgModule({
   imports: [
@@ -50,6 +51,7 @@ import { FinishedOrdersModule } from './finished-orders/finished-orders.module';
     ReportsModule,
     CreateOrderByStepsModule,
     FinishedOrdersModule,
+    PendingOrdersModule,
     AuthModule,
     Angulartics2Module.forRoot(),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
