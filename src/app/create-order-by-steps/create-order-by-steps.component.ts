@@ -4,6 +4,8 @@ import { CompaniesComponent } from '@app/companies/companies.component';
 import { CustomersComponent } from '@app/customers/customers.component';
 import { AddCustomersComponent } from '@app/customers/add-customers/add-customers.component';
 import { AngularFirestore } from '@angular/fire/firestore';
+import * as moment from 'moment';
+import { ToolsService } from '@app/@shared/services/tools/tools.service';
 
 @Component({
   selector: 'app-create-order-by-steps',
@@ -35,10 +37,46 @@ export class CreateOrderByStepsComponent implements OnInit {
   constructor(
     private afs: AngularFirestore,
     private modalController: ModalController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private tools: ToolsService
   ) {}
 
   ngOnInit(): void {}
+
+  async save() {
+    try {
+      let order = {};
+      if (this.type === 'orden') {
+        order = {
+          type: this.type,
+          deliveryPlace: this.address,
+          collectionPlace: {
+            streetAddress: this.company.streetAddress,
+            references: this.company.references,
+          },
+          customer: {
+            id: this.customer.id,
+            folio: this.customer.folio,
+            name: this.customer.name,
+          },
+          menu: this.menu,
+          company: {
+            name: this.company.name,
+            id: this.company.id,
+            folio: this.company.folio,
+          },
+          totalOrder: this.totalOrder,
+          shippingPrice: this.shippingPrice,
+          total: this.total,
+          date: moment().toDate(),
+          status: 'pending',
+        };
+      }
+      await this.afs.collection('ordersV2').add(order);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   public async back(): Promise<void> {
     if (this.step > 1) {
@@ -67,8 +105,19 @@ export class CreateOrderByStepsComponent implements OnInit {
     this.step = 6;
   }
 
-  public finalize() {
-    this.reset();
+  public async finalize() {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      await this.save();
+      this.reset();
+      this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
+    } catch (error) {
+      console.error(error);
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
   }
 
   reset() {
