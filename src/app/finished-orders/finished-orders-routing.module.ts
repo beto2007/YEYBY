@@ -8,7 +8,7 @@ const routes: Routes = [
   Shell.childRoutes(
     [
       { path: '', redirectTo: '/finished-orders', pathMatch: 'full' },
-      { path: 'finished-orders', component: FinishedOrdersComponent, data: { title: extract('Órdenes en espera') } },
+      { path: 'finished-orders', component: FinishedOrdersComponent, data: { title: extract('Órdenes terminadas') } },
     ],
     ['admin', 'secretary']
   ),
