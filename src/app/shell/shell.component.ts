@@ -20,9 +20,11 @@ export class ShellComponent {
       { title: 'Repartidores', link: '/deliverers', icon: 'bicycle' },
       { title: 'Clientes', link: '/customers', icon: 'person' },
       { title: 'Empresas', link: '/companies', icon: 'briefcase' },
-      { title: 'Órdenes', link: '/orders', icon: 'document-text' },
+      // { title: 'Órdenes', link: '/orders', icon: 'document-text' },
       { title: 'Reportes de repartidores', link: '/reports', icon: 'calculator-outline' },
       { title: 'Crear órden', link: '/create-order', icon: 'receipt-outline' },
+      { title: 'Órdenes en espera', link: '/pending-orders', icon: 'timer-outline' },
+      { title: 'Órdenes termindas', link: '/finished-orders', icon: 'shield-checkmark-outline' },
       { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
     company: [
@@ -32,6 +34,8 @@ export class ShellComponent {
     secretary: [
       { title: 'Inicio', link: '/home', icon: 'home' },
       { title: 'Crear órden', link: '/create-order', icon: 'receipt-outline' },
+      { title: 'Órdenes en espera', link: '/pending-orders', icon: 'timer-outline' },
+      { title: 'Órdenes termindas', link: '/finished-orders', icon: 'shield-checkmark-outline' },
       { title: 'Configuración', link: '/profile', icon: 'build' },
     ],
   };

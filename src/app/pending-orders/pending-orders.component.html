@@ -1,20 +1,96 @@
 <ion-header>
-  <ion-toolbar color="light">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title><span>Órdenes en espera</span></ion-title>
+    <ion-title> <span> Órdenes en espera</span></ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content color="light">
+
+<ion-content color="light" *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == false">
   <ion-grid fixed>
     <ion-row>
-      <ion-col size="12">
+      <ion-col>
+        <ion-text color="medium" class="ion-text-center ion-padding">
+          <h1>
+            <ion-icon class="big-icon" name="search"></ion-icon>
+          </h1>
+          <h3>Sin resultados</h3>
+          <p>No se encontraron resultados.</p>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-content color="light" *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == true">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col>
         <ion-list>
-          <ion-item lines="full">
-            <ion-label>Awesome Label</ion-label>
+          <ion-item *ngFor="let item of skeleton">
+            <ion-avatar slot="start">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <ion-label>
+              <h3>
+                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+              </h3>
+              <p>
+                <ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text>
+              </p>
+              <p>
+                <ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text>
+              </p>
+            </ion-label>
           </ion-item>
         </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-content color="light" *ngIf="arrayDocs && arrayDocs[0]">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of arrayDocs; let i = index" lines="full">
+            <ion-icon slot="start" [name]="item.type === 'special-order' ? 'star-outline' : 'receipt-outline'">
+            </ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h3 *ngIf="item?.company?.name as name">
+                <ion-icon name="briefcase"></ion-icon> <strong>{{ name }}</strong>
+              </h3>
+              <h3 *ngIf="item?.customer?.name as name"><ion-icon name="person"></ion-icon> {{ name }}</h3>
+              <p><strong>Inicio: </strong> {{ item?.dateStr }}</p>
+              <ion-chip color="success">
+                <ion-icon name="stopwatch-outline"></ion-icon>
+                <ion-label>{{ item?.time | async }}</ion-label>
+              </ion-chip>
+            </ion-label>
+            <ion-buttons slot="end">
+              <ion-button size="large" (click)="assignDeliverier(item?.id)">
+                <ion-icon size="large" slot="icon-only" src="assets\icons\motocicleta.svg"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button color="white" (click)="initializeApp('back')" [disabled]="!back || isLoading == true">
+          <ion-icon slot="icon-only" name="caret-back-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="white" (click)="initializeApp('forward')" [disabled]="!forward || isLoading == true">
+          <ion-icon slot="icon-only" name="caret-forward-outline"></ion-icon>
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
