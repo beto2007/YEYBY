@@ -3,9 +3,10 @@ import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Quer
 import { Subscription, Observable } from 'rxjs';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute } from '@angular/router';
+import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import * as moment from 'moment';
 import { interval } from 'rxjs';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-pending-orders',
@@ -35,7 +36,8 @@ export class PendingOrdersComponent implements OnInit {
     private afs: AngularFirestore,
     private tools: ToolsService,
     private aRoute: ActivatedRoute,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private modalController: ModalController
   ) {
     this.aRoute.params.subscribe((params) => {
       if (
@@ -213,17 +215,46 @@ export class PendingOrdersComponent implements OnInit {
     return String(times);
   }
 
-  async assignDeliverier(id: string) {
-    this.isLoading = true;
-    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-    loadingOverlay.present();
-    try {
-      this.afs.collection('ordersV2').doc(id).update({ status: 'finished' });
-      this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
-    } catch (error) {
-      console.error(error);
-    }
-    this.isLoading = false;
-    loadingOverlay.dismiss();
+  // async assignDeliverier(id: string) {
+  //   this.isLoading = true;
+  //   const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+  //   loadingOverlay.present();
+  //   try {
+  //     this.afs.collection('ordersV2').doc(id).update({ status: 'finished' });
+  //     this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  //   this.isLoading = false;
+  //   loadingOverlay.dismiss();
+  // }
+
+  public async assignDeliverier(id: string): Promise<void> {
+    const modal = await this.modalController.create({
+      component: DeliverersComponent,
+      componentProps: { mode: 'modal' },
+    });
+    modal.onDidDismiss().then(async (response) => {
+      this.isLoading = true;
+      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+      loadingOverlay.present();
+      if (response && response.data && response.data.item && response.data.item.id) {
+        this.afs
+          .collection('ordersV2')
+          .doc(id)
+          .update({
+            status: 'finished',
+            delivery: {
+              name: response.data.item.name,
+              folio: response.data.item.folio,
+              id: response.data.item.id,
+            },
+          });
+        this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
+      }
+      this.isLoading = false;
+      loadingOverlay.dismiss();
+    });
+    return await modal.present();
   }
 }
