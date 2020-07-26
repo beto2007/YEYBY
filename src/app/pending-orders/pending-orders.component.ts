@@ -15,14 +15,14 @@ import { LoadingController, ModalController } from '@ionic/angular';
 })
 export class PendingOrdersComponent implements OnInit {
   public skeleton: any[] = ['', '', '', '', '', ''];
-  public arrayDocs: any[];
+  public arrayDocs: any[] = [];
   public isLoading: boolean;
   private subscription: Subscription;
   private totalSubs: Subscription;
   public total: number = 0;
   public orderBy: string = 'date';
   public orderByDirection: any = 'asc';
-  private perPage: number = 5;
+  private perPage: number = 500;
   private mainCollection: string = 'ordersV2';
   private startAfter: any;
   private endBefore: any;
@@ -116,6 +116,9 @@ export class PendingOrdersComponent implements OnInit {
             this.arrayDocs = snap.map((element) => {
               const id: string = element.payload.doc.id;
               const data: any = element.payload.doc.data();
+              data.menuStr = Array.from(data.menu)
+                .map((e: any) => ' ' + e.name)
+                .toString();
               data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
               data.time = new Observable<string>((observer) => {
                 observer.next(this.getMinutes(data.date.toDate()));
@@ -214,20 +217,6 @@ export class PendingOrdersComponent implements OnInit {
     }
     return String(times);
   }
-
-  // async assignDeliverier(id: string) {
-  //   this.isLoading = true;
-  //   const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-  //   loadingOverlay.present();
-  //   try {
-  //     this.afs.collection('ordersV2').doc(id).update({ status: 'finished' });
-  //     this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  //   this.isLoading = false;
-  //   loadingOverlay.dismiss();
-  // }
 
   public async assignDeliverier(id: string): Promise<void> {
     const modal = await this.modalController.create({
