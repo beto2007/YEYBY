@@ -1,17 +1,23 @@
 <ion-header>
-  <ion-toolbar color="light">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title><span>Crear órden</span></ion-title>
+    <ion-title> <span> Crear órden</span></ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content color="light">
   <ion-grid fixed>
     <ion-row>
       <ion-col size="12">
         <!-- paso 1 seleccionar el tipo de operación -->
-        <div *ngIf="step === 1" class="yeyby-wrap">
+        <div *ngIf="step === 1">
           <ion-card>
             <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
             <ion-card-header>
@@ -120,7 +126,7 @@
           </ion-card>
         </div>
         <!-- paso 2 seleccionar usuario-->
-        <div *ngIf="step === 2" class="yeyby-wrap">
+        <div *ngIf="step === 2">
           <ion-card>
             <img
               class="logo"
@@ -240,7 +246,7 @@
           </ion-card>
         </div>
         <!-- paso 3 seleccionar empresa-->
-        <div *ngIf="step === 3" class="yeyby-wrap">
+        <div *ngIf="step === 3">
           <ion-card>
             <img
               class="logo"
@@ -360,7 +366,7 @@
           </ion-card>
         </div>
         <!-- paso 4 seleccionar menu-->
-        <div *ngIf="step === 4" class="yeyby-wrap">
+        <div *ngIf="step === 4">
           <ion-card>
             <ion-card-header>
               <ion-card-subtitle>Paso 4</ion-card-subtitle>
@@ -623,7 +629,7 @@
           </ion-card>
         </div>
         <!-- paso 5 seleccionar lugar de entrega-->
-        <div *ngIf="step === 5" class="yeyby-wrap">
+        <div *ngIf="step === 5">
           <ion-card>
             <ion-card-header>
               <ion-card-subtitle>Paso 5</ion-card-subtitle>
@@ -764,7 +770,7 @@
           </ion-card>
         </div>
         <!-- paso 6 resumen-->
-        <div *ngIf="step === 6" class="yeyby-wrap">
+        <div *ngIf="step === 6">
           <ion-card>
             <ion-card-header>
               <ion-card-subtitle>Paso 6</ion-card-subtitle>
