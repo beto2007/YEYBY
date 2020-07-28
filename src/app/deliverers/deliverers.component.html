@@ -69,16 +69,7 @@
             <ion-icon class="big-icon" name="search"></ion-icon>
           </h1>
           <h3>Sin resultados</h3>
-          <p>
-            No se encontraron resultados de {{ title.lowerCase.prural }}, ¿Desea agrear un
-            {{ title.lowerCase.singular }} nuevo?.
-          </p>
-          <div class="ion-text-center ion-padding">
-            <ion-button (click)="add()">
-              <ion-icon slot="start" name="add"></ion-icon>
-              Agregar
-            </ion-button>
-          </div>
+          <p>No se encontraron resultados de {{ title.lowerCase.prural }}</p>
         </ion-text>
       </ion-col>
     </ion-row>
@@ -120,11 +111,7 @@
           <div *ngFor="let item of arrayDocs; let i = index">
             <ion-item lines="full" *ngSwitchCase="'modal'">
               <ion-avatar slot="start">
-                <img
-                  [src]="
-                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
-                  "
-                />
+                <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
               </ion-avatar>
               <ion-label>
                 <h2>{{ item?.name }}</h2>
@@ -146,11 +133,7 @@
             </ion-item>
             <ion-item lines="full" *ngSwitchCase="'select'">
               <ion-avatar slot="start">
-                <img
-                  [src]="
-                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
-                  "
-                />
+                <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
               </ion-avatar>
               <ion-label>
                 <div class="ion-margin-vertical">
@@ -179,11 +162,7 @@
             </ion-item>
             <ion-item lines="full" *ngSwitchDefault>
               <ion-avatar slot="start">
-                <img
-                  [src]="
-                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
-                  "
-                />
+                <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
               </ion-avatar>
               <ion-label [routerLink]="['/deliverers/' + item.id]" routerDirection="forward">
                 <h2>{{ item?.name }}</h2>
@@ -221,7 +200,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!(mode === 'modal' || mode === 'select')">
     <ion-fab-button (click)="add()" [disabled]="isLoading == true">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

@@ -19,7 +19,7 @@
       <ion-col size="12">
         <!-- paso 1 seleccionar el tipo de operación -->
         <div *ngIf="step === 1">
-          <ion-card>
+          <ion-card class="ion-no-margin">
             <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
             <ion-card-header>
               <ion-card-subtitle>Paso 1</ion-card-subtitle>
@@ -128,7 +128,7 @@
         </div>
         <!-- paso 2 seleccionar usuario-->
         <div *ngIf="step === 2">
-          <ion-card>
+          <ion-card class="ion-no-margin">
             <img
               class="logo"
               [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/img/user_default.jpg'"
@@ -248,7 +248,7 @@
         </div>
         <!-- paso 3 seleccionar empresa-->
         <div *ngIf="step === 3">
-          <ion-card>
+          <ion-card class="ion-no-margin">
             <img
               class="logo"
               [src]="company?.image?.main?.url ? company?.image?.main?.url : '../../assets/img/restaurant.png'"
@@ -368,7 +368,7 @@
         </div>
         <!-- paso 4 seleccionar menu-->
         <div *ngIf="step === 4">
-          <ion-card>
+          <ion-card class="ion-no-margin">
             <ion-card-header>
               <ion-card-subtitle>Paso 4</ion-card-subtitle>
               <ion-card-title>
@@ -487,7 +487,7 @@
               </ion-list>
             </ion-card-content>
           </ion-card>
-          <ion-card>
+          <ion-card class="ion-no-margin">
             <ion-card-content>
               <ion-list>
                 <ion-item lines="none">
@@ -631,7 +631,7 @@
         </div>
         <!-- paso 5 seleccionar lugar de entrega-->
         <div *ngIf="step === 5">
-          <ion-card>
+          <ion-card class="ion-no-margin">
             <ion-card-header>
               <ion-card-subtitle>Paso 5</ion-card-subtitle>
               <ion-card-title>
@@ -772,7 +772,7 @@
         </div>
         <!-- paso 6 resumen-->
         <div *ngIf="step === 6">
-          <ion-card>
+          <ion-card class="ion-no-margin">
             <ion-card-header>
               <ion-card-subtitle>Paso 6</ion-card-subtitle>
               <ion-card-title>
