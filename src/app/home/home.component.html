@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -10,12 +10,14 @@
   <ion-grid fixed *ngIf="userType === 'admin' || userType === 'secretary'">
     <ion-row>
       <ion-col size="12">
-        <ion-card class="ion-text-center ion-no-margin ion-margin-vertical" color="dark">
+        <ion-card class="ion-text-center ion-no-margin ion-margin-vertical my-card-dark-5">
           <br />
           <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
           <ion-card-content>
             <ion-card-title>
-              <span>YEYBY - Panel Administrativo</span>
+              <ion-text color="light">
+                <span>YEYBY - Panel Administrativo</span>
+              </ion-text>
             </ion-card-title>
           </ion-card-content>
         </ion-card>
@@ -27,18 +29,18 @@
           lines="full"
           button
           mode="md"
-          class="ion-margin-bottom my-item-dark"
+          class="ion-no-margin my-item"
           routerLink="/create-order/type/orden"
           routerDirection="forward"
         >
-          <ion-icon color="primary" name="fast-food-outline" slot="start" size="large"> </ion-icon>
+          <ion-icon color="light" src="assets\icons\comida-rapida.svg" slot="start" class="icon-big"> </ion-icon>
           <ion-label class="ion-text-wrap">
             <h2>
               <strong>Crear órden</strong>
             </h2>
             <p></p>
           </ion-label>
-          <ion-icon name="add-outline" color="success" slot="end"></ion-icon>
+          <ion-icon name="add-outline" color="dark" slot="end"></ion-icon>
         </ion-item>
       </ion-col>
       <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
@@ -46,18 +48,18 @@
           lines="full"
           button
           mode="md"
-          class="ion-margin-bottom my-item-dark"
+          class="ion-no-margin my-item"
           routerLink="/create-order/type/envio"
           routerDirection="forward"
         >
-          <ion-icon color="primary" src="assets\icons\scooter.svg" slot="start" size="large"> </ion-icon>
+          <ion-icon color="light" src="assets\icons\paquete-o-empaquetar.svg" slot="start" class="icon-big"> </ion-icon>
           <ion-label class="ion-text-wrap">
             <h2>
               <strong>Crear envío</strong>
             </h2>
             <p></p>
           </ion-label>
-          <ion-icon name="add" color="success" slot="end"></ion-icon>
+          <ion-icon name="add" color="dark" slot="end"></ion-icon>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -67,18 +69,18 @@
           lines="full"
           button
           mode="md"
-          class="ion-margin-bottom my-item-dark"
+          class="ion-no-margin my-item"
           routerLink="/pending-orders"
           routerDirection="forward"
         >
-          <ion-icon color="primary" name="timer-outline" slot="start" size="large"> </ion-icon>
+          <ion-icon color="light" src="assets\icons\menu.svg" slot="start" class="icon-big"> </ion-icon>
           <ion-label class="ion-text-wrap">
             <h2>
               <strong>Órdenes en espera</strong>
             </h2>
             <p></p>
           </ion-label>
-          <ion-icon name="chevron-forward-outline" color="success" slot="end"></ion-icon>
+          <ion-icon name="chevron-forward-outline" color="dark" slot="end"></ion-icon>
         </ion-item>
       </ion-col>
       <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
@@ -86,18 +88,18 @@
           lines="full"
           button
           mode="md"
-          class="ion-margin-bottom my-item-dark"
+          class="ion-no-margin my-item"
           routerLink="/finished-orders"
           routerDirection="forward"
         >
-          <ion-icon color="primary" name="shield-checkmark-outline" slot="start" size="large"> </ion-icon>
+          <ion-icon color="light" src="assets\icons\proteger.svg" slot="start" class="icon-big"> </ion-icon>
           <ion-label class="ion-text-wrap">
             <h2>
               <strong>Órdenes terminadas</strong>
             </h2>
             <p></p>
           </ion-label>
-          <ion-icon name="chevron-forward-outline" color="success" slot="end"></ion-icon>
+          <ion-icon name="chevron-forward-outline" color="dark" slot="end"></ion-icon>
         </ion-item>
       </ion-col>
     </ion-row>

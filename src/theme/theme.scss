@@ -12,10 +12,157 @@
   --padding-bottom: 15px;
 }
 
-.my-item-dark {
+.my-card-dark-1 {
+  --background: var(--ion-color-dark) url("/assets/img/pattern1.png") 100%;
+  --color: #ffffff;
+}
+
+.my-card-dark-2 {
+  --background: var(--ion-color-dark) url("/assets/img/pattern2.png") 100%;
+  --color: #ffffff;
+}
+
+.my-card-dark-3 {
+  --background: var(--ion-color-dark) url("/assets/img/pattern3.png") 100%;
+  --color: #ffffff;
+}
+
+.my-card-dark-4 {
+  --background: var(--ion-color-dark) url("/assets/img/pattern4.png") 100%;
+  --color: #ffffff;
+}
+
+.my-card-dark-5 {
+  --background: var(--ion-color-dark) url("/assets/img/pattern5.png") 100%;
+  --color: #ffffff;
+}
+
+.my-card-dark-6 {
+  --background: var(--ion-color-dark) url("/assets/img/pattern6.png") 100%;
+  --color: #ffffff;
+}
+
+.my-item-dark-1 {
   --border-radius: 5px;
   --border-color: #2b2b2b;
-  --background: var(--ion-color-dark) url("/assets/img/pattern5.png") scroll;
+  --background: var(--ion-color-dark) url("/assets/img/pattern1.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-dark-2 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-dark) url("/assets/img/pattern2.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-dark-3 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-dark) url("/assets/img/pattern3.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-dark-4 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-dark) url("/assets/img/pattern4.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-dark-5 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-dark) url("/assets/img/pattern5.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-dark-6 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-dark) url("/assets/img/pattern6.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-1 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern1.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-2 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern2.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-3 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern3.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-4 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern4.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-5 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern5.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-6 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern6.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-7 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern7.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-primary-8 {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-primary) url("/assets/img/pattern8.png") 100%;
   --color: #ffffff;
   --padding-top: 15px;
   --padding-bottom: 15px;
@@ -24,16 +171,23 @@
 .my-item-success {
   --border-radius: 5px;
   --border-color: #095e3d;
-  --background: var(--ion-color-success) url("/assets/img/pattern6.png") scroll;
+  --background: var(--ion-color-success) url("/assets/img/pattern6.png") 100%;
   --color: #ffffff;
   --padding-top: 15px;
   --padding-bottom: 15px;
 }
 
+.my-item {
+  --border-radius: 5px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  border-bottom: 2px solid var(--ion-color-primary);
+}
+
 .my-item-warning {
   --border-radius: 5px;
   --border-color: #c56811;
-  --background: var(--ion-color-warning) url("/assets/img/pattern4.png") scroll;
+  --background: var(--ion-color-warning) url("/assets/img/pattern4.png") 100%;
   --color: var(--ion-color-dark);
   --padding-top: 15px;
   --padding-bottom: 15px;
@@ -72,4 +226,8 @@
 
 .item-disabled {
   opacity: 0.8 !important;
+}
+
+.icon-big {
+  font-size: 55px;
 }
