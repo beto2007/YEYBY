@@ -1,5 +1,5 @@
-<ion-header [ngSwitch]="mode">
-  <ion-toolbar color="primary" *ngIf="!(mode === 'modal' || mode === 'select'); else isModal">
+<ion-header>
+  <ion-toolbar color="primary" *ngIf="!(mode === 'modal' || mode === 'select')">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -12,18 +12,16 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ng-template #isModal>
-    <ion-toolbar color="primary">
-      <ion-title>
-        <span> Seleccionar {{ title.lowerCase.singular }} </span>
-      </ion-title>
-      <ion-buttons slot="end">
-        <ion-button (click)="closeModal()">
-          <ion-icon slot="icon-only" name="close"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ng-template>
+  <ion-toolbar color="primary" *ngIf="mode === 'modal' || mode === 'select'">
+    <ion-title>
+      <span> Seleccionar {{ title.lowerCase.singular }} </span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
   <ion-toolbar color="light">
     <ion-searchbar
       class="ion-margin-top"
@@ -108,7 +106,7 @@
     <ion-row>
       <ion-col [ngSwitch]="mode">
         <ion-list *ngSwitchCase="'modal'">
-          <ion-item lines="full" *ngFor="let item of arrayDocs; let i = index">
+          <ion-item lines="full" *ngFor="let item of arrayDocs; let i = index" (click)="selectItem(item)">
             <ion-avatar slot="start">
               <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
             </ion-avatar>
@@ -124,15 +122,15 @@
               </p>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
             </ion-label>
-            <ion-buttons slot="end">
-              <ion-button (click)="selectItem(item)">
-                <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
           </ion-item>
         </ion-list>
         <ion-list *ngSwitchCase="'select'">
-          <ion-item lines="full" *ngFor="let item of arrayDocs; let i = index">
+          <ion-item
+            lines="full"
+            *ngFor="let item of arrayDocs; let i = index"
+            (click)="selectItem(item)"
+            [disabled]="item?.isEnabled === true ? false : true"
+          >
             <ion-avatar slot="start">
               <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
             </ion-avatar>
@@ -155,11 +153,11 @@
                 {{ item?.isEnabled === true ? 'Disponible' : 'Ocupado' }}</ion-badge
               >
             </ion-label>
-            <ion-buttons slot="end">
-              <ion-button (click)="selectItem(item)" [disabled]="item?.isEnabled === true ? false : true">
+            <!-- <ion-buttons slot="end">
+              <ion-button >
                 <ion-icon slot="icon-only" name="add-outline"></ion-icon>
               </ion-button>
-            </ion-buttons>
+            </ion-buttons> -->
           </ion-item>
         </ion-list>
         <ion-list *ngSwitchDefault>

@@ -91,6 +91,13 @@
                   <ion-icon name="stopwatch-outline"></ion-icon>
                   <ion-label>{{ item?.time | async }}</ion-label>
                 </ion-chip>
+                <!-- <br>
+                <ion-chip color="tertiary" class="ion-no-margin ion-margin-vertical" *ngIf="item?.type === 'envio'">
+                  <ion-label>Envío</ion-label>
+                </ion-chip>
+                <ion-chip color="tertiary" class="ion-no-margin ion-margin-vertical" *ngIf="item?.type === 'orden'">
+                  <ion-label>Órden</ion-label>
+                </ion-chip> -->
               </ion-label>
               <ion-buttons slot="end">
                 <ion-button size="large" (click)="assignDeliverier(item?.id)">
