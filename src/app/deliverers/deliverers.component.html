@@ -1,5 +1,5 @@
-<ion-header>
-  <ion-toolbar color="primary" *ngIf="!(mode === 'modal'); else isModal">
+<ion-header [ngSwitch]="mode">
+  <ion-toolbar color="primary" *ngIf="!(mode === 'modal' || mode === 'select'); else isModal">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -116,33 +116,17 @@
   <ion-grid fixed>
     <ion-row>
       <ion-col>
-        <ion-list>
-          <ion-item *ngFor="let item of arrayDocs; let i = index">
-            <ion-avatar slot="start">
-              <img
-                [src]="
-                  item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
-                "
-              />
-            </ion-avatar>
-            <ion-label
-              *ngIf="!(mode === 'modal'); else isModalActions"
-              [routerLink]="['/deliverers/' + item.id]"
-              routerDirection="forward"
-            >
-              <h2>{{ item?.name }}</h2>
-              <h3>
-                <ion-icon slot="start" name="call" color="medium"></ion-icon>
-                <strong>{{ item?.phone }}</strong>
-              </h3>
-              <p>
-                <ion-icon slot="start" name="location" color="medium"></ion-icon>
-                {{ item?.streetAddress | slice: 0:100 }}
-              </p>
-              <p><strong>Folio: </strong> {{ item?.folio }}</p>
-            </ion-label>
-            <ng-template #isModalActions>
-              <ion-label (click)="selectItem(item)">
+        <ion-list [ngSwitch]="mode">
+          <div *ngFor="let item of arrayDocs; let i = index">
+            <ion-item lines="full" *ngSwitchCase="'modal'">
+              <ion-avatar slot="start">
+                <img
+                  [src]="
+                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                  "
+                />
+              </ion-avatar>
+              <ion-label>
                 <h2>{{ item?.name }}</h2>
                 <h3>
                   <ion-icon slot="start" name="call" color="medium"></ion-icon>
@@ -154,16 +138,75 @@
                 </p>
                 <p><strong>Folio: </strong> {{ item?.folio }}</p>
               </ion-label>
-            </ng-template>
-            <ion-buttons slot="end">
-              <ion-button size="small" (click)="generateOrderConfirm(item.id)">
-                <ion-icon slot="icon-only" name="receipt-outline"></ion-icon>
-              </ion-button>
-              <ion-button (click)="presentPopover($event, item)">
-                <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
+              <ion-buttons slot="end">
+                <ion-button (click)="selectItem(item)">
+                  <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+            <ion-item lines="full" *ngSwitchCase="'select'">
+              <ion-avatar slot="start">
+                <img
+                  [src]="
+                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                  "
+                />
+              </ion-avatar>
+              <ion-label>
+                <div class="ion-margin-vertical">
+                  <ion-text color="primary">
+                    <strong> {{ item?.name }}</strong>
+                  </ion-text>
+                </div>
+                <h3>
+                  <ion-icon slot="start" name="call" color="medium"></ion-icon>
+                  <strong>{{ item?.phone }}</strong>
+                </h3>
+                <p>
+                  <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                  {{ item?.streetAddress | slice: 0:100 }}
+                </p>
+                <p><strong>Folio: </strong> {{ item?.folio }}</p>
+                <ion-badge [color]="item?.isEnabled === true ? 'success' : 'medium'" mode="ios">
+                  {{ item?.isEnabled === true ? 'Disponible' : 'Ocupado' }}</ion-badge
+                >
+              </ion-label>
+              <ion-buttons slot="end">
+                <ion-button (click)="selectItem(item)" [disabled]="item?.isEnabled === true ? false : true">
+                  <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+            <ion-item lines="full" *ngSwitchDefault>
+              <ion-avatar slot="start">
+                <img
+                  [src]="
+                    item.image && item.image.list && item.image.list.url ? item.image.list.url : 'assets/no-image.png'
+                  "
+                />
+              </ion-avatar>
+              <ion-label [routerLink]="['/deliverers/' + item.id]" routerDirection="forward">
+                <h2>{{ item?.name }}</h2>
+                <h3>
+                  <ion-icon slot="start" name="call" color="medium"></ion-icon>
+                  <strong>{{ item?.phone }}</strong>
+                </h3>
+                <p>
+                  <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                  {{ item?.streetAddress | slice: 0:100 }}
+                </p>
+                <p><strong>Folio: </strong> {{ item?.folio }}</p>
+              </ion-label>
+              <ion-buttons slot="end">
+                <ion-button size="small" (click)="generateOrderConfirm(item.id)">
+                  <ion-icon slot="icon-only" name="receipt-outline"></ion-icon>
+                </ion-button>
+                <ion-button (click)="presentPopover($event, item)">
+                  <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+          </div>
         </ion-list>
       </ion-col>
     </ion-row>

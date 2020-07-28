@@ -221,25 +221,32 @@ export class PendingOrdersComponent implements OnInit {
   public async assignDeliverier(id: string): Promise<void> {
     const modal = await this.modalController.create({
       component: DeliverersComponent,
-      componentProps: { mode: 'modal' },
+      componentProps: { mode: 'select' },
     });
     modal.onDidDismiss().then(async (response) => {
       this.isLoading = true;
       const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
       loadingOverlay.present();
-      if (response && response.data && response.data.item && response.data.item.id) {
-        this.afs
-          .collection('ordersV2')
-          .doc(id)
-          .update({
-            status: 'finished',
-            delivery: {
-              name: response.data.item.name,
-              folio: response.data.item.folio,
-              id: response.data.item.id,
-            },
+      try {
+        if (response && response.data && response.data.item && response.data.item.id) {
+          await this.afs
+            .collection('ordersV2')
+            .doc(id)
+            .update({
+              status: 'finished',
+              delivery: {
+                name: response.data.item.name,
+                folio: response.data.item.folio,
+                id: response.data.item.id,
+              },
+            });
+          await this.afs.collection('deliverers').doc(response.data.item.id).update({
+            isEnabled: false,
           });
-        this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
+          this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
+        }
+      } catch (error) {
+        console.error(error);
       }
       this.isLoading = false;
       loadingOverlay.dismiss();
