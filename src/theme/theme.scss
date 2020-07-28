@@ -2,3 +2,70 @@
  * Global application theme.
  * Framework overrides and customization goes here.
  */
+
+.my-item-primary {
+  --border-radius: 5px;
+  --border-color: #000000;
+  --background: var(--ion-color-primary) url("/assets/img/pattern1.png") 100%;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-dark {
+  --border-radius: 5px;
+  --border-color: #2b2b2b;
+  --background: var(--ion-color-dark) url("/assets/img/pattern5.png") scroll;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-success {
+  --border-radius: 5px;
+  --border-color: #095e3d;
+  --background: var(--ion-color-success) url("/assets/img/pattern6.png") scroll;
+  --color: #ffffff;
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.my-item-warning {
+  --border-radius: 5px;
+  --border-color: #c56811;
+  --background: var(--ion-color-warning) url("/assets/img/pattern4.png") scroll;
+  --color: var(--ion-color-dark);
+  --padding-top: 15px;
+  --padding-bottom: 15px;
+}
+
+.button-yeiby {
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  height: auto !important;
+}
+
+.button-yeiby-no-shadow {
+  --box-shadow: none;
+}
+
+.button-yeiby-no-padding {
+  --padding-end: 0px !important;
+  --padding-start: 0px !important;
+  --margin: 0 !important;
+}
+
+.yeyby-wrap {
+  display: block;
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+.divider {
+  display: block;
+  height: 40px;
+  border-right: 3px dashed var(--ion-color-success);
+  width: 50%;
+  margin: 5px 1.5px;
+}

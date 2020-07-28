@@ -16,27 +16,26 @@ export class ShellComponent {
   public routes: any[];
   public routesPermissions = {
     admin: [
-      { title: 'Inicio', link: '/home', icon: 'home' },
-      { title: 'Repartidores', link: '/deliverers', icon: 'bicycle' },
-      { title: 'Clientes', link: '/customers', icon: 'person' },
-      { title: 'Empresas', link: '/companies', icon: 'briefcase' },
-      // { title: 'Órdenes', link: '/orders', icon: 'document-text' },
+      { title: 'Inicio', link: '/home', icon: 'home-outline' },
+      { title: 'Repartidores', link: '/deliverers', icon: 'bicycle-outline' },
+      { title: 'Clientes', link: '/customers', icon: 'person-outline' },
+      { title: 'Empresas', link: '/companies', icon: 'briefcase-outline' },
       { title: 'Reportes de repartidores', link: '/reports', icon: 'calculator-outline' },
       { title: 'Crear órden', link: '/create-order', icon: 'receipt-outline' },
       { title: 'Órdenes en espera', link: '/pending-orders', icon: 'timer-outline' },
       { title: 'Órdenes termindas', link: '/finished-orders', icon: 'shield-checkmark-outline' },
-      { title: 'Configuración', link: '/profile', icon: 'build' },
+      { title: 'Configuración', link: '/profile', icon: 'build-outline' },
     ],
     company: [
-      { title: 'Inicio', link: '/home', icon: 'home' },
-      { title: 'Configuración', link: '/profile', icon: 'build' },
+      { title: 'Inicio', link: '/home', icon: 'home-outline' },
+      { title: 'Configuración', link: '/profile', icon: 'build-outline' },
     ],
     secretary: [
-      { title: 'Inicio', link: '/home', icon: 'home' },
+      { title: 'Inicio', link: '/home', icon: 'home-outline' },
       { title: 'Crear órden', link: '/create-order', icon: 'receipt-outline' },
       { title: 'Órdenes en espera', link: '/pending-orders', icon: 'timer-outline' },
       { title: 'Órdenes termindas', link: '/finished-orders', icon: 'shield-checkmark-outline' },
-      { title: 'Configuración', link: '/profile', icon: 'build' },
+      { title: 'Configuración', link: '/profile', icon: 'build-outline' },
     ],
   };
 

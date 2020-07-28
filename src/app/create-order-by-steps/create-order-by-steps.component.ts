@@ -6,6 +6,7 @@ import { AddCustomersComponent } from '@app/customers/add-customers/add-customer
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as moment from 'moment';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-create-order-by-steps',
@@ -38,8 +39,15 @@ export class CreateOrderByStepsComponent implements OnInit {
     private afs: AngularFirestore,
     private modalController: ModalController,
     private loadingController: LoadingController,
-    private tools: ToolsService
-  ) {}
+    private tools: ToolsService,
+    private aRoute: ActivatedRoute
+  ) {
+    this.aRoute.params.subscribe((params) => {
+      if (params && params.type && (params.type === 'orden' || params.type === 'envio')) {
+        this.step1(params.type);
+      }
+    });
+  }
 
   ngOnInit(): void {}
 

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="light">
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -7,10 +7,10 @@
   </ion-toolbar>
 </ion-header>
 <ion-content color="light">
-  <ion-grid fixed *ngIf="userType === 'admin'">
+  <ion-grid fixed *ngIf="userType === 'admin' || userType === 'secretary'">
     <ion-row>
       <ion-col size="12">
-        <ion-card class="ion-text-center" color="dark">
+        <ion-card class="ion-text-center ion-no-margin ion-margin-vertical" color="dark">
           <br />
           <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
           <ion-card-content>
@@ -22,32 +22,87 @@
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size-xl=" 4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
-        <ion-button color="primary" expand="block" size="large" routerLink="/customers">
-          <ion-icon slot="start" name="person"></ion-icon>
-          Clientes
-        </ion-button>
+      <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+        <ion-item
+          lines="full"
+          button
+          mode="md"
+          class="ion-margin-bottom my-item-dark"
+          routerLink="/create-order/type/orden"
+          routerDirection="forward"
+        >
+          <ion-icon color="primary" name="fast-food-outline" slot="start" size="large"> </ion-icon>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              <strong>Crear órden</strong>
+            </h2>
+            <p></p>
+          </ion-label>
+          <ion-icon name="add-outline" color="success" slot="end"></ion-icon>
+        </ion-item>
       </ion-col>
-      <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
-        <ion-button color="primary" expand="block" size="large" routerLink="/deliverers">
-          <ion-icon slot="start" name="bicycle"></ion-icon>
-          Repartidores
-        </ion-button>
+      <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+        <ion-item
+          lines="full"
+          button
+          mode="md"
+          class="ion-margin-bottom my-item-dark"
+          routerLink="/create-order/type/envio"
+          routerDirection="forward"
+        >
+          <ion-icon color="primary" src="assets\icons\scooter.svg" slot="start" size="large"> </ion-icon>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              <strong>Crear envío</strong>
+            </h2>
+            <p></p>
+          </ion-label>
+          <ion-icon name="add" color="success" slot="end"></ion-icon>
+        </ion-item>
       </ion-col>
-      <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
-        <ion-button color="primary" expand="block" size="large" routerLink="/companies">
-          <ion-icon slot="start" name="briefcase"></ion-icon>
-          Empresas
-        </ion-button>
+    </ion-row>
+    <ion-row>
+      <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+        <ion-item
+          lines="full"
+          button
+          mode="md"
+          class="ion-margin-bottom my-item-dark"
+          routerLink="/pending-orders"
+          routerDirection="forward"
+        >
+          <ion-icon color="primary" name="timer-outline" slot="start" size="large"> </ion-icon>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              <strong>Órdenes en espera</strong>
+            </h2>
+            <p></p>
+          </ion-label>
+          <ion-icon name="chevron-forward-outline" color="success" slot="end"></ion-icon>
+        </ion-item>
       </ion-col>
-      <ion-col size-xl="4" size-lg="4" size-md="4" size-sm="6" size-xs="12">
-        <ion-button color="primary" expand="block" size="large" routerLink="/orders">
-          <ion-icon slot="start" name="document-text"></ion-icon>
-          Órdenes
-        </ion-button>
+      <ion-col size-xl="6" size-lg="6" size-md="6" size-sm="6" size-xs="12">
+        <ion-item
+          lines="full"
+          button
+          mode="md"
+          class="ion-margin-bottom my-item-dark"
+          routerLink="/finished-orders"
+          routerDirection="forward"
+        >
+          <ion-icon color="primary" name="shield-checkmark-outline" slot="start" size="large"> </ion-icon>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              <strong>Órdenes terminadas</strong>
+            </h2>
+            <p></p>
+          </ion-label>
+          <ion-icon name="chevron-forward-outline" color="success" slot="end"></ion-icon>
+        </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
+
   <ion-grid fixed *ngIf="userType === 'company'">
     <ion-row>
       <ion-col size-xl=" 4" size-lg="6" size-md="6" size-sm="6" size-xs="12" *ngFor="let item of companies">

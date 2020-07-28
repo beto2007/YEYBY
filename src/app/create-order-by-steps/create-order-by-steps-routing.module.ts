@@ -8,6 +8,11 @@ const routes: Routes = [
   Shell.childRoutes(
     [
       { path: '', redirectTo: '/create-order', pathMatch: 'full' },
+      {
+        path: 'create-order/type/:type',
+        component: CreateOrderByStepsComponent,
+        data: { title: extract('Crear órdenes') },
+      },
       { path: 'create-order', component: CreateOrderByStepsComponent, data: { title: extract('Crear órdenes') } },
     ],
     ['admin', 'secretary']
