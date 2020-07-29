@@ -178,4 +178,42 @@ export class ToolsService {
     }
     return result;
   }
+
+  public beautyDate(date: any) {
+    return this.dateFormatter(date, 'DD/MM/YYYY h:mm A');
+  }
+
+  public getMinutes(date: Date): string {
+    let times: string;
+    let diff: any = moment().diff(date, 'minutes');
+    if (diff > 60) {
+      const hours = Math.floor(diff / 60);
+      let _hour;
+      if (hours > 1) {
+        _hour = `${hours} horas`;
+      } else {
+        _hour = '1 hora';
+      }
+      const minutes = Math.floor(diff % 60);
+      let _minutes;
+      if (minutes === 0) {
+        _minutes = '';
+      }
+      if (minutes > 1) {
+        _minutes = `y ${minutes} minutos`;
+      } else {
+        _minutes = 'y 1 minuto';
+      }
+      times = `${_hour} ${_minutes}`;
+    } else if (diff === 0) {
+      times = 'Hace un momento';
+    } else {
+      if (diff > 1) {
+        times = `${diff} minutos`;
+      } else {
+        times = '1 minuto';
+      }
+    }
+    return String(times);
+  }
 }

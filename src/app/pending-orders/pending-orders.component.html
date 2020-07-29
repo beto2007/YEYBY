@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"></ion-back-button>
       <ion-menu-button></ion-menu-button>
@@ -61,13 +61,6 @@
     <ion-row>
       <ion-col>
         <ion-list class="ion-no-padding">
-          <ion-list-header color="dark" class="ion-no-margin">
-            <ion-label> <strong>Total:</strong> {{ arrayDocs?.length }} </ion-label>
-            <ion-button color="light" routerLink="/create-order">
-              Crear órden
-              <ion-icon slot="end" name="add"></ion-icon>
-            </ion-button>
-          </ion-list-header>
           <ion-item-sliding *ngFor="let item of arrayDocs; let i = index">
             <ion-item lines="full">
               <ion-label>

@@ -6,7 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import * as moment from 'moment';
 import { interval } from 'rxjs';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, AlertController } from '@ionic/angular';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-finished-orders',
@@ -21,8 +22,8 @@ export class FinishedOrdersComponent implements OnInit {
   private totalSubs: Subscription;
   public total: number = 0;
   public orderBy: string = 'date';
-  public orderByDirection: any = 'asc';
-  private perPage: number = 5;
+  public orderByDirection: any = 'desc';
+  private perPage: number = 50;
   private mainCollection: string = 'ordersV2';
   private startAfter: any;
   private endBefore: any;
@@ -37,7 +38,8 @@ export class FinishedOrdersComponent implements OnInit {
     private tools: ToolsService,
     private aRoute: ActivatedRoute,
     private loadingController: LoadingController,
-    private modalController: ModalController
+    private firebase: FirebaseService,
+    private alertController: AlertController
   ) {
     this.aRoute.params.subscribe((params) => {
       if (
@@ -116,12 +118,12 @@ export class FinishedOrdersComponent implements OnInit {
             this.arrayDocs = snap.map((element) => {
               const id: string = element.payload.doc.id;
               const data: any = element.payload.doc.data();
-              data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
+              data.dateStr = data.date && data.date !== '' ? this.tools.beautyDate(data.date.toDate()) : '';
               data.time = new Observable<string>((observer) => {
-                observer.next(this.getMinutes(data.date.toDate()));
+                observer.next(this.tools.getMinutes(data.assignmentTime.toDate()));
                 this.subscriptions.push(
                   interval(1000).subscribe(() => {
-                    observer.next(this.getMinutes(data.date.toDate()));
+                    observer.next(this.tools.getMinutes(data.assignmentTime.toDate()));
                   })
                 );
               });
@@ -177,84 +179,52 @@ export class FinishedOrdersComponent implements OnInit {
     }
   }
 
-  beautyDate(date: any) {
-    return this.tools.dateFormatter(date, 'DD/MM/YYYY h:mm A');
+  async presentAlertConfirm(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Finalizar órden',
+      message: '¿Estás seguro de finalizar esta órden?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Finalizar',
+          handler: () => {
+            this.finishOrder(id);
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
-  public getMinutes(date: Date): string {
-    let times: string;
-    let diff: any = moment().diff(date, 'minutes');
-    if (diff > 60) {
-      const hours = Math.floor(diff / 60);
-      let _hour;
-      if (hours > 1) {
-        _hour = `${hours} horas`;
+  public alertCancelOrder(id: string) {
+    this.firebase.alertCancelOrder(id);
+  }
+
+  public async finishOrder(id: string) {
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      const response = await this.afs.collection('ordersV2').doc(id).ref.get();
+      const data = response.data();
+      if (data && data.delivery && data.delivery.id) {
+        await this.afs.collection('deliverers').doc(data.delivery.id).update({
+          isEnabled: true,
+        });
+        await this.afs.collection('ordersV2').doc(id).update({
+          deliveredTime: moment().toDate(),
+          isOrderDelivered: true,
+        });
+        this.tools.presentToast('¡Órden terminada con éxito, el repartidor ahora está disponible!');
       } else {
-        _hour = '1 hora';
+        this.tools.presentToast('Ha ocurrido un error');
       }
-      const minutes = Math.floor(diff % 60);
-      let _minutes;
-      if (minutes === 0) {
-        _minutes = '';
-      }
-      if (minutes > 1) {
-        _minutes = `y ${minutes} minutos`;
-      } else {
-        _minutes = 'y 1 minuto';
-      }
-      times = `${_hour} ${_minutes}`;
-    } else if (diff === 0) {
-      times = 'Hace un momento';
-    } else {
-      if (diff > 1) {
-        times = `${diff} minutos`;
-      } else {
-        times = '1 minuto';
-      }
+    } catch (error) {
+      console.error(error);
+      this.tools.presentToast('Ha ocurrido un error');
     }
-    return String(times);
-  }
-
-  // async assignDeliverier(id: string) {
-  //   this.isLoading = true;
-  //   const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-  //   loadingOverlay.present();
-  //   try {
-  //     this.afs.collection('ordersV2').doc(id).update({ status: 'finished' });
-  //     this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  //   this.isLoading = false;
-  //   loadingOverlay.dismiss();
-  // }
-
-  public async assignDeliverier(id: string): Promise<void> {
-    const modal = await this.modalController.create({
-      component: DeliverersComponent,
-      componentProps: { mode: 'modal' },
-    });
-    modal.onDidDismiss().then(async (response) => {
-      this.isLoading = true;
-      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-      loadingOverlay.present();
-      if (response && response.data && response.data.item && response.data.item.id) {
-        this.afs
-          .collection('ordersV2')
-          .doc(id)
-          .update({
-            status: 'finished',
-            delivery: {
-              name: response.data.item.name,
-              folio: response.data.item.folio,
-              id: response.data.item.id,
-            },
-          });
-        this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
-      }
-      this.isLoading = false;
-      loadingOverlay.dismiss();
-    });
-    return await modal.present();
+    loadingOverlay.dismiss();
   }
 }

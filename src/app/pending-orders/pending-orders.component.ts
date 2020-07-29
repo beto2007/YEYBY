@@ -4,10 +4,10 @@ import { Subscription, Observable } from 'rxjs';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute } from '@angular/router';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
-import * as moment from 'moment';
 import { interval } from 'rxjs';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-pending-orders',
@@ -121,12 +121,12 @@ export class PendingOrdersComponent implements OnInit {
               data.menuStr = Array.from(data.menu)
                 .map((e: any) => ' ' + e.name)
                 .toString();
-              data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
+              data.dateStr = data.date && data.date !== '' ? this.tools.beautyDate(data.date.toDate()) : '';
               data.time = new Observable<string>((observer) => {
-                observer.next(this.getMinutes(data.date.toDate()));
+                observer.next(this.tools.getMinutes(data.date.toDate()));
                 this.subscriptions.push(
                   interval(1000).subscribe(() => {
-                    observer.next(this.getMinutes(data.date.toDate()));
+                    observer.next(this.tools.getMinutes(data.date.toDate()));
                   })
                 );
               });
@@ -182,44 +182,6 @@ export class PendingOrdersComponent implements OnInit {
     }
   }
 
-  beautyDate(date: any) {
-    return this.tools.dateFormatter(date, 'DD/MM/YYYY h:mm A');
-  }
-
-  public getMinutes(date: Date): string {
-    let times: string;
-    let diff: any = moment().diff(date, 'minutes');
-    if (diff > 60) {
-      const hours = Math.floor(diff / 60);
-      let _hour;
-      if (hours > 1) {
-        _hour = `${hours} horas`;
-      } else {
-        _hour = '1 hora';
-      }
-      const minutes = Math.floor(diff % 60);
-      let _minutes;
-      if (minutes === 0) {
-        _minutes = '';
-      }
-      if (minutes > 1) {
-        _minutes = `y ${minutes} minutos`;
-      } else {
-        _minutes = 'y 1 minuto';
-      }
-      times = `${_hour} ${_minutes}`;
-    } else if (diff === 0) {
-      times = 'Hace un momento';
-    } else {
-      if (diff > 1) {
-        times = `${diff} minutos`;
-      } else {
-        times = '1 minuto';
-      }
-    }
-    return String(times);
-  }
-
   public async assignDeliverier(id: string): Promise<void> {
     const modal = await this.modalController.create({
       component: DeliverersComponent,
@@ -241,6 +203,8 @@ export class PendingOrdersComponent implements OnInit {
                 folio: response.data.item.folio,
                 id: response.data.item.id,
               },
+              assignmentTime: moment().toDate(),
+              isOrderDelivered: false,
             });
           await this.afs.collection('deliverers').doc(response.data.item.id).update({
             isEnabled: false,
