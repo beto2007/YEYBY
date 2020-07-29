@@ -1,10 +1,10 @@
 .logo {
   display: block;
-  width: 150px;
-  height: 150px;
+  width: 110px;
+  height: 110px;
   margin: 0 auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .button-yeiby {
@@ -36,4 +36,9 @@
   border-right: 3px dashed var(--ion-color-success);
   width: 50%;
   margin: 5px 1.5px;
+}
+
+ion-card-content {
+  padding-top: 10px;
+  background: #ffffff !important;
 }

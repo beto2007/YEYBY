@@ -184,6 +184,12 @@
   border-bottom: 2px solid var(--ion-color-primary);
 }
 
+.my-item-no-lines {
+  --border-radius: 5px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+}
+
 .my-item-warning {
   --border-radius: 5px;
   --border-color: #c56811;
@@ -230,4 +236,10 @@
 
 .icon-big {
   font-size: 55px;
+}
+
+.icon-gigant {
+  font-size: 110px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
