@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 
@@ -16,7 +16,8 @@ export class FirebaseService {
     private router: Router,
     private afs: AngularFirestore,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private alertController: AlertController
   ) {
     moment.locale('es');
   }
@@ -254,5 +255,48 @@ export class FirebaseService {
       return ret;
     }
     return ret;
+  }
+
+  async cancelOrderV2(id: string, reason: string) {
+    try {
+      await this.afs.collection('ordersV2').doc(id).update({
+        status: 'cancelled',
+        cancellationDate: new Date(),
+        cancellationReason: reason,
+      });
+      this.presentToast('¡Orden cancelada!');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async alertCancelOrder(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Cancelar órden',
+      inputs: [
+        {
+          name: 'description',
+          type: 'textarea',
+          placeholder: 'Motivo de la cancelación',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          handler: (data) => {
+            if (data && data.description && data.description !== '') {
+              this.cancelOrderV2(id, String(data.description));
+            } else {
+              this.presentToast('Órden no cancelada, debe incluir el motivo de la cancelación.');
+            }
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

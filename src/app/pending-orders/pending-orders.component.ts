@@ -7,6 +7,7 @@ import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import * as moment from 'moment';
 import { interval } from 'rxjs';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-pending-orders',
@@ -37,7 +38,8 @@ export class PendingOrdersComponent implements OnInit {
     private tools: ToolsService,
     private aRoute: ActivatedRoute,
     private loadingController: LoadingController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private firebase: FirebaseService
   ) {
     this.aRoute.params.subscribe((params) => {
       if (
@@ -252,5 +254,9 @@ export class PendingOrdersComponent implements OnInit {
       loadingOverlay.dismiss();
     });
     return await modal.present();
+  }
+
+  public alertCancelOrder(id: string) {
+    this.firebase.alertCancelOrder(id);
   }
 }
