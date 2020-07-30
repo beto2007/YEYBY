@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary" *ngIf="!(mode === 'modal'); else isModal">
+  <ion-toolbar color="dark" *ngIf="!(mode === 'modal')">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -12,18 +12,16 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ng-template #isModal>
-    <ion-toolbar color="primary">
-      <ion-title>
-        <span> Seleccionar {{ title.lowerCase.singular }} </span>
-      </ion-title>
-      <ion-buttons slot="end">
-        <ion-button (click)="closeModal()">
-          <ion-icon slot="icon-only" name="close"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ng-template>
+  <ion-toolbar color="dark" *ngIf="mode === 'modal'">
+    <ion-title>
+      <span> Seleccionar {{ title.lowerCase.singular }} </span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
   <ion-toolbar color="light">
     <ion-searchbar
       class="ion-margin-top"
@@ -148,7 +146,7 @@
 
 <ion-content color="light" *ngIf="arrayDocs && arrayDocs[0]">
   <ion-grid fixed>
-    <ion-row *ngIf="!(mode === 'modal'); else isModalActions">
+    <ion-row *ngIf="!(mode === 'modal')">
       <ion-col size-xl="4" size-lg="6" size-md="6" size-sm="6" size-xs="12" *ngFor="let item of arrayDocs">
         <ion-card>
           <ion-toolbar>
@@ -165,6 +163,7 @@
             </ion-buttons>
           </ion-toolbar>
           <img
+            class="full-img"
             [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'"
             [routerLink]="['/companies/' + item.id]"
             routerDirection="forward"
@@ -192,33 +191,31 @@
         </ion-card>
       </ion-col>
     </ion-row>
-    <ng-template #isModalActions>
-      <ion-row>
-        <ion-col>
-          <ion-list>
-            <ion-item *ngFor="let item of arrayDocs" (click)="selectItem(item)">
-              <ion-thumbnail slot="start">
-                <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
-              </ion-thumbnail>
-              <ion-label>
-                <h2>{{ item?.name }}</h2>
-                <h3>
-                  <small><strong>Folio: </strong>{{ item?.folio }}</small>
-                </h3>
-                <p>
-                  <ion-icon slot="start" name="information-circle" color="medium"></ion-icon>
-                  {{ item?.description | slice: 0:150 }}...
-                </p>
-                <p>
-                  <ion-icon slot="start" name="location" color="medium"></ion-icon>
-                  {{ item?.streetAddress | slice: 0:200 }}...
-                </p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-col>
-      </ion-row>
-    </ng-template>
+    <ion-row *ngIf="mode === 'modal'">
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of arrayDocs" (click)="selectItem(item)">
+            <ion-thumbnail slot="start">
+              <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
+            </ion-thumbnail>
+            <ion-label>
+              <h2>{{ item?.name }}</h2>
+              <h3>
+                <small><strong>Folio: </strong>{{ item?.folio }}</small>
+              </h3>
+              <p>
+                <ion-icon slot="start" name="information-circle" color="medium"></ion-icon>
+                {{ item?.description | slice: 0:150 }}...
+              </p>
+              <p>
+                <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                {{ item?.streetAddress | slice: 0:200 }}...
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
     <ion-row>
       <ion-col>
         <ion-button color="white" (click)="initializeApp('back')" [disabled]="!back || isLoading == true">

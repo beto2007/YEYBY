@@ -20,17 +20,11 @@ export class CreateOrderByStepsComponent implements OnInit {
   menu: any[];
   companyMenu: any[];
   address: any;
-  public otherProduct = {
-    isChecked: false,
-    description: '',
-    price: 0,
-    quantity: 1,
-  };
   totalOrder: number = 0;
   total: number = 0;
   public shippingPrice: number = 30;
   deliveryLocationReferences: string = '';
-  deliveryAddress: string;
+  deliveryAddress: string = 'default';
   deliveryLocation: string = '';
   public step: number = 1;
   public type: 'orden' | 'envio';
@@ -129,17 +123,12 @@ export class CreateOrderByStepsComponent implements OnInit {
   }
 
   reset() {
+    this.type = undefined;
     this.customer = undefined;
     this.company = undefined;
     this.companyMenu = undefined;
     this.menu = undefined;
     this.address = undefined;
-    this.otherProduct = {
-      isChecked: false,
-      description: '',
-      price: 0,
-      quantity: 1,
-    };
     this.totalOrder = 0;
     this.total = 0;
     this.shippingPrice = 30;
@@ -186,25 +175,10 @@ export class CreateOrderByStepsComponent implements OnInit {
       loadingOverlay.present();
       if (response && response.data && response.data.item && response.data.item.id) {
         this.customer = response.data.item;
-        this.step2();
-      }
-      this.isLoading = false;
-      loadingOverlay.dismiss();
-    });
-    return await modal.present();
-  }
-
-  public async createCustomer(): Promise<void> {
-    const modal = await this.modalController.create({
-      component: AddCustomersComponent,
-      componentProps: { mode: 'modal' },
-    });
-    modal.onDidDismiss().then(async (response) => {
-      this.isLoading = true;
-      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-      loadingOverlay.present();
-      if (response && response.data && response.data.item && response.data.item.id) {
-        this.customer = response.data.item;
+        this.address = {
+          references: this.customer.references,
+          streetAddress: this.customer.streetAddress,
+        };
         this.step2();
       }
       this.isLoading = false;
@@ -216,7 +190,6 @@ export class CreateOrderByStepsComponent implements OnInit {
   calculate() {
     this.totalOrder = 0;
     this.total = 0;
-
     if (this.companyMenu) {
       this.companyMenu.forEach((item) => {
         if (item.active === true && item.isChecked === true && item.quantity > 0) {
@@ -230,9 +203,6 @@ export class CreateOrderByStepsComponent implements OnInit {
         }
       });
     }
-    if (this.otherProduct.isChecked === true && this.otherProduct.quantity > 0) {
-      this.totalOrder = this.totalOrder + this.otherProduct.quantity * this.otherProduct.price;
-    }
     this.total = this.totalOrder + this.shippingPrice;
   }
 
@@ -243,6 +213,15 @@ export class CreateOrderByStepsComponent implements OnInit {
         streetAddress: this.customer.streetAddress,
       };
     } else if (event && event.target && event.target.value && event.target.value === 'other') {
+      this.address = {
+        references: this.deliveryLocationReferences,
+        streetAddress: this.deliveryLocation,
+      };
+    }
+  }
+
+  changeAddress(event: any) {
+    if (event && event.target && event.target.value) {
       this.address = {
         references: this.deliveryLocationReferences,
         streetAddress: this.deliveryLocation,
