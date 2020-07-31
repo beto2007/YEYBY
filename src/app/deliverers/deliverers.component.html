@@ -1,10 +1,10 @@
 <ion-header>
-  <ion-toolbar color="primary" *ngIf="!(mode === 'modal' || mode === 'select')">
+  <ion-toolbar color="dark" *ngIf="!(mode === 'modal' || mode === 'select')">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>
-      <span> {{ title.capitalLetter.prural }} </span></ion-title
+      <span> {{ mode === 'list' ? 'Órdenes terminadas' : title.capitalLetter.prural }} </span></ion-title
     >
     <ion-buttons slot="end">
       <ion-button routerLink="/home">
@@ -12,7 +12,7 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar color="primary" *ngIf="mode === 'modal' || mode === 'select'">
+  <ion-toolbar color="dark" *ngIf="mode === 'modal' || mode === 'select'">
     <ion-title>
       <span> Seleccionar {{ title.lowerCase.singular }} </span>
     </ion-title>
@@ -153,13 +153,41 @@
                 {{ item?.isEnabled === true ? 'Disponible' : 'Ocupado' }}</ion-badge
               >
             </ion-label>
-            <!-- <ion-buttons slot="end">
-              <ion-button >
-                <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons> -->
           </ion-item>
         </ion-list>
+
+        <ion-list *ngSwitchCase="'list'">
+          <ion-item
+            lines="full"
+            *ngFor="let item of arrayDocs; let i = index"
+            [routerLink]="['/finished-orders/' + item.id]"
+            routerDirection="forward"
+          >
+            <ion-avatar slot="start">
+              <img [src]="item?.image?.list?.url ? item.image.list.url : 'assets/no-image.png'" />
+            </ion-avatar>
+            <ion-label>
+              <div class="ion-margin-vertical">
+                <ion-text color="primary">
+                  <strong> {{ item?.name }}</strong>
+                </ion-text>
+              </div>
+              <h3>
+                <ion-icon slot="start" name="call" color="medium"></ion-icon>
+                <strong>{{ item?.phone }}</strong>
+              </h3>
+              <p>
+                <ion-icon slot="start" name="location" color="medium"></ion-icon>
+                {{ item?.streetAddress | slice: 0:100 }}
+              </p>
+              <p><strong>Folio: </strong> {{ item?.folio }}</p>
+              <ion-badge [color]="item?.isEnabled === true ? 'success' : 'medium'" mode="ios">
+                {{ item?.isEnabled === true ? 'Disponible' : 'Ocupado' }}</ion-badge
+              >
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
         <ion-list *ngSwitchDefault>
           <ion-item lines="full" *ngFor="let item of arrayDocs; let i = index">
             <ion-avatar slot="start">
@@ -200,7 +228,13 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!(mode === 'modal' || mode === 'select')">
+
+  <ion-fab
+    vertical="bottom"
+    horizontal="end"
+    slot="fixed"
+    *ngIf="!(mode === 'modal' || mode === 'select' || mode === 'list')"
+  >
     <ion-fab-button (click)="add()" [disabled]="isLoading == true">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

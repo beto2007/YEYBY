@@ -11,6 +11,7 @@ const routes: Routes = [
     [
       { path: '', redirectTo: '/deliverers', pathMatch: 'full' },
       { path: 'deliverers', component: DeliverersComponent, data: { title: extract('Repartidores') } },
+      { path: 'deliverers/orders/:mode', component: DeliverersComponent, data: { title: extract('Órdenes') } },
       { path: 'deliverers/:id', component: DetailDelivererComponent, data: { title: extract('Detalle') } },
     ],
     ['admin']

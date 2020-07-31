@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { AddDelivererComponent } from './add-deliverer/add-deliverer.component';
 import { SortByDelivererComponent } from './sort-by-deliverer/sort-by-deliverer.component';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-deliverers',
@@ -43,16 +44,22 @@ export class DeliverersComponent implements OnInit, OnDestroy {
     },
   };
   public mode: string = '';
-  //in-order
 
   constructor(
+    private aRoute: ActivatedRoute,
     private afs: AngularFirestore,
     private toastController: ToastController,
     private popoverController: PopoverController,
     private modalController: ModalController,
     private myFire: FirebaseService,
     private alertController: AlertController
-  ) {}
+  ) {
+    this.aRoute.params.subscribe((params) => {
+      if (params && params.mode && params.mode === 'list') {
+        this.mode = 'list';
+      }
+    });
+  }
 
   async doSearch(ev: any) {
     this.isLoading = true;
