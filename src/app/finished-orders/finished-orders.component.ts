@@ -3,12 +3,10 @@ import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Quer
 import { Subscription, Observable } from 'rxjs';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute } from '@angular/router';
-import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import * as moment from 'moment';
 import { interval } from 'rxjs';
-import { LoadingController, ModalController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController } from '@ionic/angular';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
-
 @Component({
   selector: 'app-finished-orders',
   templateUrl: './finished-orders.component.html',
@@ -25,6 +23,7 @@ export class FinishedOrdersComponent implements OnInit {
   public orderByDirection: any = 'desc';
   private perPage: number = 50;
   private mainCollection: string = 'ordersV2';
+  public filterByDelivery: string;
   private startAfter: any;
   private endBefore: any;
   private startAt: any;
@@ -32,6 +31,7 @@ export class FinishedOrdersComponent implements OnInit {
   public back: boolean = false;
   public status: string = 'created';
   private subscriptions: Subscription[] = [];
+  public customer: any;
 
   constructor(
     private afs: AngularFirestore,
@@ -42,14 +42,22 @@ export class FinishedOrdersComponent implements OnInit {
     private alertController: AlertController
   ) {
     this.aRoute.params.subscribe((params) => {
-      if (
-        params &&
-        params.type &&
-        (params.type === 'in-progress' || params.type === 'created' || params.type === 'finished')
-      ) {
-        this.segmentChanged({ detail: { value: params.type } });
+      if (params && params.id) {
+        this.filterByDelivery = String(params.id);
+        this.initDelivery(this.filterByDelivery);
       }
     });
+  }
+
+  async initDelivery(idDelivery: string) {
+    try {
+      const response = await this.afs.collection('deliverers').doc(idDelivery).ref.get();
+      const data = response.data();
+      const id = response.id;
+      this.customer = { id, ...data };
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   segmentChanged(ev: any) {
@@ -75,6 +83,9 @@ export class FinishedOrdersComponent implements OnInit {
         let query: Query;
         query = collRef.orderBy(this.orderBy, this.orderByDirection);
         query = query.where('status', '==', 'finished');
+        if (this.filterByDelivery) {
+          query = query.where('delivery.id', '==', this.filterByDelivery);
+        }
         if (this.startAfter && direction === 'forward') {
           query = query.startAfter(this.startAfter);
         } else if (this.startAt && this.endBefore && direction === 'back') {
@@ -86,27 +97,51 @@ export class FinishedOrdersComponent implements OnInit {
             this.startAfter = snap.length > 0 ? snap[snap.length - 1].payload.doc : undefined;
             this.endBefore = snap.length > 0 ? snap[0].payload.doc : undefined;
             if (this.startAfter) {
-              this.forward = !(
-                await this.afs
+              let forwardQuery;
+              if (this.filterByDelivery) {
+                forwardQuery = this.afs
+                  .collection(this.mainCollection)
+                  .ref.orderBy(this.orderBy, this.orderByDirection)
+                  .where('status', '==', 'finished')
+                  .where('delivery.id', '==', this.filterByDelivery)
+                  .startAfter(this.startAfter)
+                  .limit(this.perPage)
+                  .get();
+              } else {
+                forwardQuery = this.afs
                   .collection(this.mainCollection)
                   .ref.orderBy(this.orderBy, this.orderByDirection)
                   .where('status', '==', 'finished')
                   .startAfter(this.startAfter)
                   .limit(this.perPage)
-                  .get()
-              ).empty;
+                  .get();
+              }
+              this.forward = !(await forwardQuery).empty;
             } else {
               this.forward = false;
             }
             let back: any = {};
             if (this.endBefore) {
-              back = await this.afs
-                .collection(this.mainCollection)
-                .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
-                .where('status', '==', 'finished')
-                .startAfter(this.endBefore)
-                .limit(this.perPage)
-                .get();
+              let backQuery;
+              if (this.filterByDelivery) {
+                backQuery = this.afs
+                  .collection(this.mainCollection)
+                  .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
+                  .where('status', '==', 'finished')
+                  .where('delivery.id', '==', this.filterByDelivery)
+                  .startAfter(this.endBefore)
+                  .limit(this.perPage)
+                  .get();
+              } else {
+                backQuery = this.afs
+                  .collection(this.mainCollection)
+                  .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
+                  .where('status', '==', 'finished')
+                  .startAfter(this.endBefore)
+                  .limit(this.perPage)
+                  .get();
+              }
+              back = await backQuery;
             } else {
               back.empty = true;
             }
