@@ -1,6 +1,7 @@
 <ion-header>
   <ion-toolbar color="dark" *ngIf="!(mode === 'modal' || mode === 'select')">
     <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>
@@ -155,6 +156,14 @@
             </ion-label>
           </ion-item>
         </ion-list>
+
+        <ion-button *ngSwitchCase="'list'" routerLink="/pending-orders" routerDirection="forward" expand="block">
+          <ion-label>
+            <small>Ir a órdenes en espera</small>
+          </ion-label>
+          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+
         <ion-list *ngSwitchCase="'list'">
           <ion-item
             lines="full"
@@ -223,7 +232,6 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-
   <ion-fab
     vertical="bottom"
     horizontal="end"
@@ -231,6 +239,12 @@
     *ngIf="!(mode === 'modal' || mode === 'select' || mode === 'list')"
   >
     <ion-fab-button (click)="add()" [disabled]="isLoading == true">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="mode === 'list'">
+    <ion-fab-button routerLink="/create-order" routerDirection="forward">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
