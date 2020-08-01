@@ -127,7 +127,7 @@ export class ToolsService {
         path: '',
       },
     };
-    const random = new Date().getMilliseconds();
+    const random = moment().toDate().getMilliseconds();
     const name = random + file.name;
     var storageRef1 = this.afStorage.ref(bucket + '/' + name);
     const imageResponse1 = await storageRef1.put(file);

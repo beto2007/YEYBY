@@ -12,6 +12,7 @@ import { AddCompanyComponent } from '../add-company/add-company.component';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { Logger } from '@core';
 const log = new Logger('Login');
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-options-companies',
@@ -76,7 +77,7 @@ export class OptionsCompaniesComponent implements OnInit {
           const code: string = this.tools.randomNumber(6);
           const response = await this.afs.collection('invites').doc(this.item.id).set({
             code: code,
-            date: new Date(),
+            date: moment().toDate(),
             company: this.item.id,
             status: 'pending',
           });

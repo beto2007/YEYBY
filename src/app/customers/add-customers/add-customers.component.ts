@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { DocumentReference } from '@angular/fire/firestore';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-add-customers',
@@ -127,7 +128,7 @@ export class AddCustomersComponent implements OnInit {
       data.search = search;
       data.name = String(data.name).toLocaleLowerCase();
       data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
-      data.date = new Date();
+      data.date = moment().toDate();
       if (this.file) {
         data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'customers');
       }

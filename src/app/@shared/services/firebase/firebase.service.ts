@@ -31,9 +31,9 @@ export class FirebaseService {
         company: data.company ? data.company : {},
         customer: data.customer ? data.customer : {},
         deliverer: data.deliverer ? data.deliverer : {},
-        date: new Date(),
-        startDate: new Date(),
-        finishDate: new Date(),
+        date: moment().toDate(),
+        startDate: moment().toDate(),
+        finishDate: moment().toDate(),
         search: [],
         status: 'created',
         type: 'special-order',
@@ -62,7 +62,7 @@ export class FirebaseService {
     try {
       await this.afs.collection('orders').doc(id).update({
         status: 'delivered',
-        finishDate: new Date(),
+        finishDate: moment().toDate(),
       });
       this.presentToast('¡Orden entregada!');
     } catch (error) {
@@ -74,7 +74,7 @@ export class FirebaseService {
     try {
       await this.afs.collection('orders').doc(id).update({
         status: 'cancelled',
-        finishDate: new Date(),
+        finishDate: moment().toDate(),
       });
       this.presentToast('¡Orden cancelada!');
     } catch (error) {
@@ -86,7 +86,7 @@ export class FirebaseService {
     try {
       await this.afs.collection('orders').doc(id).update({
         status: 'canceled-delivery',
-        finishDate: new Date(),
+        finishDate: moment().toDate(),
       });
       this.presentToast('¡Entrega cancelada!');
     } catch (error) {
@@ -136,7 +136,7 @@ export class FirebaseService {
               if (data.empty == true) {
                 await this.afs.collection('orders').doc(id).update({
                   status: 'in-progress',
-                  startDate: new Date(),
+                  startDate: moment().toDate(),
                 });
                 return { canCreate: true, code: 'created', message: 'Orden iniciada.' };
               } else {
@@ -194,7 +194,7 @@ export class FirebaseService {
         if (data.empty == true) {
           await this.afs.collection('orders').doc(id).update({
             status: 'in-progress',
-            startDate: new Date(),
+            startDate: moment().toDate(),
           });
           return { canCreate: true, code: 'created', message: 'Orden iniciada.' };
         } else {

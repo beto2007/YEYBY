@@ -15,6 +15,7 @@ import { AddCompanyComponent } from '../add-company/add-company.component';
 import { Logger } from '@core';
 import { CredentialsService } from '@app/auth';
 const log = new Logger('Login');
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-detail-company',
@@ -131,7 +132,7 @@ export class DetailCompanyComponent implements OnInit {
     loadingOverlay.present();
     try {
       let data: any = this.myForm.value;
-      data.date = new Date();
+      data.date = moment().toDate();
       data.nameStr = String(data.name).toLocaleLowerCase();
       const response: DocumentReference = await this.afs
         .collection('companies')
@@ -196,7 +197,7 @@ export class DetailCompanyComponent implements OnInit {
       loadingOverlay.present();
       try {
         let data: any = this.myForm.value;
-        data.date = new Date();
+        data.date = moment().toDate();
         data.nameStr = String(data.name).toLocaleLowerCase();
         await this.afs
           .collection('companies')
@@ -238,7 +239,7 @@ export class DetailCompanyComponent implements OnInit {
           const code: string = this.tools.randomNumber(6);
           const response = await this.afs.collection('invites').doc(this.data.id).set({
             code: code,
-            date: new Date(),
+            date: moment().toDate(),
             company: this.data.id,
             status: 'pending',
           });

@@ -203,7 +203,7 @@ export class AddCompanyComponent implements OnInit {
       data.search = search;
       data.name = String(data.name).toLocaleLowerCase();
       data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
-      data.date = new Date();
+      data.date = moment().toDate();
       if (this.file) {
         data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'companies');
       }

@@ -33,8 +33,8 @@ export class ReportsComponent implements OnInit {
     private tools: ToolsService,
     private modalController: ModalController
   ) {
-    this.today = this.beautyDateToday(new Date());
-    this.today1 = this.beautyDateTodayDDMMYYYY(new Date());
+    this.today = this.beautyDateToday(moment().toDate());
+    this.today1 = this.beautyDateTodayDDMMYYYY(moment().toDate());
   }
 
   beautyDate(date: any) {
@@ -92,8 +92,8 @@ export class ReportsComponent implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         const today = moment();
-        let start = today.startOf('day').toDate(); // new Date(today.format('YYYY-MM-DD') + ' 00:00:00');
-        let end = today.endOf('day').toDate(); //new Date(today.format('YYYY-MM-DD') + ' 11:59:59');
+        let start = today.startOf('day').toDate();
+        let end = today.endOf('day').toDate();
         let collection: AngularFirestoreCollection<any>;
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;

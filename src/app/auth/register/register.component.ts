@@ -11,6 +11,7 @@ import { NoWhiteSpaceValidator } from '@shared/validators/noWhiteSpace.validator
 import { EmailValidator } from '@shared/validators/email.validator';
 import { MustMatch } from '@shared/helpers/must-match.validator';
 const log = new Logger('Login');
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-register',
@@ -73,7 +74,7 @@ export class RegisterComponent implements OnInit {
                     name: name,
                     nameStr: this.tools.stringSearch(name),
                     search: this.tools.arraySearch(name),
-                    date: new Date(),
+                    date: moment().toDate(),
                     status: 'active',
                     type: 'user',
                     uid: userID,
