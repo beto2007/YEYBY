@@ -97,8 +97,8 @@ export class ReportsComponent implements OnInit {
         let collection: AngularFirestoreCollection<any>;
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;
-        query = collRef.where('status', '==', 'finished');
-        query = query.where('isOrderDelivered', '==', true);
+        query = collRef.where('status', 'in', ['finished', 'cancelled']);
+        // query = query.where('isOrderDelivered', '==', true);
         if (this.delivery) {
           query = query.where('delivery.id', '==', this.delivery.id);
         }
@@ -133,7 +133,13 @@ export class ReportsComponent implements OnInit {
   calculate() {
     this.total = 0;
     this.arrayDocs.forEach((element: any) => {
-      if (element && element.shippingPrice) {
+      if (
+        element &&
+        element.shippingPrice &&
+        element.status &&
+        element.status === 'finished' &&
+        element.isOrderDelivered === true
+      ) {
         this.total = this.total + Number(element.shippingPrice);
       }
     });

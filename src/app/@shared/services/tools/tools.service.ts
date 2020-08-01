@@ -225,9 +225,9 @@ export class ToolsService {
     const alert = await this.alertController.create({
       cssClass: 'ion-text-wrap',
       header: 'Enviar información a repartidor',
-      message: `¿Desea enviar la información de la orden generada al repartidor "${
+      message: `¿Desea enviar la información de la orden generada al repartidor ${
         order && order.delivery && order.delivery.name ? order.delivery.name : ''
-      }"?`,
+      }?`,
       inputs: [
         {
           name: 'companyFolio',
@@ -268,7 +268,7 @@ export class ToolsService {
       ],
       buttons: [
         {
-          text: 'Cancelar',
+          text: 'No enviar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {

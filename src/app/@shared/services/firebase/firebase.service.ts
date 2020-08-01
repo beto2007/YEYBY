@@ -224,6 +224,7 @@ export class FirebaseService {
       await this.afs.collection('orders').doc(id).update({
         status: 'cancelled',
         cancellationDate: moment().toDate(),
+        deliveredTime: moment().toDate(),
         cancellationReason: reason,
         isOrderDelivered: false,
       });

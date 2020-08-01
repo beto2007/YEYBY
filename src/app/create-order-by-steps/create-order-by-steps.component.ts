@@ -126,6 +126,11 @@ export class CreateOrderByStepsComponent implements OnInit {
             this.router.navigate(['/pending-orders']);
           },
         },
+        {
+          text: '',
+          icon: 'close',
+          role: 'cancel',
+        },
       ];
       this.tools.presentToast('¡Órden creada con éxito! <br/> ¿Ir a órdenes en espera?', 60000, 'top', buttons);
     } catch (error) {

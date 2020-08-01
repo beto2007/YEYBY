@@ -108,7 +108,7 @@
                 <ion-chip
                   color="success"
                   class="ion-no-margin ion-margin-vertical"
-                  *ngIf="item?.isOrderDelivered === false"
+                  *ngIf="item?.isOrderDelivered === false && item?.status === 'finished'"
                 >
                   <ion-icon name="stopwatch-outline"></ion-icon>
                   <ion-label>{{ item?.time | async }}</ion-label>
