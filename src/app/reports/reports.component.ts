@@ -17,8 +17,8 @@ export class ReportsComponent implements OnInit {
   public today: string;
   public today1: string;
   private subscription: Subscription;
-  public orderBy: string = 'finishDate';
-  public deliverer: any;
+  public orderBy: string = 'deliveredTime';
+  public delivery: any;
   public orderByDirection: any = 'asc';
   private perPage: number = 750;
   private mainCollection: string = 'orders';
@@ -76,7 +76,7 @@ export class ReportsComponent implements OnInit {
       loadingOverlay.present();
       try {
         if (response && response.data && response.data.item && response.data.item.id) {
-          this.deliverer = response.data.item;
+          this.delivery = response.data.item;
           const data = await this.getDocs();
         }
       } catch (error) {
@@ -92,17 +92,20 @@ export class ReportsComponent implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         const today = moment();
-        let start = new Date(today.format('YYYY-MM-DD') + ' 00:00:00');
-        let end = new Date(today.format('YYYY-MM-DD') + ' 11:59:59');
+        let start = today.startOf('day').toDate(); // new Date(today.format('YYYY-MM-DD') + ' 00:00:00');
+        let end = today.endOf('day').toDate(); //new Date(today.format('YYYY-MM-DD') + ' 11:59:59');
+        console.log(start);
+        console.log(end);
         let collection: AngularFirestoreCollection<any>;
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;
-        query = collRef.where('status', '==', 'delivered');
-        if (this.deliverer) {
-          query = query.where('deliverer.id', '==', this.deliverer.id);
+        query = collRef.where('status', '==', 'finished');
+        query = query.where('isOrderDelivered', '==', true);
+        if (this.delivery) {
+          query = query.where('delivery.id', '==', this.delivery.id);
         }
-        query = query.where('finishDate', '>=', start);
-        query = query.where('finishDate', '<=', end);
+        query = query.where('deliveredTime', '>=', start);
+        query = query.where('deliveredTime', '<=', end);
         query = query.orderBy(this.orderBy, this.orderByDirection);
         collection = this.afs.collection(this.mainCollection, (ref) => query.limit(this.perPage));
         this.subscription = collection.snapshotChanges().subscribe(
@@ -111,12 +114,12 @@ export class ReportsComponent implements OnInit {
               const id: string = element.payload.doc.id;
               const data: any = element.payload.doc.data();
               data.dateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
-              data.startDateStr =
-                data.startDate && data.startDate !== '' ? this.beautyDate(data.startDate.toDate()) : '';
+              data.startDateStr = data.date && data.date !== '' ? this.beautyDate(data.date.toDate()) : '';
               data.finishDateStr =
-                data.finishDate && data.finishDate !== '' ? this.beautyDate(data.finishDate.toDate()) : '';
+                data.deliveredTime && data.deliveredTime !== '' ? this.beautyDate(data.deliveredTime.toDate()) : '';
               return { id, ...data };
             });
+            console.log(this.arrayDocs);
             this.calculate();
             resolve(this.arrayDocs);
           },
@@ -133,8 +136,8 @@ export class ReportsComponent implements OnInit {
   calculate() {
     this.total = 0;
     this.arrayDocs.forEach((element: any) => {
-      if (element && element.order && element.order.shippingPrice) {
-        this.total = this.total + Number(element.order.shippingPrice);
+      if (element && element.shippingPrice) {
+        this.total = this.total + Number(element.shippingPrice);
       }
     });
   }

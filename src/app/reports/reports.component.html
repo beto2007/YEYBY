@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="home"></ion-back-button>
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title> Reporte de repartidor por día</ion-title>
@@ -17,11 +17,11 @@
   <ion-grid fixed>
     <ion-row>
       <ion-col>
-        <div *ngIf="deliverer; else selectDeliverer">
+        <div *ngIf="delivery; else selectDeliverer">
           <ion-card>
             <ion-card-header>
               <ion-toolbar class="ion-no-padding">
-                <h2>{{ deliverer?.name }}</h2>
+                <h2>{{ delivery?.name }}</h2>
                 <ion-buttons slot="end">
                   <ion-button color="medium" (click)="addDelivererFunc()">
                     <ion-icon slot="icon-only" name="repeat-outline"></ion-icon>
@@ -31,7 +31,7 @@
             </ion-card-header>
             <ion-card-content>
               <ion-label>
-                <p><strong>Folio: </strong> {{ deliverer?.folio }}</p>
+                <p><strong>Folio: </strong> {{ delivery?.folio }}</p>
               </ion-label>
             </ion-card-content>
           </ion-card>
@@ -70,7 +70,7 @@
                       <ion-icon name="briefcase"></ion-icon> <strong>{{ name }}</strong>
                     </h3>
                     <h3 *ngIf="item?.customer?.name as name"><ion-icon name="person"></ion-icon> {{ name }}</h3>
-                    <div *ngIf="item.status === 'delivered'">
+                    <div>
                       <p>
                         <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
                       </p>
@@ -78,20 +78,20 @@
                         <small> <strong>Entrega: </strong> {{ item?.finishDateStr }} </small>
                       </p>
                     </div>
-                    <div *ngIf="item.status === 'in-progress'">
+                    <!-- <div *ngIf="item.status === 'in-progress'">
                       <p>
                         <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
                       </p>
-                    </div>
-                    <div *ngIf="item.status === 'canceled-delivery'">
+                    </div> -->
+                    <!-- <div *ngIf="item.status === 'canceled-delivery'">
                       <p>
                         <small> <strong>Inicio: </strong> {{ item?.startDateStr }} </small>
                       </p>
                       <p>
                         <small> <strong>Cancelación: </strong> {{ item?.finishDateStr }} </small>
                       </p>
-                    </div>
-                    <div *ngIf="item.status === 'cancelled'">
+                    </div> -->
+                    <!-- <div *ngIf="item.status === 'cancelled'">
                       <p>
                         <small> <strong>Creación: </strong> {{ item?.dateStr }} </small>
                       </p>
@@ -103,10 +103,10 @@
                       <p>
                         <small> <strong>Creación: </strong> {{ item?.dateStr }} </small>
                       </p>
-                    </div>
+                    </div> -->
                   </ion-label>
                   <ion-chip slot="end">
-                    <ion-label>{{ item?.order?.shippingPrice | currency: 'USD' }}</ion-label>
+                    <ion-label>{{ item?.shippingPrice | currency: 'USD' }}</ion-label>
                   </ion-chip>
                 </ion-item>
               </ion-list>
