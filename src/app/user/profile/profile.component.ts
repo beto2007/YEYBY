@@ -70,6 +70,14 @@ export class ProfileComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({});
     loadingOverlay.present();
     try {
+      let data: any = this.personalDataForm.value;
+      let search: string[] = [];
+      data.nameStr = String(data.name).toLocaleLowerCase();
+      search = search.concat(this.tools.arraySearch(String(this.personalDataForm.get('name').value)));
+      search = search.concat(this.tools.arraySearch(String(this.personalDataForm.get('phone').value)));
+      data.search = search;
+      data.name = String(data.name).toLocaleLowerCase();
+      data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
       await this.afs
         .collection('users')
         .doc(this.credentialsService.credentials.uid)

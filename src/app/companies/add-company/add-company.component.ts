@@ -201,6 +201,8 @@ export class AddCompanyComponent implements OnInit {
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('name').value)));
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('phone').value)));
       data.search = search;
+      data.name = String(data.name).toLocaleLowerCase();
+      data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
       data.date = new Date();
       if (this.file) {
         data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'companies');
@@ -231,6 +233,8 @@ export class AddCompanyComponent implements OnInit {
       data.nameStr = String(data.name).toLocaleLowerCase();
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('name').value)));
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('phone').value)));
+      data.name = String(data.name).toLocaleLowerCase();
+      data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
       data.search = search;
       if (this.file) {
         data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'companies');
