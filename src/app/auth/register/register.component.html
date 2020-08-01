@@ -24,14 +24,14 @@
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('name').touched && registerForm.get('name').getError('required')"
               >
-                <span padding translate>Nombre requerido</span>
+                <span padding>Nombre requerido</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('name').touched && registerForm.get('name').getError('whitespace')"
               >
-                <span padding translate>Nombre no válido</span>
+                <span padding>Nombre no válido</span>
               </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Email</ion-label>
@@ -42,14 +42,14 @@
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('email').touched && registerForm.get('email').getError('required')"
               >
-                <span padding translate>Email requerido</span>
+                <span padding>Email requerido</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('email').touched && registerForm.get('email').getError('invalidEmail')"
               >
-                <span padding translate>Email no válido</span>
+                <span padding>Email no válido</span>
               </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Código de verificación</ion-label>
@@ -60,14 +60,14 @@
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('code').touched && registerForm.get('code').getError('required')"
               >
-                <span padding translate>Código de verificación requerido</span>
+                <span padding>Código de verificación requerido</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('code').touched && registerForm.get('code').getError('whitespace')"
               >
-                <span padding translate>Código no válido</span>
+                <span padding>Código no válido</span>
               </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Contraseña</ion-label>
@@ -78,21 +78,21 @@
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('password1').touched && registerForm.get('password1').getError('required')"
               >
-                <span padding translate>Contraseña requerida</span>
+                <span padding>Contraseña requerida</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('password1').touched && registerForm.get('password1').getError('minlength')"
               >
-                <span padding translate>La contraseña debe tener al menos 6 carácteres</span>
+                <span padding>La contraseña debe tener al menos 6 carácteres</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('password1').touched && registerForm.get('password1').getError('whitespace')"
               >
-                <span padding translate>Contraseña no válida</span>
+                <span padding>Contraseña no válida</span>
               </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Repetir contraseña</ion-label>
@@ -103,14 +103,14 @@
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('password2').touched && registerForm.get('password2').getError('required')"
               >
-                <span padding translate>Debes repetir la contraseña</span>
+                <span padding>Debes repetir la contraseña</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="registerForm.get('password2').touched && registerForm.get('password2').getError('mustMatch')"
               >
-                <span padding translate>Las contraseñas deben de coincidir</span>
+                <span padding>Las contraseñas deben de coincidir</span>
               </ion-text>
             </ion-list>
             <div class="ion-padding-horizontal">

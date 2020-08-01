@@ -7,7 +7,7 @@
           <img class="logo" src="assets/ngx-rocket-logo.png" alt="yeyby logo" />
           <h1>YEYBY</h1>
           <h2>Ingreso a la plataforma</h2>
-          <p>Ingresa tu emails y contraseña para continuar:</p>
+          <p>Ingresa tu Email y contraseña para continuar:</p>
         </div>
         <div class="login-container">
           <form (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
@@ -21,14 +21,14 @@
                 class="ion-padding ion-text-padding"
                 *ngIf="loginForm.get('username').touched && loginForm.get('username').getError('required')"
               >
-                <span padding translate>Email requerido</span>
+                <span padding>Email requerido</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="loginForm.get('username').touched && loginForm.get('username').getError('invalidEmail')"
               >
-                <span padding translate>Email no válido</span>
+                <span padding>Email no válido</span>
               </ion-text>
               <ion-item lines="inset">
                 <ion-label color="medium" position="floating">Contraseña</ion-label>
@@ -39,21 +39,21 @@
                 class="ion-padding ion-text-padding"
                 *ngIf="loginForm.get('password').touched && loginForm.get('password').getError('required')"
               >
-                <span padding translate>Contraseña requerida</span>
+                <span padding>Contraseña requerida</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="loginForm.get('password').touched && loginForm.get('password').getError('minlength')"
               >
-                <span padding translate>La contraseña debe tener al menos 6 carácteres</span>
+                <span padding>La contraseña debe tener al menos 6 carácteres</span>
               </ion-text>
               <ion-text
                 color="danger"
                 class="ion-padding ion-text-padding"
                 *ngIf="loginForm.get('password').touched && loginForm.get('password').getError('whitespace')"
               >
-                <span padding translate>Contraseña no válida</span>
+                <span padding>Contraseña no válida</span>
               </ion-text>
               <ion-item class="ion-padding-top" lines="none">
                 <ion-label>Recordarme</ion-label>
