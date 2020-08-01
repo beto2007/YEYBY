@@ -234,42 +234,44 @@ export class PendingOrdersComponent implements OnInit {
     const alert = await this.alertController.create({
       cssClass: 'ion-text-wrap',
       header: 'Enviar información a repartidor',
-      message: `¿Desea enviar la información de la orden generada al repartidor "${order.delivery.name}"?`,
+      message: `¿Desea enviar la información de la orden generada al repartidor "${
+        order && order.delivery && order.delivery.name ? order.delivery.name : ''
+      }"?`,
       inputs: [
         {
-          name: 'checkbox2',
+          name: 'companyFolio',
           type: 'checkbox',
           label: 'Folio de la empresa',
-          value: 'value2',
+          value: 'companyFolio',
           checked: true,
         },
         {
-          name: 'checkbox3',
+          name: 'companyPhone',
           type: 'checkbox',
           label: 'Teléfono de la empresa',
-          value: 'value3',
+          value: 'companyPhone',
           checked: true,
         },
         {
-          name: 'checkbox6',
+          name: 'customerName',
           type: 'checkbox',
           label: 'Nombre de cliente',
-          value: 'value6',
+          value: 'customerName',
           checked: true,
         },
 
         {
-          name: 'checkbox7',
+          name: 'customerFolio',
           type: 'checkbox',
           label: 'Folio de cliente',
-          value: 'value7',
+          value: 'customerFolio',
           checked: true,
         },
         {
-          name: 'checkbox8',
+          name: 'customerPhone',
           type: 'checkbox',
           label: 'Teléfono de cliente',
-          value: 'value8',
+          value: 'customerPhone',
           checked: true,
         },
       ],
@@ -282,14 +284,128 @@ export class PendingOrdersComponent implements OnInit {
         {
           text: 'Enviar',
           handler: (filters: any[]) => {
-            this.tools.sendInformationToDelverer(
-              order.delivery.phone,
-              'this.mapInformation(this.filterInformation(filters))'
-            );
+            //console.log(filters);
+            //this.filterInformation(filters, order)
+            // this.tools.sendInformationToDelverer(
+            //   order && order.delivery && order.delivery.phone ? order.delivery.phone : '',
+            console.log(this.mapInformation(this.filterInformation(filters, order)));
+            // );
           },
         },
       ],
     });
     await alert.present();
+  }
+
+  filterInformation(filters: any[], order: any): any {
+    let finalOrder: any = {
+      company: {},
+      customer: {},
+    };
+    filters.forEach((element) => {
+      switch (element) {
+        case 'companyFolio':
+          finalOrder.company.folio = order.company.folio;
+          delete order.company.folio;
+          break;
+        case 'companyPhone':
+          finalOrder.company.phone = order.company.phone;
+          delete order.company.phone;
+          break;
+        case 'customerName':
+          finalOrder.customer.name = order.customer.name;
+          delete order.customer.name;
+          break;
+        case 'customerFolio':
+          finalOrder.customer.folio = order.customer.folio;
+          delete order.customer.folio;
+          break;
+        case 'customerPhone':
+          finalOrder.customer.phone = order.customer.phone;
+          delete order.customer.phone;
+          break;
+      }
+    });
+    return { ...finalOrder, ...order };
+  }
+
+  mapInformation(order: any): string {
+    let message: string = '';
+    //Company Info
+    message = message + `Orden: ${order.folio}\n`;
+    message = message + '---------------------------\n';
+    message = message + `Fecha de inicio: ${moment(order.date).format('LLL')}\n`;
+    message = message + '\n';
+
+    message = message + `Lugar de recolección\n`;
+    message = message + '---------------------------\n';
+    if (order && order.company && order.company.name) {
+      message = message + `Empresa: ${order.company.name}\n`;
+    }
+    if (order && order.company && order.company.folio) {
+      message = message + `Folio: ${order.company.folio}\n`;
+    }
+    if (order && order.company && order.company.phone) {
+      message = message + `Teléfono: ${order.company.phone}\n`;
+    }
+    if (order && order.company && order.company.streetAddress) {
+      message = message + `Dirección: ${order.company.streetAddress}\n`;
+    }
+    if (order && order.company && order.company.references) {
+      message = message + `Referencias: ${order.company.references}\n`;
+    }
+    message = message + '\n';
+    //Products Info
+    if (order && order.menu) {
+      message = message + `Productos:\n`;
+      message = message + '---------------------------\n';
+      let productStr: string = '';
+      Array.from(order.menu).forEach((product: any) => {
+        if (product && product.name && product.name !== '') {
+          productStr = productStr + `(${product.quantity}) ${product.name}\n`;
+        }
+        if (product && product.observations && product.observations !== '') {
+          productStr = productStr + `${product.observations}\n`;
+        }
+        if (product && product.price && product.price !== '') {
+          productStr = productStr + `Precio: $${new Intl.NumberFormat('en-IN').format(Number(product.price))}\n`;
+        }
+      });
+      message = message + productStr;
+      message = message + '---------------------------\n';
+      message = message + `Costo de orden: $${new Intl.NumberFormat('en-IN').format(Number(order.totalOrder))}\n`;
+      message = message + `Costo de envío: $${new Intl.NumberFormat('en-IN').format(Number(order.shippingPrice))}\n`;
+      message = message + `Total: $${new Intl.NumberFormat('en-IN').format(Number(order.total))}\n`;
+      message = message + '\n';
+    }
+    //Customer Info
+    message = message + `Lugar de entrega\n`;
+    message = message + '---------------------------\n';
+    if (order && order.customer && order.customer.name) {
+      message = message + `Cliente: ${order.customer.name}\n`;
+    }
+    if (order && order.customer && order.customer.folio) {
+      message = message + `Folio: ${order.customer.folio}\n`;
+    }
+    if (order && order.customer && order.customer.phone) {
+      message = message + `Teléfono: ${order.customer.phone}\n`;
+    }
+    if (order && order.deliveryPlace && order.deliveryPlace.streetAddress) {
+      message = message + `Dirección: ${order.deliveryPlace.streetAddress}\n`;
+    }
+    if (order && order.deliveryPlace && order.deliveryPlace.references) {
+      message = message + `Referencias: ${order.deliveryPlace.references}\n`;
+    }
+    //Deliverer Info
+    message = message + '\n';
+    message = message + `El que entrega\n`;
+    message = message + '---------------------------\n';
+    if (order && order.delivery && order.delivery.name) {
+      message = message + `Repartidor: ${order.delivery.name}\n`;
+    }
+    if (order && order.delivery && order.delivery.folio) {
+      message = message + `Folio: ${order.delivery.folio}\n`;
+    }
+    return message;
   }
 }

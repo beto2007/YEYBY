@@ -67,6 +67,8 @@ export class CreateOrderByStepsComponent implements OnInit {
             folio: this.company.folio,
             name: this.company.name,
             phone: this.company.phone,
+            streetAddress: this.company.streetAddress,
+            references: this.company.references,
           },
           totalOrder: this.totalOrder,
           shippingPrice: this.shippingPrice,

@@ -98,3 +98,8 @@ exports.deliverersCounter = functions.firestore.document('deliverers/{id}').onWr
  * Count documents in orders collection.
  */
 exports.ordersCounter = functions.firestore.document('orders/{id}').onWrite(documentCounter('orders'));
+
+/**
+ * Count documents in ordersV2 collection.
+ */
+exports.ordersCounterV2 = functions.firestore.document('ordersV2/{id}').onWrite(documentCounter('ordersV2'));
