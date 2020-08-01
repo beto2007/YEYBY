@@ -27,7 +27,11 @@
             <ion-item lines="none">
               <ion-thumbnail slot="start">
                 <img
-                  [src]="company?.image?.main?.url ? company?.image?.main?.url : '../../assets/img/restaurant.png'"
+                  [src]="
+                    data?.company?.image?.main?.url
+                      ? data?.company?.image?.main?.url
+                      : '../../assets/img/restaurant.png'
+                  "
                 />
               </ion-thumbnail>
               <ion-label>
@@ -52,7 +56,11 @@
             <ion-item lines="none">
               <ion-avatar slot="start">
                 <img
-                  [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/img/user_default.jpg'"
+                  [src]="
+                    data?.customer?.image?.main?.url
+                      ? data?.customer?.image?.main?.url
+                      : '../../assets/img/user_default.jpg'
+                  "
                 />
               </ion-avatar>
               <ion-label>
