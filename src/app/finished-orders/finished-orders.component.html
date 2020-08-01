@@ -126,6 +126,9 @@
               <ion-item-option (click)="alertCancelOrder(item?.id)" color="light">
                 <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
               </ion-item-option>
+              <ion-item-option [routerLink]="'/order-detail/' + item?.id" routerDirection="forward" color="light">
+                <ion-icon slot="icon-only" name="eye" color="medium"></ion-icon>
+              </ion-item-option>
             </ion-item-options>
           </ion-item-sliding>
         </ion-list>

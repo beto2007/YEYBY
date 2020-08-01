@@ -1,0 +1,133 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title> <span> Detalle de órden</span></ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card class="ion-text-center ion-no-margin my-card-dark-5">
+          <ion-icon class="icon-gigant" src="assets\icons\factura.svg"></ion-icon>
+          <ion-card-header>
+            <ion-card-subtitle color="light">{{ data?.date }}</ion-card-subtitle>
+            <ion-card-title color="light">Resumen de orden</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="none">
+              <ion-thumbnail slot="start">
+                <img
+                  [src]="company?.image?.main?.url ? company?.image?.main?.url : '../../assets/img/restaurant.png'"
+                />
+              </ion-thumbnail>
+              <ion-label>
+                <h2>{{ data?.company?.name ? data?.company?.name : 'Sin empresa asignada' }}</h2>
+                <p><strong>Folio:</strong> {{ data?.company?.folio ? data?.company?.folio : '' }}</p>
+                <p><strong>Teléfono:</strong> {{ data?.company?.phone ? data?.company?.phone : '' }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label class="ion-text-wrap">
+                <h2>{{ data?.company?.streetAddress }}</h2>
+                <p>{{ data?.company?.references }}</p>
+              </ion-label>
+            </ion-item>
+            <div class="ion-text-center">
+              <ion-icon size="large" color="success" name="radio-button-on-outline"></ion-icon>
+            </div>
+            <div class="divider"></div>
+            <div class="ion-text-center">
+              <ion-icon size="large" color="success" name="location-outline"></ion-icon>
+            </div>
+            <ion-item lines="none">
+              <ion-avatar slot="start">
+                <img
+                  [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/img/user_default.jpg'"
+                />
+              </ion-avatar>
+              <ion-label>
+                <h2>{{ data?.customer?.name ? data?.customer?.name : 'Sin cliente asignado' }}</h2>
+                <p><strong>Folio:</strong> {{ data?.customer?.folio ? data?.customer?.folio : '' }}</p>
+                <p><strong>Teléfono:</strong> {{ data?.customer?.phone ? data?.customer?.phone : '' }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label class="ion-text-wrap">
+                <h2>{{ data?.address?.streetAddress }}</h2>
+                <p>{{ data?.address?.references }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-list>
+              <ion-list-header>
+                <ion-label>
+                  <h2>Mi órden</h2>
+                </ion-label>
+              </ion-list-header>
+              <ion-item *ngFor="let item of data?.menu" lines="full">
+                <ion-label slot="start" class="ion-text-wrap">
+                  <h4>{{ item?.name }}</h4>
+                  <p>
+                    <small>
+                      <strong>Cantidad: {{ item?.quantity }} </strong>
+                    </small>
+                  </p>
+                </ion-label>
+                <ion-label slot="end" class="ion-text-wrap ion-text-right">
+                  <p>
+                    <small>
+                      {{ item?.price | currency: 'USD' }}
+                    </small>
+                  </p>
+                </ion-label>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-label class="ion-text-wrap">
+                  <strong>
+                    Costo de orden
+                  </strong>
+                </ion-label>
+                <ion-label class="ion-text-end">
+                  {{ data?.totalOrder | currency: 'USD' }}
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label class="ion-text-wrap">
+                  <strong>
+                    Costo de envío
+                  </strong>
+                </ion-label>
+                <ion-label class="ion-text-end">
+                  {{ data?.shippingPrice | currency: 'USD' }}
+                </ion-label>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-label>
+                  <h1>
+                    <strong>
+                      Total
+                    </strong>
+                  </h1>
+                </ion-label>
+                <ion-label class="ion-text-end">
+                  <h1>
+                    {{ data?.total | currency: 'USD' }}
+                  </h1>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
