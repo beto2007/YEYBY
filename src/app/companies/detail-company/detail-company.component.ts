@@ -214,27 +214,6 @@ export class DetailCompanyComponent implements OnInit {
     }
   }
 
-  async generateOrderConfirm() {
-    const alert = await this.alertController.create({
-      header: 'Generar orden',
-      message: `¿Está seguro de generar nueva orden?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: 'Generar orden',
-          handler: () => {
-            this.myFire.createOrder(this.data.id, 'company');
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
   async updateCompany() {
     const modal = await this.modalController.create({
       component: AddCompanyComponent,

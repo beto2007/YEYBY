@@ -82,8 +82,7 @@
           <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
           <ion-toolbar>
             <ion-title slot="start">
-              <small>
-                <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
+              <small> <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text> </small
             ></ion-title>
             <ion-buttons slot="end">
               <ion-button size="small">
@@ -154,9 +153,6 @@
               <small><strong>Folio: </strong>{{ item?.folio }}</small></ion-title
             >
             <ion-buttons slot="end">
-              <ion-button size="small" (click)="generateOrderConfirm(item.id)">
-                <ion-icon slot="icon-only" name="receipt-outline"></ion-icon>
-              </ion-button>
               <ion-button size="small" (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
               </ion-button>

@@ -155,7 +155,6 @@
             </ion-label>
           </ion-item>
         </ion-list>
-
         <ion-list *ngSwitchCase="'list'">
           <ion-item
             lines="full"
@@ -187,7 +186,6 @@
             </ion-label>
           </ion-item>
         </ion-list>
-
         <ion-list *ngSwitchDefault>
           <ion-item lines="full" *ngFor="let item of arrayDocs; let i = index">
             <ion-avatar slot="start">
@@ -206,9 +204,6 @@
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
             </ion-label>
             <ion-buttons slot="end">
-              <ion-button size="small" (click)="generateOrderConfirm(item.id)">
-                <ion-icon slot="icon-only" name="receipt-outline"></ion-icon>
-              </ion-button>
               <ion-button (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
               </ion-button>

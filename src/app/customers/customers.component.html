@@ -149,9 +149,6 @@
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
             </ion-label>
             <ion-buttons slot="end" *ngIf="!(mode === 'modal')">
-              <ion-button size="small" (click)="generateOrderConfirm(item.id)">
-                <ion-icon slot="icon-only" name="receipt-outline"></ion-icon>
-              </ion-button>
               <ion-button (click)="presentPopover($event, item)">
                 <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
               </ion-button>

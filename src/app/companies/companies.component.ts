@@ -69,27 +69,6 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     }
   }
 
-  async generateOrderConfirm(id: string) {
-    const alert = await this.alertController.create({
-      header: 'Generar orden',
-      message: `¿Está seguro de generar nueva orden?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: 'Generar orden',
-          handler: () => {
-            this.myFire.createOrder(id, 'company');
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
   async doSearch(ev: any) {
     this.isLoading = true;
     try {

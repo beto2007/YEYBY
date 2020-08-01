@@ -267,25 +267,4 @@ export class CustomersComponent implements OnInit, OnDestroy {
   selectItem(item: any) {
     this.modalController.dismiss({ item: item });
   }
-
-  async generateOrderConfirm(id: string) {
-    const alert = await this.alertController.create({
-      header: 'Generar orden',
-      message: `¿Está seguro de generar nueva orden?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: 'Generar orden',
-          handler: () => {
-            this.myFire.createOrder(id, 'customer');
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
 }
