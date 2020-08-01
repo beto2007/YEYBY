@@ -20,7 +20,7 @@
         <ion-card class="ion-text-center ion-no-margin my-card-dark-5">
           <ion-icon class="icon-gigant" src="assets\icons\factura.svg"></ion-icon>
           <ion-card-header>
-            <ion-card-subtitle color="light">{{ data?.date }}</ion-card-subtitle>
+            <ion-card-subtitle color="light">{{ data?.dateStr }}</ion-card-subtitle>
             <ion-card-title color="light">Resumen de orden</ion-card-title>
           </ion-card-header>
           <ion-card-content>
@@ -125,6 +125,23 @@
                 </ion-label>
               </ion-item>
             </ion-list>
+            <br />
+            <ion-item
+              lines="none"
+              button
+              mode="md"
+              class="ion-no-margin my-item-no-lines"
+              color="success"
+              (click)="sendInfo()"
+            >
+              <ion-label class="ion-text-wrap">
+                <h2>
+                  <strong>Enviar por WhatsApp</strong>
+                </h2>
+                <p></p>
+              </ion-label>
+              <ion-icon name="logo-whatsapp" slot="end"></ion-icon>
+            </ion-item>
           </ion-card-content>
         </ion-card>
       </ion-col>

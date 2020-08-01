@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as moment from 'moment';
+import { ToolsService } from '@app/@shared/services/tools/tools.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -16,7 +17,8 @@ export class OrderDetailComponent implements OnInit {
   constructor(
     private afs: AngularFirestore,
     private aRoute: ActivatedRoute,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private tools: ToolsService
   ) {
     this.aRoute.params.subscribe((params) => {
       this.initializeApp(params.id);
@@ -32,11 +34,16 @@ export class OrderDetailComponent implements OnInit {
     try {
       const response = await this.afs.collection('orders').doc(id).ref.get();
       this.data = response.data();
-      this.data.date = moment(this.data.date.toDate()).format('LLLL');
+      this.data.id = response.id;
+      this.data.dateStr = moment(this.data.date.toDate()).format('LLLL');
     } catch (error) {
       console.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
+  }
+
+  sendInfo() {
+    this.tools.sendInformationToDelvererCheck(this.data);
   }
 }
