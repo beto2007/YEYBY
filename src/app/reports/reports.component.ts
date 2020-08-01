@@ -94,8 +94,6 @@ export class ReportsComponent implements OnInit {
         const today = moment();
         let start = today.startOf('day').toDate(); // new Date(today.format('YYYY-MM-DD') + ' 00:00:00');
         let end = today.endOf('day').toDate(); //new Date(today.format('YYYY-MM-DD') + ' 11:59:59');
-        console.log(start);
-        console.log(end);
         let collection: AngularFirestoreCollection<any>;
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;
@@ -119,7 +117,6 @@ export class ReportsComponent implements OnInit {
                 data.deliveredTime && data.deliveredTime !== '' ? this.beautyDate(data.deliveredTime.toDate()) : '';
               return { id, ...data };
             });
-            console.log(this.arrayDocs);
             this.calculate();
             resolve(this.arrayDocs);
           },

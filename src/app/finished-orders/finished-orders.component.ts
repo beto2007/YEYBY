@@ -82,7 +82,7 @@ export class FinishedOrdersComponent implements OnInit {
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;
         query = collRef.orderBy(this.orderBy, this.orderByDirection);
-        query = query.where('status', '==', 'finished');
+        query = query.where('status', 'in', ['finished', 'cancelled']);
         if (this.filterByDelivery) {
           query = query.where('delivery.id', '==', this.filterByDelivery);
         }

@@ -216,10 +216,16 @@ export class FirebaseService {
 
   async cancelOrderV2(id: string, reason: string) {
     try {
+      const response = await this.afs.collection('orders').doc(id).ref.get();
+      const data = response.data();
+      await this.afs.collection('deliverers').doc(data.delivery.id).update({
+        isEnabled: true,
+      });
       await this.afs.collection('orders').doc(id).update({
         status: 'cancelled',
-        cancellationDate: new Date(),
+        cancellationDate: moment().toDate(),
         cancellationReason: reason,
+        isOrderDelivered: false,
       });
       this.presentToast('¡Orden cancelada!');
     } catch (error) {
