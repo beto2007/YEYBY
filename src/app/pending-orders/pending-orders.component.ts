@@ -230,7 +230,6 @@ export class PendingOrdersComponent implements OnInit {
   }
 
   async sendInformationToDelvererCheck(order: any) {
-    console.log(order);
     const alert = await this.alertController.create({
       cssClass: 'ion-text-wrap',
       header: 'Enviar información a repartidor',
@@ -283,13 +282,11 @@ export class PendingOrdersComponent implements OnInit {
         },
         {
           text: 'Enviar',
-          handler: (filters: any[]) => {
-            //console.log(filters);
-            //this.filterInformation(filters, order)
-            // this.tools.sendInformationToDelverer(
-            //   order && order.delivery && order.delivery.phone ? order.delivery.phone : '',
-            console.log(this.mapInformation(this.filterInformation(filters, order)));
-            // );
+          handler: (filters: string[]) => {
+            this.tools.sendInformationToDelverer(
+              order && order.delivery && order.delivery.phone ? order.delivery.phone : '',
+              this.mapInformation(order, filters)
+            );
           },
         },
       ],
@@ -297,55 +294,22 @@ export class PendingOrdersComponent implements OnInit {
     await alert.present();
   }
 
-  filterInformation(filters: any[], order: any): any {
-    let finalOrder: any = {
-      company: {},
-      customer: {},
-    };
-    filters.forEach((element) => {
-      switch (element) {
-        case 'companyFolio':
-          finalOrder.company.folio = order.company.folio;
-          delete order.company.folio;
-          break;
-        case 'companyPhone':
-          finalOrder.company.phone = order.company.phone;
-          delete order.company.phone;
-          break;
-        case 'customerName':
-          finalOrder.customer.name = order.customer.name;
-          delete order.customer.name;
-          break;
-        case 'customerFolio':
-          finalOrder.customer.folio = order.customer.folio;
-          delete order.customer.folio;
-          break;
-        case 'customerPhone':
-          finalOrder.customer.phone = order.customer.phone;
-          delete order.customer.phone;
-          break;
-      }
-    });
-    return { ...finalOrder, ...order };
-  }
-
-  mapInformation(order: any): string {
+  mapInformation(order: any, filters: string[]): string {
     let message: string = '';
     //Company Info
     message = message + `Orden: ${order.folio}\n`;
     message = message + '---------------------------\n';
-    message = message + `Fecha de inicio: ${moment(order.date).format('LLL')}\n`;
+    message = message + `Fecha de inicio: ${moment(order.date.toDate()).format('LLL')}\n`;
     message = message + '\n';
-
     message = message + `Lugar de recolección\n`;
     message = message + '---------------------------\n';
     if (order && order.company && order.company.name) {
       message = message + `Empresa: ${order.company.name}\n`;
     }
-    if (order && order.company && order.company.folio) {
+    if (order && order.company && order.company.folio && filters.indexOf('companyFolio') > -1) {
       message = message + `Folio: ${order.company.folio}\n`;
     }
-    if (order && order.company && order.company.phone) {
+    if (order && order.company && order.company.phone && filters.indexOf('companyPhone') > -1) {
       message = message + `Teléfono: ${order.company.phone}\n`;
     }
     if (order && order.company && order.company.streetAddress) {
@@ -381,13 +345,13 @@ export class PendingOrdersComponent implements OnInit {
     //Customer Info
     message = message + `Lugar de entrega\n`;
     message = message + '---------------------------\n';
-    if (order && order.customer && order.customer.name) {
+    if (order && order.customer && order.customer.name && filters.indexOf('customerName') > -1) {
       message = message + `Cliente: ${order.customer.name}\n`;
     }
-    if (order && order.customer && order.customer.folio) {
+    if (order && order.customer && order.customer.folio && filters.indexOf('customerFolio') > -1) {
       message = message + `Folio: ${order.customer.folio}\n`;
     }
-    if (order && order.customer && order.customer.phone) {
+    if (order && order.customer && order.customer.phone && filters.indexOf('customerPhone') > -1) {
       message = message + `Teléfono: ${order.customer.phone}\n`;
     }
     if (order && order.deliveryPlace && order.deliveryPlace.streetAddress) {
