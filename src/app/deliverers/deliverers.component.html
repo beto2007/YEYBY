@@ -149,7 +149,7 @@
                 {{ item?.streetAddress | slice: 0:100 }}
               </p>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
-              <ion-badge [color]="item?.isEnabled === true ? 'success' : 'medium'" mode="ios">
+              <ion-badge [color]="item?.isEnabled === true ? 'success' : 'danger'" mode="ios">
                 {{ item?.isEnabled === true ? 'Disponible' : 'Ocupado' }}</ion-badge
               >
             </ion-label>
@@ -180,7 +180,7 @@
                 {{ item?.streetAddress | slice: 0:100 }}
               </p>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
-              <ion-badge [color]="item?.isEnabled === true ? 'success' : 'medium'" mode="ios">
+              <ion-badge [color]="item?.isEnabled === true ? 'success' : 'danger'" mode="ios">
                 {{ item?.isEnabled === true ? 'Disponible' : 'Ocupado' }}</ion-badge
               >
             </ion-label>

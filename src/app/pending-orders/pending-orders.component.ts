@@ -5,7 +5,7 @@ import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute } from '@angular/router';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import { interval } from 'rxjs';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, AlertController } from '@ionic/angular';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import * as moment from 'moment';
 
@@ -39,7 +39,8 @@ export class PendingOrdersComponent implements OnInit {
     private aRoute: ActivatedRoute,
     private loadingController: LoadingController,
     private modalController: ModalController,
-    private firebase: FirebaseService
+    private firebase: FirebaseService,
+    private alertController: AlertController
   ) {
     this.aRoute.params.subscribe((params) => {
       if (
@@ -182,7 +183,7 @@ export class PendingOrdersComponent implements OnInit {
     }
   }
 
-  public async assignDeliverier(id: string): Promise<void> {
+  public async assignDeliverier(order: any): Promise<void> {
     const modal = await this.modalController.create({
       component: DeliverersComponent,
       componentProps: { mode: 'select' },
@@ -195,13 +196,14 @@ export class PendingOrdersComponent implements OnInit {
         if (response && response.data && response.data.item && response.data.item.id) {
           await this.afs
             .collection('ordersV2')
-            .doc(id)
+            .doc(order.id)
             .update({
               status: 'finished',
               delivery: {
                 name: response.data.item.name,
                 folio: response.data.item.folio,
                 id: response.data.item.id,
+                phone: response.data.item.phone,
               },
               assignmentTime: moment().toDate(),
               isOrderDelivered: false,
@@ -209,7 +211,10 @@ export class PendingOrdersComponent implements OnInit {
           await this.afs.collection('deliverers').doc(response.data.item.id).update({
             isEnabled: false,
           });
-          this.tools.presentToast('¡Órden creada con éxito!', 6000, 'top');
+          const docResponse = await this.afs.collection('ordersV2').doc(order.id).ref.get();
+          const data = docResponse.data();
+          const id = docResponse.id;
+          this.sendInformationToDelvererCheck({ id, ...data });
         }
       } catch (error) {
         console.error(error);
@@ -222,5 +227,69 @@ export class PendingOrdersComponent implements OnInit {
 
   public alertCancelOrder(id: string) {
     this.firebase.alertCancelOrder(id);
+  }
+
+  async sendInformationToDelvererCheck(order: any) {
+    console.log(order);
+    const alert = await this.alertController.create({
+      cssClass: 'ion-text-wrap',
+      header: 'Enviar información a repartidor',
+      message: `¿Desea enviar la información de la orden generada al repartidor "${order.delivery.name}"?`,
+      inputs: [
+        {
+          name: 'checkbox2',
+          type: 'checkbox',
+          label: 'Folio de la empresa',
+          value: 'value2',
+          checked: true,
+        },
+        {
+          name: 'checkbox3',
+          type: 'checkbox',
+          label: 'Teléfono de la empresa',
+          value: 'value3',
+          checked: true,
+        },
+        {
+          name: 'checkbox6',
+          type: 'checkbox',
+          label: 'Nombre de cliente',
+          value: 'value6',
+          checked: true,
+        },
+
+        {
+          name: 'checkbox7',
+          type: 'checkbox',
+          label: 'Folio de cliente',
+          value: 'value7',
+          checked: true,
+        },
+        {
+          name: 'checkbox8',
+          type: 'checkbox',
+          label: 'Teléfono de cliente',
+          value: 'value8',
+          checked: true,
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Enviar',
+          handler: (filters: any[]) => {
+            this.tools.sendInformationToDelverer(
+              order.delivery.phone,
+              'this.mapInformation(this.filterInformation(filters))'
+            );
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

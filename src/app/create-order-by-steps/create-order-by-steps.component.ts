@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, LoadingController } from '@ionic/angular';
 import { CompaniesComponent } from '@app/companies/companies.component';
 import { CustomersComponent } from '@app/customers/customers.component';
-import { AddCustomersComponent } from '@app/customers/add-customers/add-customers.component';
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as moment from 'moment';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
@@ -60,12 +59,14 @@ export class CreateOrderByStepsComponent implements OnInit {
             id: this.customer.id,
             folio: this.customer.folio,
             name: this.customer.name,
+            phone: this.customer.phone,
           },
           menu: this.menu,
           company: {
-            name: this.company.name,
             id: this.company.id,
             folio: this.company.folio,
+            name: this.company.name,
+            phone: this.company.phone,
           },
           totalOrder: this.totalOrder,
           shippingPrice: this.shippingPrice,
