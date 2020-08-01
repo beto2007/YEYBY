@@ -216,7 +216,7 @@ export class FirebaseService {
 
   async cancelOrderV2(id: string, reason: string) {
     try {
-      await this.afs.collection('ordersV2').doc(id).update({
+      await this.afs.collection('orders').doc(id).update({
         status: 'cancelled',
         cancellationDate: new Date(),
         cancellationReason: reason,

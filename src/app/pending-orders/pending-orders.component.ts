@@ -24,7 +24,7 @@ export class PendingOrdersComponent implements OnInit {
   public orderBy: string = 'date';
   public orderByDirection: any = 'asc';
   private perPage: number = 500;
-  private mainCollection: string = 'ordersV2';
+  private mainCollection: string = 'orders';
   private startAfter: any;
   private endBefore: any;
   private startAt: any;
@@ -195,7 +195,7 @@ export class PendingOrdersComponent implements OnInit {
       try {
         if (response && response.data && response.data.item && response.data.item.id) {
           await this.afs
-            .collection('ordersV2')
+            .collection('orders')
             .doc(order.id)
             .update({
               status: 'finished',
@@ -211,7 +211,7 @@ export class PendingOrdersComponent implements OnInit {
           await this.afs.collection('deliverers').doc(response.data.item.id).update({
             isEnabled: false,
           });
-          const docResponse = await this.afs.collection('ordersV2').doc(order.id).ref.get();
+          const docResponse = await this.afs.collection('orders').doc(order.id).ref.get();
           const data = docResponse.data();
           const id = docResponse.id;
           this.sendInformationToDelvererCheck({ id, ...data });

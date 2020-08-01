@@ -49,6 +49,7 @@ export class CreateOrderByStepsComponent implements OnInit {
       let order = {};
       if (this.type === 'orden') {
         order = {
+          search: [],
           type: this.type,
           deliveryPlace: this.address,
           collectionPlace: {
@@ -77,7 +78,7 @@ export class CreateOrderByStepsComponent implements OnInit {
           status: 'pending',
         };
       }
-      await this.afs.collection('ordersV2').add(order);
+      await this.afs.collection('orders').add(order);
     } catch (error) {
       console.error(error);
     }

@@ -22,7 +22,7 @@ export class FinishedOrdersComponent implements OnInit {
   public orderBy: string = 'date';
   public orderByDirection: any = 'desc';
   private perPage: number = 50;
-  private mainCollection: string = 'ordersV2';
+  private mainCollection: string = 'orders';
   public filterByDelivery: string;
   private startAfter: any;
   private endBefore: any;
@@ -242,13 +242,13 @@ export class FinishedOrdersComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      const response = await this.afs.collection('ordersV2').doc(id).ref.get();
+      const response = await this.afs.collection('orders').doc(id).ref.get();
       const data = response.data();
       if (data && data.delivery && data.delivery.id) {
         await this.afs.collection('deliverers').doc(data.delivery.id).update({
           isEnabled: true,
         });
-        await this.afs.collection('ordersV2').doc(id).update({
+        await this.afs.collection('orders').doc(id).update({
           deliveredTime: moment().toDate(),
           isOrderDelivered: true,
         });
