@@ -17,6 +17,7 @@ export const environment = {
   serverUrl: '/api',
   defaultLanguage: 'es-ES',
   supportedLanguages: ['es-ES'],
+  firebaseApi: 'https://us-central1-yeyby-c072f.cloudfunctions.net/',
 };
 
 /*

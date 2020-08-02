@@ -13,4 +13,5 @@ export const environment = {
   serverUrl: 'https://yeyby-c072f.web.app',
   defaultLanguage: 'es-ES',
   supportedLanguages: ['es-ES'],
+  firebaseApi: 'https://us-central1-yeyby-c072f.cloudfunctions.net/',
 };
