@@ -76,6 +76,34 @@
                 <p>{{ data?.address?.references }}</p>
               </ion-label>
             </ion-item>
+
+            <ion-item lines="none">
+              <ion-label class="ion-text-wrap">
+                <p><strong>Repartidor</strong></p>
+              </ion-label>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-avatar slot="start">
+                <img
+                  [src]="
+                    data?.delivery?.image?.main?.url
+                      ? data?.delivery?.image?.main?.url
+                      : '../../assets/img/user_default.jpg'
+                  "
+                />
+              </ion-avatar>
+              <ion-label>
+                <h2>{{ data?.delivery?.name ? data?.delivery?.name : 'Selecciona un repartidor' }}</h2>
+                <p *ngIf="data?.delivery?.folio">
+                  <strong>Folio:</strong> {{ data?.delivery?.folio ? data?.delivery?.folio : '' }}
+                </p>
+                <p *ngIf="data?.delivery?.phone">
+                  <strong>Teléfono:</strong> {{ data?.delivery?.phone ? data?.delivery?.phone : '' }}
+                </p>
+              </ion-label>
+            </ion-item>
+
             <ion-list>
               <ion-list-header>
                 <ion-label>

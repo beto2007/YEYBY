@@ -204,6 +204,10 @@ export class PendingOrdersComponent implements OnInit {
                 folio: response.data.item.folio,
                 id: response.data.item.id,
                 phone: response.data.item.phone,
+                image:
+                  response && response.data && response.data.item && response.data.item.image
+                    ? response.data.item.image
+                    : {},
               },
               assignmentTime: moment().toDate(),
               isOrderDelivered: false,

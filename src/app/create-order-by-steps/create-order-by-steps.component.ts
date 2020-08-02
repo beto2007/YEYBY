@@ -62,6 +62,7 @@ export class CreateOrderByStepsComponent implements OnInit {
             folio: this.customer.folio,
             name: this.customer.name,
             phone: this.customer.phone,
+            image: this.customer && this.customer.image ? this.customer.image : {},
           },
           menu: this.menu,
           company: {
@@ -71,6 +72,7 @@ export class CreateOrderByStepsComponent implements OnInit {
             phone: this.company.phone,
             streetAddress: this.company.streetAddress,
             references: this.company.references,
+            image: this.company && this.company.image ? this.company.image : {},
           },
           totalOrder: this.totalOrder,
           shippingPrice: this.shippingPrice,
