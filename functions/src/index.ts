@@ -102,30 +102,30 @@ exports.ordersCounter = functions.firestore.document('orders/{id}').onWrite(docu
 /**
  * Registration
  */
-exports.code = functions.https.onRequest(async (request, _response) => {
-  _response.header('Content-Type', 'application/json');
-  _response.header('Access-Control-Allow-Origin', '*');
-  _response.header(
+exports.code = functions.https.onRequest(async (request, response) => {
+  response.header('Content-Type', 'application/json');
+  response.header('Access-Control-Allow-Origin', '*');
+  response.header(
     'Access-Control-Allow-Headers',
     'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
   );
   if (request.method === 'OPTIONS') {
-    return _response.status(204).send('');
+    return response.status(204).send('');
   }
   try {
     const _code = request.body.code;
     //const _token = request.body.token;
     const _email = request.body.email;
-    const _password1 = request.body.password;
+    const _password = request.body.password;
     const _name = request.body.name;
     const _nameStr = request.body.nameStr;
     const _search = request.body.search;
     const _date = request.body.date;
     //const decodedToken = await admin.auth().verifyIdToken(_token);
     //if (request.body.uid && decodedToken.uid) {
-    const response = await db.collection('invites').where('code', '==', _code).where('status', '==', 'pending').get();
-    if (!response.empty === true) {
-      const doc = response.docs[0];
+    const response2 = await db.collection('invites').where('code', '==', _code).where('status', '==', 'pending').get();
+    if (!response2.empty === true) {
+      const doc = response2.docs[0];
       if (doc && doc.exists === true) {
         if (doc.data().company) {
           const inviteID: string = doc.id;
@@ -133,7 +133,7 @@ exports.code = functions.https.onRequest(async (request, _response) => {
           if (response1.exists === true) {
             const companyID: string = response1.id;
             const email: string = String(_email);
-            const password: string = String(_password1);
+            const password: string = String(_password);
             const user = await admin.auth().createUser({ email: email, password: password });
             if (user && user.email && user.uid) {
               const userID: string = user.uid;
@@ -156,63 +156,92 @@ exports.code = functions.https.onRequest(async (request, _response) => {
               await db.collection('invites').doc(inviteID).update({
                 status: 'assigned',
               });
-              return _response
+              return response
                 .status(200)
                 .send({ status: 'success', message: 'Registro creado correctamente, bienvenido.' });
             } else {
-              return _response
+              return response
                 .status(401)
                 .send({ status: 'error', message: 'Ha ocurrido un error, por favor inténtalo más tarde.' });
             }
           } else {
-            return _response
-              .status(401)
-              .send({
-                status: 'error',
-                message:
-                  'No existe una empresa asociada a este código, por favor contacta a la persona que te envió este código.',
-              });
-          }
-        } else {
-          return _response
-            .status(401)
-            .send({
+            return response.status(401).send({
               status: 'error',
               message:
                 'No existe una empresa asociada a este código, por favor contacta a la persona que te envió este código.',
             });
-        }
-      } else {
-        return _response
-          .status(401)
-          .send({
+          }
+        } else {
+          return response.status(401).send({
             status: 'error',
             message:
-              'El código de verifiación ya ha sido utilizado o no existe, por favor contacta a la persona que te envió este código.',
+              'No existe una empresa asociada a este código, por favor contacta a la persona que te envió este código.',
           });
-      }
-    } else {
-      return _response
-        .status(401)
-        .send({
+        }
+      } else {
+        return response.status(401).send({
           status: 'error',
           message:
             'El código de verifiación ya ha sido utilizado o no existe, por favor contacta a la persona que te envió este código.',
         });
+      }
+    } else {
+      return response.status(401).send({
+        status: 'error',
+        message:
+          'El código de verifiación ya ha sido utilizado o no existe, por favor contacta a la persona que te envió este código.',
+      });
     }
     // } else {
-    //   return _response.status(401).send({ message: 'Usuario no válido' });
+    //   return response.status(401).send({ message: 'Usuario no válido' });
     // }
   } catch (error) {
     console.error(error);
     if (error.code === 'auth/email-already-in-use') {
-      return _response
+      return response
         .status(501)
         .send({ status: 'error', message: 'El email que intentas registrar esta siendo utlizado por otra cuenta.' });
     } else {
-      return _response
+      return response
         .status(501)
         .send({ status: 'error', message: 'Ha ocurrido un error, por favor inténtalo más tarde.' });
     }
+  }
+});
+
+/**
+ * Create Auth
+ */
+exports.crateUserAuth = functions.https.onRequest(async (request, response) => {
+  response.header('Content-Type', 'application/json');
+  response.header('Access-Control-Allow-Origin', '*');
+  response.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+  );
+  if (request.method === 'OPTIONS') {
+    return response.status(204).send('');
+  }
+  try {
+    const token = request.body.token;
+    const email = request.body.email;
+    const password = request.body.password;
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    if (decodedToken && decodedToken.uid) {
+      const user = await admin.auth().createUser({ email: email, password: password });
+      if (user && user.email && user.uid) {
+        return response.status(200).send({ status: 'success', message: 'Registro creado correctamente.', data: user });
+      } else {
+        return response
+          .status(401)
+          .send({ status: 'error', message: 'Ha ocurrido un error, por favor inténtalo más tarde.' });
+      }
+    } else {
+      return response.status(401).send({ message: 'Usuario no válido' });
+    }
+  } catch (error) {
+    return response
+      .status(401)
+      .send({ status: 'error', message: 'Ha ocurrido un error, por favor inténtalo más tarde.', error: error });
   }
 });
