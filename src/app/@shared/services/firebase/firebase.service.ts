@@ -303,7 +303,7 @@ export class FirebaseService {
           const docResponse = await this.afs.collection('orders').doc(order.id).ref.get();
           const data = docResponse.data();
           const id = docResponse.id;
-          this.tools.sendInformationToDelvererCheck({ id, ...data });
+          this.tools.sendInformationToDelvererCheck({ id, ...data }, 'update');
         }
       } catch (error) {
         console.error(error);

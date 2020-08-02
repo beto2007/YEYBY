@@ -221,7 +221,7 @@ export class ToolsService {
     return String(times);
   }
 
-  async sendInformationToDelvererCheck(order: any) {
+  async sendInformationToDelvererCheck(order: any, type: 'send' | 'update') {
     const alert = await this.alertController.create({
       cssClass: 'ion-text-wrap',
       header: 'Enviar información a repartidor',
@@ -272,7 +272,9 @@ export class ToolsService {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            this.presentToast('¡Correcto! <br> Se asignó repartidor a órden.');
+            if (type === 'update') {
+              this.presentToast('¡Correcto! <br> Se asignó repartidor a órden.');
+            }
           },
         },
         {
@@ -282,9 +284,13 @@ export class ToolsService {
               order && order.delivery && order.delivery.phone ? order.delivery.phone : '',
               this.mapInformation(order, filters)
             );
-            this.presentToast(
-              '¡Correcto! <br> Se asignó repartidor a órden.<br>Se envió información de órden a repartidor.'
-            );
+            if (type === 'update') {
+              this.presentToast(
+                '¡Correcto! <br> Se asignó repartidor a órden.<br>Se envió información de órden a repartidor.'
+              );
+            } else if (type === 'send') {
+              this.presentToast('¡Correcto! <br> Información enviada correctamente.');
+            }
           },
         },
       ],

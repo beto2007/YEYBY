@@ -53,7 +53,7 @@ export class OrderDetailComponent implements OnInit {
   }
 
   sendInformationToDelvererCheck() {
-    this.tools.sendInformationToDelvererCheck(this.order);
+    this.tools.sendInformationToDelvererCheck(this.order, 'send');
   }
 
   ionViewDidLeave() {
