@@ -17,8 +17,6 @@ export class YeybyUsersComponent implements OnInit {
   public arrayDocs: any[];
   public isLoading = false;
   private subscription: Subscription;
-  private totalSubs: Subscription;
-  public total: number = 0;
   public orderBy: string = 'nameStr';
   public orderByDirection: any = 'asc';
   private searchOrderBy: string = 'nameStr';
@@ -79,6 +77,7 @@ export class YeybyUsersComponent implements OnInit {
         let collRef: CollectionReference = this.afs.collection(this.mainCollection).ref;
         let query: Query;
         query = collRef.orderBy(this.orderBy, this.orderByDirection);
+        query = query.where('type', '==', 'yeyby-users');
         if (this.startAfter && direction === 'forward') {
           query = query.startAfter(this.startAfter);
         } else if (this.startAt && this.endBefore && direction === 'back') {
@@ -94,6 +93,7 @@ export class YeybyUsersComponent implements OnInit {
                 await this.afs
                   .collection(this.mainCollection)
                   .ref.orderBy(this.orderBy, this.orderByDirection)
+                  .where('type', '==', 'yeyby-users')
                   .startAfter(this.startAfter)
                   .limit(this.perPage)
                   .get()
@@ -106,6 +106,7 @@ export class YeybyUsersComponent implements OnInit {
               back = await this.afs
                 .collection(this.mainCollection)
                 .ref.orderBy(this.orderBy, this.orderByDirection === 'asc' ? 'desc' : 'asc')
+                .where('type', '==', 'yeyby-users')
                 .startAfter(this.endBefore)
                 .limit(this.perPage)
                 .get();
@@ -140,6 +141,7 @@ export class YeybyUsersComponent implements OnInit {
       const snap = await this.afs
         .collection(this.mainCollection)
         .ref.orderBy(this.searchOrderBy, this.searchOorderByDirection)
+        .where('type', '==', 'yeyby-users')
         .where('search', 'array-contains-any', [this.searchStr])
         .limit(this.perPage)
         .get();
@@ -150,6 +152,7 @@ export class YeybyUsersComponent implements OnInit {
           await this.afs
             .collection(this.mainCollection)
             .ref.orderBy(this.searchOrderBy, this.searchOorderByDirection)
+            .where('type', '==', 'yeyby-users')
             .where('search', 'array-contains-any', [this.searchStr])
             .startAfter(this.startAfter)
             .limit(this.perPage)
@@ -163,6 +166,7 @@ export class YeybyUsersComponent implements OnInit {
         back = await this.afs
           .collection(this.mainCollection)
           .ref.orderBy(this.searchOrderBy, this.searchOorderByDirection === 'asc' ? 'desc' : 'asc')
+          .where('type', '==', 'yeyby-users')
           .where('search', 'array-contains-any', [this.searchStr])
           .startAfter(this.endBefore)
           .limit(this.perPage)
@@ -224,18 +228,12 @@ export class YeybyUsersComponent implements OnInit {
 
   totalSubscription() {
     const snap = this.afs.doc(this.docNumbers).valueChanges();
-    this.totalSubs = snap.subscribe((snap: any) => {
-      this.total = Number(snap.count);
-    });
   }
 
   closeSubscriptions() {
     try {
       if (this.subscription) {
         this.subscription.unsubscribe();
-      }
-      if (this.totalSubs) {
-        this.totalSubs.unsubscribe();
       }
     } catch (error) {
       console.error(error);
