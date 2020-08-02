@@ -24,7 +24,27 @@
             <ion-card-subtitle color="light">{{ data?.folio }}</ion-card-subtitle>
             <ion-card-title color="light">Resumen de orden</ion-card-title>
           </ion-card-header>
+          <ion-toolbar color="danger" *ngIf="data?.status === 'cancelled'">
+            <ion-title>Órden cancelada</ion-title>
+          </ion-toolbar>
+          <ion-toolbar color="warning" *ngIf="data?.status === 'pending'">
+            <ion-title>Órden en espera</ion-title>
+          </ion-toolbar>
+          <ion-toolbar color="success" *ngIf="data?.status === 'finished' && data?.isOrderDelivered === false">
+            <ion-title>Órden terminada</ion-title>
+          </ion-toolbar>
+          <ion-toolbar color="success" *ngIf="data?.status === 'finished' && data?.isOrderDelivered === true">
+            <ion-title>Órden terminada y entregada</ion-title>
+          </ion-toolbar>
           <ion-card-content>
+            <ion-item *ngIf="data?.status === 'cancelled'" lines="none" class="item-border">
+              <ion-label class="ion-text-center">
+                <h2>
+                  <strong>Motivo de cancelación</strong>
+                </h2>
+                <p>{{ data?.cancellationReason }}</p>
+              </ion-label>
+            </ion-item>
             <ion-item lines="none">
               <ion-thumbnail slot="start">
                 <img
@@ -76,13 +96,11 @@
                 <p>{{ data?.address?.references }}</p>
               </ion-label>
             </ion-item>
-
             <ion-item lines="none">
               <ion-label class="ion-text-wrap">
                 <p><strong>Repartidor</strong></p>
               </ion-label>
             </ion-item>
-
             <ion-item lines="none">
               <ion-avatar slot="start">
                 <img
@@ -103,11 +121,10 @@
                 </p>
               </ion-label>
             </ion-item>
-
             <ion-list>
               <ion-list-header>
                 <ion-label>
-                  <h2>Mi órden</h2>
+                  <h2>Órden</h2>
                 </ion-label>
               </ion-list-header>
               <ion-item *ngFor="let item of data?.menu" lines="full">
@@ -164,6 +181,7 @@
             </ion-list>
             <br />
             <ion-item
+              *ngIf="data?.delivery?.id && data?.isOrderDelivered !== true && data?.status === 'finished'"
               lines="none"
               button
               mode="md"
