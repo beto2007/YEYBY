@@ -102,7 +102,10 @@ export class ShellComponent {
   }
 
   private logout() {
-    this.authenticationService.logout().subscribe(() => this.router.navigate(['/login']));
+    this.authenticationService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+      location.reload();
+    });
   }
 
   get isWeb(): boolean {
