@@ -40,10 +40,69 @@
       </ion-text>
       <ion-item lines="inset">
         <ion-label color="medium" position="stacked">
-          <ion-text color="primary"> <span class="ion-padding"></span> </ion-text> Email
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Email
         </ion-label>
         <ion-input type="text" formControlName="email" autocomplete="email"></ion-input>
       </ion-item>
+      <ion-text color="danger" [hidden]="myForm.controls.email.valid || myForm.controls.email.untouched">
+        <span class="ion-padding">Email inválido</span>
+      </ion-text>
+      <ion-item lines="inset">
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Contraseña
+        </ion-label>
+        <ion-input type="password" formControlName="password1" autocomplete="Contraseña"></ion-input>
+      </ion-item>
+      <ion-text
+        color="danger"
+        class="ion-padding ion-text-padding"
+        *ngIf="myForm.get('password1').touched && myForm.get('password1').getError('required')"
+      >
+        <span padding>Contraseña requerida</span>
+      </ion-text>
+      <ion-text
+        color="danger"
+        class="ion-padding ion-text-padding"
+        *ngIf="myForm.get('password1').touched && myForm.get('password1').getError('minlength')"
+      >
+        <span padding>La contraseña debe tener al menos 6 carácteres</span>
+      </ion-text>
+      <ion-text
+        color="danger"
+        class="ion-padding ion-text-padding"
+        *ngIf="myForm.get('password1').touched && myForm.get('password1').getError('whitespace')"
+      >
+        <span padding>Contraseña no válida</span>
+      </ion-text>
+      <ion-item lines="inset">
+        <ion-label color="medium" position="stacked">
+          <ion-text color="primary">
+            <span class="ion-padding">*</span>
+          </ion-text>
+          Repetir contraseña
+        </ion-label>
+        <ion-input type="password" formControlName="password2" autocomplete="Repetir contraseña"></ion-input>
+      </ion-item>
+      <ion-text
+        color="danger"
+        class="ion-padding ion-text-padding"
+        *ngIf="myForm.get('password2').touched && myForm.get('password2').getError('required')"
+      >
+        <span padding>Debes repetir la contraseña</span>
+      </ion-text>
+      <ion-text
+        color="danger"
+        class="ion-padding ion-text-padding"
+        *ngIf="myForm.get('password2').touched && myForm.get('password2').getError('mustMatch')"
+      >
+        <span padding>Las contraseñas deben de coincidir</span>
+      </ion-text>
       <ion-item lines="inset">
         <ion-label color="medium" position="stacked">
           <ion-text color="primary">

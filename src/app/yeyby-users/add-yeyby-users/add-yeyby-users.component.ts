@@ -4,7 +4,13 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { DocumentReference } from '@angular/fire/firestore';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
+import { NoWhiteSpaceValidator } from '@shared/validators/noWhiteSpace.validator';
+import { EmailValidator } from '@shared/validators/email.validator';
+import { MustMatch } from '@shared/helpers/must-match.validator';
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@env/environment';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-add-yeyby-users',
@@ -22,6 +28,7 @@ export class AddYeybyUsersComponent implements OnInit {
   file: File;
   imagesPath: string[] = [];
   returnValue: boolean;
+  token: string;
 
   constructor(
     private tools: ToolsService,
@@ -29,12 +36,21 @@ export class AddYeybyUsersComponent implements OnInit {
     private formBuilder: FormBuilder,
     private afs: AngularFirestore,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private http: HttpClient,
+    private afAuth: AngularFireAuth
   ) {
     this.createForm();
   }
 
+  async getTOken() {
+    this.afAuth.authState.subscribe(async (user) => {
+      this.token = await user.getIdToken();
+    });
+  }
+
   ngOnInit(): void {
+    this.getTOken();
     if (this.id) {
       this.initData(this.id);
     }
@@ -64,7 +80,7 @@ export class AddYeybyUsersComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      const response = await this.afs.collection('customers').doc(id).ref.get();
+      const response = await this.afs.collection('users').doc(id).ref.get();
       const data = response.data();
       if (data) {
         if (data && data.image) {
@@ -84,22 +100,31 @@ export class AddYeybyUsersComponent implements OnInit {
   }
 
   private createForm() {
-    this.myForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      phone: ['', Validators.required],
-      email: [''],
-      streetAddress: ['', Validators.required],
-      references: [''],
-    });
+    this.myForm = this.formBuilder.group(
+      {
+        name: ['', Validators.required],
+        phone: ['', Validators.required],
+        email: ['', [Validators.required, EmailValidator.isValid]],
+        streetAddress: ['', Validators.required],
+        references: [''],
+        password1: ['', [Validators.required, Validators.minLength(6), NoWhiteSpaceValidator.isValid]],
+        password2: ['', [Validators.required]],
+      },
+      {
+        validator: MustMatch('password1', 'password2'),
+      }
+    );
   }
 
   fillForm(data: any) {
     this.myForm.setValue({
       name: data && data.name ? data.name : '',
       phone: data && data.phone ? data.phone : '',
-      email: data && data.owner ? data.owner : '',
+      email: data && data.email ? data.email : '',
       streetAddress: data && data.streetAddress ? data.streetAddress : '',
       references: data && data.references ? data.references : '',
+      password1: '',
+      password2: '',
     });
   }
 
@@ -120,25 +145,39 @@ export class AddYeybyUsersComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      let data: any = this.myForm.value;
-      let search: string[] = [];
-      data.nameStr = String(data.name).toLocaleLowerCase();
-      search = search.concat(this.tools.arraySearch(String(this.myForm.get('name').value)));
-      search = search.concat(this.tools.arraySearch(String(this.myForm.get('phone').value)));
-      data.search = search;
-      data.name = String(data.name).toLocaleLowerCase();
-      data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
-      data.date = moment().toDate();
-      if (this.file) {
-        data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'customers');
-      }
-      const response: DocumentReference = await this.afs.collection('customers').add(data);
-      if (response.id) {
-        const response2 = await response.get();
-        const data = response2.data();
-        const id = response2.id;
-        this.close({ item: { id, ...data } });
-        this.presentToast('Cliente agregado correctamente');
+      if (this.token) {
+        const responseInit: any = await this.http
+          .post(
+            `${environment.firebaseApi}crateUserAuth`,
+            {
+              token: this.token,
+              email: String(this.myForm.get('email').value).toLowerCase(),
+              password: String(this.myForm.get('password1').value),
+            },
+            { observe: 'body' }
+          )
+          .toPromise();
+        if (responseInit && responseInit.status && responseInit.status === 'success') {
+          let data: any = this.myForm.value;
+          let search: string[] = [];
+          data.nameStr = String(data.name).toLocaleLowerCase();
+          search = search.concat(this.tools.arraySearch(String(this.myForm.get('name').value)));
+          search = search.concat(this.tools.arraySearch(String(this.myForm.get('phone').value)));
+          search = search.concat(this.tools.arraySearch(String(this.myForm.get('email').value).toLowerCase()));
+          data.search = search;
+          data.type = 'yeyby-users';
+          data.email = String(this.myForm.get('email').value).toLowerCase();
+          data.name = String(data.name).toLocaleLowerCase();
+          data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
+          data.date = moment().toDate();
+          if (this.file) {
+            data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'users');
+          }
+          await this.afs.collection('users').doc(responseInit.data.uid).set(data);
+          this.presentToast('Usuario agregado correctamente');
+        } else {
+          this.presentToast('Ha ocurrido un error');
+        }
       } else {
         this.presentToast('Ha ocurrido un error');
       }
@@ -164,9 +203,9 @@ export class AddYeybyUsersComponent implements OnInit {
       data.name = String(data.name).toLocaleLowerCase();
       data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
       if (this.file) {
-        data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'customers');
+        data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'users');
       }
-      await this.afs.collection('customers').doc(id).update(data);
+      await this.afs.collection('users').doc(id).update(data);
       if (this.file) {
         this.tools.deletePast(this.imagesPath);
       }
