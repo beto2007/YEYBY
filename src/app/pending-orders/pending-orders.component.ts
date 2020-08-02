@@ -5,9 +5,7 @@ import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute } from '@angular/router';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import { interval } from 'rxjs';
-import { LoadingController, ModalController, AlertController } from '@ionic/angular';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-pending-orders',
@@ -37,10 +35,7 @@ export class PendingOrdersComponent implements OnInit {
     private afs: AngularFirestore,
     private tools: ToolsService,
     private aRoute: ActivatedRoute,
-    private loadingController: LoadingController,
-    private modalController: ModalController,
-    private firebase: FirebaseService,
-    private alertController: AlertController
+    private firebase: FirebaseService
   ) {
     this.aRoute.params.subscribe((params) => {
       if (
@@ -184,49 +179,7 @@ export class PendingOrdersComponent implements OnInit {
   }
 
   public async assignDeliverier(order: any): Promise<void> {
-    const modal = await this.modalController.create({
-      component: DeliverersComponent,
-      componentProps: { mode: 'select' },
-    });
-    modal.onDidDismiss().then(async (response) => {
-      this.isLoading = true;
-      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-      loadingOverlay.present();
-      try {
-        if (response && response.data && response.data.item && response.data.item.id) {
-          await this.afs
-            .collection('orders')
-            .doc(order.id)
-            .update({
-              status: 'finished',
-              delivery: {
-                name: response.data.item.name,
-                folio: response.data.item.folio,
-                id: response.data.item.id,
-                phone: response.data.item.phone,
-                image:
-                  response && response.data && response.data.item && response.data.item.image
-                    ? response.data.item.image
-                    : {},
-              },
-              assignmentTime: moment().toDate(),
-              isOrderDelivered: false,
-            });
-          await this.afs.collection('deliverers').doc(response.data.item.id).update({
-            isEnabled: false,
-          });
-          const docResponse = await this.afs.collection('orders').doc(order.id).ref.get();
-          const data = docResponse.data();
-          const id = docResponse.id;
-          this.tools.sendInformationToDelvererCheck({ id, ...data });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      this.isLoading = false;
-      loadingOverlay.dismiss();
-    });
-    return await modal.present();
+    this.firebase.assignDeliverier(order, DeliverersComponent);
   }
 
   public alertCancelOrder(id: string) {

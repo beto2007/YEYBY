@@ -115,7 +115,7 @@
                 </ion-chip>
               </ion-label>
               <ion-buttons slot="end" *ngIf="item?.isOrderDelivered === false && item?.status !== 'cancelled'">
-                <ion-button (click)="presentAlertConfirm(item?.id)" color="primary">
+                <ion-button (click)="finishOrderAlertConfirm(item?.id)" color="primary">
                   <small>Finalizar</small>
                 </ion-button>
               </ion-buttons>

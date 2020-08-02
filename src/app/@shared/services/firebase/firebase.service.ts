@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
-import { LoadingController, ToastController, AlertController } from '@ionic/angular';
+import { LoadingController, ToastController, AlertController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { ToolsService } from '../tools/tools.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,13 +12,16 @@ export class FirebaseService {
   private minutesOfDay = (m: any) => {
     return Number(m.minutes() + m.hours() * 60);
   };
+  isLoading: boolean = false;
 
   constructor(
     private router: Router,
     private afs: AngularFirestore,
     private loadingController: LoadingController,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private modalController: ModalController,
+    private tools: ToolsService
   ) {
     moment.locale('es');
   }
@@ -262,5 +266,96 @@ export class FirebaseService {
       ],
     });
     await alert.present();
+  }
+
+  public async assignDeliverier(order: any, component: any): Promise<void> {
+    const modal = await this.modalController.create({
+      component: component,
+      componentProps: { mode: 'select' },
+    });
+    modal.onDidDismiss().then(async (response) => {
+      this.isLoading = true;
+      const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+      loadingOverlay.present();
+      try {
+        if (response && response.data && response.data.item && response.data.item.id) {
+          await this.afs
+            .collection('orders')
+            .doc(order.id)
+            .update({
+              status: 'finished',
+              delivery: {
+                name: response.data.item.name,
+                folio: response.data.item.folio,
+                id: response.data.item.id,
+                phone: response.data.item.phone,
+                image:
+                  response && response.data && response.data.item && response.data.item.image
+                    ? response.data.item.image
+                    : {},
+              },
+              assignmentTime: moment().toDate(),
+              isOrderDelivered: false,
+            });
+          await this.afs.collection('deliverers').doc(response.data.item.id).update({
+            isEnabled: false,
+          });
+          const docResponse = await this.afs.collection('orders').doc(order.id).ref.get();
+          const data = docResponse.data();
+          const id = docResponse.id;
+          this.tools.sendInformationToDelvererCheck({ id, ...data });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      this.isLoading = false;
+      loadingOverlay.dismiss();
+    });
+    return await modal.present();
+  }
+
+  async finishOrderAlertConfirm(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Finalizar órden',
+      message: '¿Estás seguro de finalizar esta órden?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Finalizar',
+          handler: () => {
+            this.finishOrder(id);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  public async finishOrder(id: string) {
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      const response = await this.afs.collection('orders').doc(id).ref.get();
+      const data = response.data();
+      if (data && data.delivery && data.delivery.id) {
+        await this.afs.collection('deliverers').doc(data.delivery.id).update({
+          isEnabled: true,
+        });
+        await this.afs.collection('orders').doc(id).update({
+          deliveredTime: moment().toDate(),
+          isOrderDelivered: true,
+        });
+        this.tools.presentToast('¡Órden terminada con éxito, el repartidor ahora está disponible!');
+      } else {
+        this.tools.presentToast('Ha ocurrido un error');
+      }
+    } catch (error) {
+      console.error(error);
+      this.tools.presentToast('Ha ocurrido un error');
+    }
+    loadingOverlay.dismiss();
   }
 }

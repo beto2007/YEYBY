@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import * as moment from 'moment';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
+import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { DeliverersComponent } from '@app/deliverers/deliverers.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-order-detail',
@@ -12,15 +15,19 @@ import { ToolsService } from '@app/@shared/services/tools/tools.service';
 })
 export class OrderDetailComponent implements OnInit {
   isLoading: boolean = false;
-  public data: any;
+  public order: any;
+  subscription: Subscription;
+  document: AngularFirestoreDocument;
 
   constructor(
     private afs: AngularFirestore,
     private aRoute: ActivatedRoute,
     private loadingController: LoadingController,
-    private tools: ToolsService
+    private tools: ToolsService,
+    private firebase: FirebaseService
   ) {
     this.aRoute.params.subscribe((params) => {
+      this.closeSubscriptions();
       this.initializeApp(params.id);
     });
   }
@@ -32,10 +39,12 @@ export class OrderDetailComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      const response = await this.afs.collection('orders').doc(id).ref.get();
-      this.data = response.data();
-      this.data.id = response.id;
-      this.data.dateStr = moment(this.data.date.toDate()).format('LLLL');
+      this.document = await this.afs.collection('orders').doc(id);
+      this.subscription = this.document.snapshotChanges().subscribe((snap) => {
+        this.order = snap.payload.data();
+        this.order.id = snap.payload.id;
+        this.order.dateStr = moment(this.order.date.toDate()).format('LLLL');
+      });
     } catch (error) {
       console.error(error);
     }
@@ -43,7 +52,29 @@ export class OrderDetailComponent implements OnInit {
     loadingOverlay.dismiss();
   }
 
-  sendInfo() {
-    this.tools.sendInformationToDelvererCheck(this.data);
+  sendInformationToDelvererCheck() {
+    this.tools.sendInformationToDelvererCheck(this.order);
+  }
+
+  ionViewDidLeave() {
+    this.closeSubscriptions();
+  }
+
+  closeSubscriptions() {
+    try {
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  public async assignDeliverier(): Promise<void> {
+    this.firebase.assignDeliverier(this.order, DeliverersComponent);
+  }
+
+  finishOrderAlertConfirm() {
+    this.firebase.finishOrderAlertConfirm(this.order.id);
   }
 }

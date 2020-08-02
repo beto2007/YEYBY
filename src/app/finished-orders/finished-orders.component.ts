@@ -214,52 +214,11 @@ export class FinishedOrdersComponent implements OnInit {
     }
   }
 
-  async presentAlertConfirm(id: string) {
-    const alert = await this.alertController.create({
-      header: 'Finalizar órden',
-      message: '¿Estás seguro de finalizar esta órden?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
-        {
-          text: 'Finalizar',
-          handler: () => {
-            this.finishOrder(id);
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
   public alertCancelOrder(id: string) {
     this.firebase.alertCancelOrder(id);
   }
 
-  public async finishOrder(id: string) {
-    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
-    loadingOverlay.present();
-    try {
-      const response = await this.afs.collection('orders').doc(id).ref.get();
-      const data = response.data();
-      if (data && data.delivery && data.delivery.id) {
-        await this.afs.collection('deliverers').doc(data.delivery.id).update({
-          isEnabled: true,
-        });
-        await this.afs.collection('orders').doc(id).update({
-          deliveredTime: moment().toDate(),
-          isOrderDelivered: true,
-        });
-        this.tools.presentToast('¡Órden terminada con éxito, el repartidor ahora está disponible!');
-      } else {
-        this.tools.presentToast('Ha ocurrido un error');
-      }
-    } catch (error) {
-      console.error(error);
-      this.tools.presentToast('Ha ocurrido un error');
-    }
-    loadingOverlay.dismiss();
+  async finishOrderAlertConfirm(id: string) {
+    this.firebase.finishOrderAlertConfirm(id);
   }
 }
