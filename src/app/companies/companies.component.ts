@@ -1,13 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Query } from '@angular/fire/firestore';
-import { ModalController, ToastController, PopoverController, AlertController } from '@ionic/angular';
+import { ModalController, ToastController, PopoverController } from '@ionic/angular';
 import { OptionsCompaniesComponent } from './options-companies/options-companies.component';
 import { Subscription } from 'rxjs';
 import { AddCompanyComponent } from './add-company/add-company.component';
 import { SortByCompanyComponent } from './sort-by-company/sort-by-company.component';
-import { FirebaseService } from '../@shared/services/firebase/firebase.service';
 import { CredentialsService } from '@app/auth';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-companies',
@@ -52,10 +50,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     private toastController: ToastController,
     private popoverController: PopoverController,
     private modalController: ModalController,
-    private myFire: FirebaseService,
-    private alertController: AlertController,
-    private credentialsService: CredentialsService,
-    private router: Router
+    private credentialsService: CredentialsService
   ) {
     this.isAdmin =
       this.credentialsService &&
@@ -64,9 +59,6 @@ export class CompaniesComponent implements OnInit, OnDestroy {
       this.credentialsService.credentials.type === 'admin'
         ? true
         : false;
-    if (!this.isAdmin === true) {
-      this.router.navigate(['/']);
-    }
   }
 
   async doSearch(ev: any) {
