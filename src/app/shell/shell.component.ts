@@ -17,6 +17,7 @@ export class ShellComponent {
   public routesPermissions = {
     admin: [
       { title: 'Inicio', link: '/home', icon: 'home-outline' },
+      { title: 'Usuarios Yeyby', link: '/yeyby-users', icon: 'person-add-outline' },
       { title: 'Repartidores', link: '/deliverers', icon: 'bicycle-outline' },
       { title: 'Clientes', link: '/customers', icon: 'person-outline' },
       { title: 'Empresas', link: '/companies', icon: 'briefcase-outline' },

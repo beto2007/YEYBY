@@ -28,6 +28,7 @@ import { CreateOrderByStepsModule } from './create-order-by-steps/create-order-b
 import { FinishedOrdersModule } from './finished-orders/finished-orders.module';
 import { PendingOrdersModule } from './pending-orders/pending-orders.module';
 import { OrderDetailModule } from './order-detail/order-detail.module';
+import { YeybyUsersModule } from './yeyby-users/yeyby-users.module';
 
 @NgModule({
   imports: [
@@ -54,6 +55,7 @@ import { OrderDetailModule } from './order-detail/order-detail.module';
     FinishedOrdersModule,
     PendingOrdersModule,
     OrderDetailModule,
+    YeybyUsersModule,
     AuthModule,
     Angulartics2Module.forRoot(),
     AppRoutingModule, // must be imported as the last module as it contains the fallback route
