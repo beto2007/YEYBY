@@ -10,7 +10,7 @@ const routes: Routes = [
       { path: '', redirectTo: '/pending-orders', pathMatch: 'full' },
       { path: 'pending-orders', component: PendingOrdersComponent, data: { title: extract('Órdenes en espera') } },
     ],
-    ['admin', 'secretary']
+    ['admin', 'yeyby-users']
   ),
 ];
 

@@ -15,7 +15,7 @@ const routes: Routes = [
       },
       { path: 'finished-orders', component: FinishedOrdersComponent, data: { title: extract('Órdenes terminadas') } },
     ],
-    ['admin', 'secretary']
+    ['admin', 'yeyby-users']
   ),
 ];
 

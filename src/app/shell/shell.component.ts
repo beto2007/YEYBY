@@ -31,7 +31,7 @@ export class ShellComponent {
       { title: 'Inicio', link: '/home', icon: 'home-outline' },
       { title: 'Configuración', link: '/profile', icon: 'build-outline' },
     ],
-    secretary: [
+    'yeyby-users': [
       { title: 'Inicio', link: '/home', icon: 'home-outline' },
       { title: 'Crear órden', link: '/create-order', icon: 'receipt-outline' },
       { title: 'Órdenes en espera', link: '/pending-orders', icon: 'timer-outline' },
@@ -67,9 +67,9 @@ export class ShellComponent {
       this.credentialsService &&
       this.credentialsService.credentials &&
       this.credentialsService.credentials.type &&
-      this.credentialsService.credentials.type === 'secretary'
+      this.credentialsService.credentials.type === 'yeyby-users'
     ) {
-      this.routes = this.routesPermissions.secretary;
+      this.routes = this.routesPermissions['yeyby-users'];
     }
   }
 

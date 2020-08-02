@@ -24,8 +24,8 @@ export class YeybyUsersComponent implements OnInit {
   private searchOrderBy: string = 'nameStr';
   private searchOorderByDirection: any = 'asc';
   private perPage: number = 10;
-  private mainCollection: string = 'customers';
-  private docNumbers: string = 'metadatas/customers';
+  private mainCollection: string = 'users';
+  private docNumbers: string = 'metadatas/users';
   private startAfter: any;
   private endBefore: any;
   private startAt: any;
@@ -34,12 +34,12 @@ export class YeybyUsersComponent implements OnInit {
   private searchStr: string;
   public title: any = {
     capitalLetter: {
-      prural: 'Clientes',
-      singular: 'Cliente',
+      prural: 'Usuarios Yeyby',
+      singular: 'Usuario',
     },
     lowerCase: {
-      prural: 'clientes',
-      singular: 'cliente',
+      prural: 'usuarios Yeyby',
+      singular: 'usuario',
     },
   };
   public mode: string = '';
@@ -48,9 +48,7 @@ export class YeybyUsersComponent implements OnInit {
     private afs: AngularFirestore,
     private toastController: ToastController,
     private popoverController: PopoverController,
-    private modalController: ModalController,
-    private myFire: FirebaseService,
-    private alertController: AlertController
+    private modalController: ModalController
   ) {}
 
   async doSearch(ev: any) {

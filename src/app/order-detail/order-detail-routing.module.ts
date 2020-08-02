@@ -10,7 +10,7 @@ const routes: Routes = [
       { path: '', redirectTo: '/order-detail', pathMatch: 'full' },
       { path: 'order-detail/:id', component: OrderDetailComponent, data: { title: extract('Detalle de órden') } },
     ],
-    ['admin', 'secretary']
+    ['admin', 'yeyby-users']
   ),
 ];
 

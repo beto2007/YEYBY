@@ -15,7 +15,7 @@ const routes: Routes = [
       },
       { path: 'create-order', component: CreateOrderByStepsComponent, data: { title: extract('Crear órdenes') } },
     ],
-    ['admin', 'secretary']
+    ['admin', 'yeyby-users']
   ),
 ];
 
