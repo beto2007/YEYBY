@@ -54,7 +54,7 @@ export class DetailYeybyUsersComponent implements OnInit {
   ngOnInit(): void {}
 
   initializeApp(id: string) {
-    this.dataDocument = this.afs.collection('customers').doc(id);
+    this.dataDocument = this.afs.collection('users').doc(id);
     this.suscription = this.dataDocument.snapshotChanges().subscribe((snap) => {
       if (snap.payload.exists === true) {
         const data: any = snap.payload.data();

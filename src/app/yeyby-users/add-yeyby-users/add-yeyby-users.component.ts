@@ -89,6 +89,13 @@ export class AddYeybyUsersComponent implements OnInit {
           this.imagesPath.push(data.image.thumbnail.path);
           this.imagesPath.push(data.image.list.path);
         }
+        this.myForm.clearValidators();
+        this.myForm.get('email').clearValidators();
+        this.myForm.get('password1').clearValidators();
+        this.myForm.get('password2').clearValidators();
+        this.myForm.get('name').setValidators([Validators.required]);
+        this.myForm.get('phone').setValidators([Validators.required]);
+        this.myForm.get('streetAddress').setValidators([Validators.required]);
         this.fillForm(data);
       }
     } catch (error) {
@@ -199,9 +206,13 @@ export class AddYeybyUsersComponent implements OnInit {
       data.nameStr = String(data.name).toLocaleLowerCase();
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('name').value)));
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('phone').value)));
+      search = search.concat(this.tools.arraySearch(String(this.myForm.get('email').value).toLowerCase()));
       data.search = search;
+      data.type = 'yeyby-users';
+      data.email = String(this.myForm.get('email').value).toLowerCase();
       data.name = String(data.name).toLocaleLowerCase();
       data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());
+      data.date = moment().toDate();
       if (this.file) {
         data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'users');
       }

@@ -6,7 +6,7 @@
       </ion-button>
     </ion-buttons>
     <ion-title
-      ><span>{{ id ? 'Actualizar cliente' : 'Agregar cliente' }}</span></ion-title
+      ><span>{{ id ? 'Actualizar usuario' : 'Agregar usuario' }}</span></ion-title
     >
   </ion-toolbar>
 </ion-header>
@@ -38,7 +38,7 @@
       <ion-text color="danger" [hidden]="myForm.controls.phone.valid || myForm.controls.phone.untouched">
         <span class="ion-padding">Teléfono es requerido</span>
       </ion-text>
-      <ion-item lines="inset">
+      <ion-item lines="inset" *ngIf="!id">
         <ion-label color="medium" position="stacked">
           <ion-text color="primary">
             <span class="ion-padding">*</span>
@@ -50,7 +50,7 @@
       <ion-text color="danger" [hidden]="myForm.controls.email.valid || myForm.controls.email.untouched">
         <span class="ion-padding">Email inválido</span>
       </ion-text>
-      <ion-item lines="inset">
+      <ion-item lines="inset" *ngIf="!id">
         <ion-label color="medium" position="stacked">
           <ion-text color="primary">
             <span class="ion-padding">*</span>
@@ -80,7 +80,7 @@
       >
         <span padding>Contraseña no válida</span>
       </ion-text>
-      <ion-item lines="inset">
+      <ion-item lines="inset" *ngIf="!id">
         <ion-label color="medium" position="stacked">
           <ion-text color="primary">
             <span class="ion-padding">*</span>
