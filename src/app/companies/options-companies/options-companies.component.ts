@@ -13,6 +13,9 @@ import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { Logger } from '@core';
 const log = new Logger('Login');
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-options-companies',
@@ -22,6 +25,7 @@ import * as moment from 'moment';
 export class OptionsCompaniesComponent implements OnInit {
   isLoading: boolean | undefined;
   item: any;
+  token: string;
 
   constructor(
     private modalController: ModalController,
@@ -31,10 +35,20 @@ export class OptionsCompaniesComponent implements OnInit {
     private toastController: ToastController,
     private afs: AngularFirestore,
     private afStorage: AngularFireStorage,
-    private tools: ToolsService
+    private tools: ToolsService,
+    private http: HttpClient,
+    private afAuth: AngularFireAuth
   ) {}
 
-  ngOnInit(): void {}
+  async getTOken() {
+    this.afAuth.authState.subscribe(async (user) => {
+      this.token = await user.getIdToken();
+    });
+  }
+
+  ngOnInit(): void {
+    this.getTOken();
+  }
 
   dismissPopover() {
     this.popoverController.dismiss();
@@ -92,6 +106,26 @@ export class OptionsCompaniesComponent implements OnInit {
     loadingOverlay.dismiss();
   }
 
+  async presentRemoveUser() {
+    const alert = await this.alertController.create({
+      header: 'Quitar usuario asignado a empresa',
+      message: `¿Estás seguro de eliminar al usuario asignado a ${this.item.name}?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.deleteUser(this.item.user, true);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
   async presentCode(code: string) {
     const alert = await this.alertController.create({
       header: 'Código de asignación de usuario',
@@ -127,7 +161,10 @@ export class OptionsCompaniesComponent implements OnInit {
         this.deletePast(imagesPath);
       }
       await this.afs.collection('companies').doc(this.item.id).delete();
-      this.presentToast('Usuario eliminado correctamente');
+      if (this.item && this.item.user) {
+        this.deleteUser(this.item.user, false);
+      }
+      this.presentToast('Empresa eliminada correctamente');
       this.dismissPopover();
     } catch (error) {
       console.error(error);
@@ -173,5 +210,86 @@ export class OptionsCompaniesComponent implements OnInit {
     });
     this.dismissPopover();
     return await modal.present();
+  }
+
+  async deleteUser(uid: string, showAlert: boolean): Promise<void> {
+    this.isLoading = true;
+    const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+    loadingOverlay.present();
+    try {
+      if (this.token) {
+        let responseInit: any;
+        try {
+          responseInit = await this.http
+            .post(
+              `${environment.firebaseApi}deleteUserAuth`,
+              {
+                token: this.token,
+                uid: uid,
+              },
+              { observe: 'body' }
+            )
+            .toPromise();
+        } catch (error) {
+          console.error(error);
+        }
+        if (responseInit && responseInit.status && responseInit.status === 'success') {
+          await this.deleteDoc(uid, showAlert);
+        } else {
+          await this.deleteDoc(uid, showAlert);
+        }
+      } else {
+        this.presentToast('Ha ocurrido un error');
+      }
+    } catch (error) {
+      console.error(error);
+      this.presentToast('Ha ocurrido un error');
+    }
+    this.isLoading = false;
+    loadingOverlay.dismiss();
+  }
+
+  async deleteDoc(uid: string, showAlert: boolean) {
+    try {
+      const data = await this.getUserData(uid);
+      let imagesPath: string[] = [];
+      if (data && data.image && data.image.main && data.image.main.path) {
+        imagesPath.push(data.image.main.path);
+      }
+      if (data && data.image && data.image.thumbnail && data.image.thumbnail.path) {
+        imagesPath.push(data.image.thumbnail.path);
+      }
+      if (data && data.image && data.image.list && data.image.list.path) {
+        imagesPath.push(data.image.list.path);
+      }
+      if (imagesPath[0]) {
+        this.deletePast(imagesPath);
+      }
+      await this.afs.collection('users').doc(uid).delete();
+      try {
+        await this.afs.collection('companies').doc(this.item.id).update({ user: '' });
+      } catch (error) {
+        console.error(error);
+      }
+      if (showAlert === true) {
+        this.presentToast('Usuario eliminado correctamente');
+        this.dismissPopover();
+      }
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+  }
+
+  async getUserData(uid: string) {
+    let data: any;
+    try {
+      const response = await this.afs.collection('users').doc(uid).ref.get();
+      data = response.data();
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+    return data;
   }
 }

@@ -14,7 +14,6 @@ import { HomeModule } from './home/home.module';
 import { CompaniesModule } from './companies/companies.module';
 import { CustomersModule } from './customers/customers.module';
 import { DeliverersModule } from './deliverers/deliverers.module';
-import { OrdersModule } from './orders/orders.module';
 import { ProfileModule } from './user/profile/profile.module';
 import { ReportsModule } from './reports/reports.module';
 import { ShellModule } from './shell/shell.module';
@@ -48,7 +47,6 @@ import { YeybyUsersModule } from './yeyby-users/yeyby-users.module';
     CompaniesModule,
     CustomersModule,
     DeliverersModule,
-    OrdersModule,
     ProfileModule,
     ReportsModule,
     CreateOrderByStepsModule,

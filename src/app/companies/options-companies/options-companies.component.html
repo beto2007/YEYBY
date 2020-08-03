@@ -5,11 +5,17 @@
     </ion-label>
     <ion-icon slot="start" name="create"></ion-icon>
   </ion-item>
-  <ion-item button (click)="code()">
+  <ion-item button (click)="code()" *ngIf="!item?.user">
     <ion-label class="ion-text-wrap">
       Generar código de asignacion de usuario
     </ion-label>
     <ion-icon slot="start" name="person"></ion-icon>
+  </ion-item>
+  <ion-item button (click)="presentRemoveUser()" *ngIf="item?.user">
+    <ion-label class="ion-text-wrap">
+      Quitar usuario asignado a empresa
+    </ion-label>
+    <ion-icon slot="start" name="person-remove-outline"></ion-icon>
   </ion-item>
   <ion-item button (click)="presentAlertConfirm()">
     <ion-label>
