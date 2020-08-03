@@ -208,7 +208,6 @@ export class AddYeybyUsersComponent implements OnInit {
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('phone').value)));
       search = search.concat(this.tools.arraySearch(String(this.myForm.get('email').value).toLowerCase()));
       data.search = search;
-      data.type = 'yeyby-users';
       data.email = String(this.myForm.get('email').value).toLowerCase();
       data.name = String(data.name).toLocaleLowerCase();
       data.name = String(data.name).replace(/\b(\w)/g, (s) => s.toUpperCase());

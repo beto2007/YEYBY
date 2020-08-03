@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"></ion-back-button>
       <ion-menu-button></ion-menu-button>
@@ -18,6 +18,14 @@
     <ion-row>
       <ion-col>
         <ion-card class="ion-no-margin">
+          <ion-toolbar color="success">
+            <ion-title class="ion-text-center" *ngIf="data?.type === 'company'">
+              {{ 'Usuario asignado a ' + data?.company?.name }}
+            </ion-title>
+            <ion-title class="ion-text-center" *ngIf="data?.type === 'yeyby-users'">
+              Usuario Yeyby
+            </ion-title>
+          </ion-toolbar>
           <img
             style="display: block; width: 100%; margin: 0 auto; max-width: 450px;"
             [src]="

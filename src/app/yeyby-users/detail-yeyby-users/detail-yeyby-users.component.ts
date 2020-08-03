@@ -3,7 +3,6 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { AddYeybyUsersComponent } from '../add-yeyby-users/add-yeyby-users.component';
 
 @Component({
@@ -25,13 +24,7 @@ export class DetailYeybyUsersComponent implements OnInit {
   suscription: Subscription;
   data: any;
 
-  constructor(
-    private afs: AngularFirestore,
-    private aRoute: ActivatedRoute,
-    private alertController: AlertController,
-    private myFire: FirebaseService,
-    private modalController: ModalController
-  ) {
+  constructor(private afs: AngularFirestore, private aRoute: ActivatedRoute, private modalController: ModalController) {
     this.aRoute.params.subscribe((params) => {
       this.initializeApp(params.id);
     });
@@ -60,8 +53,20 @@ export class DetailYeybyUsersComponent implements OnInit {
         const data: any = snap.payload.data();
         const id: string = snap.payload.id;
         this.data = { id, ...data };
+        this.company(id);
       }
     });
+  }
+
+  async company(id: string) {
+    try {
+      const response = await this.afs.collection('companies').ref.where('user', '==', id).get();
+      if (response.empty === false) {
+        this.data.company = response.docs[0].data();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async add() {

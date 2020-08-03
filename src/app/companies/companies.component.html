@@ -179,7 +179,7 @@
               {{ item?.streetAddress | slice: 0:200 }}...
             </p>
             <div *ngIf="item?.user as user">
-              <ion-chip>
+              <ion-chip [routerLink]="['/yeyby-users/' + user]" routerDirection="forward">
                 <ion-icon name="person"></ion-icon>
                 <ion-icon name="checkmark-circle" color="success"></ion-icon>
               </ion-chip>
