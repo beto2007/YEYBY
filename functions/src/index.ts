@@ -114,15 +114,12 @@ exports.code = functions.https.onRequest(async (request, response) => {
   }
   try {
     const _code = request.body.code;
-    //const _token = request.body.token;
     const _email = request.body.email;
     const _password = request.body.password;
     const _name = request.body.name;
     const _nameStr = request.body.nameStr;
     const _search = request.body.search;
     const _date = request.body.date;
-    //const decodedToken = await admin.auth().verifyIdToken(_token);
-    //if (request.body.uid && decodedToken.uid) {
     const response2 = await db.collection('invites').where('code', '==', _code).where('status', '==', 'pending').get();
     if (!response2.empty === true) {
       const doc = response2.docs[0];
@@ -192,20 +189,14 @@ exports.code = functions.https.onRequest(async (request, response) => {
           'El código de verifiación ya ha sido utilizado o no existe, por favor contacta a la persona que te envió este código.',
       });
     }
-    // } else {
-    //   return response.status(401).send({ message: 'Usuario no válido' });
-    // }
   } catch (error) {
-    console.error(error);
-    if (error.code === 'auth/email-already-in-use') {
-      return response
-        .status(501)
-        .send({ status: 'error', message: 'El email que intentas registrar esta siendo utlizado por otra cuenta.' });
-    } else {
-      return response
-        .status(501)
-        .send({ status: 'error', message: 'Ha ocurrido un error, por favor inténtalo más tarde.' });
-    }
+    return response
+      .status(501)
+      .send({
+        error: error,
+        status: 'error',
+        message: 'El email que intentas registrar esta siendo utlizado por otra cuenta.',
+      });
   }
 });
 
@@ -236,6 +227,36 @@ exports.crateUserAuth = functions.https.onRequest(async (request, response) => {
           .status(401)
           .send({ status: 'error', message: 'Ha ocurrido un error, por favor inténtalo más tarde.' });
       }
+    } else {
+      return response.status(401).send({ message: 'Usuario no válido' });
+    }
+  } catch (error) {
+    return response
+      .status(401)
+      .send({ status: 'error', message: 'Ha ocurrido un error, por favor inténtalo más tarde.', error: error });
+  }
+});
+
+/**
+ * Delete Auth
+ */
+exports.deleteUserAuth = functions.https.onRequest(async (request, response) => {
+  response.header('Content-Type', 'application/json');
+  response.header('Access-Control-Allow-Origin', '*');
+  response.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+  );
+  if (request.method === 'OPTIONS') {
+    return response.status(204).send('');
+  }
+  try {
+    const token = request.body.token;
+    const uid = request.body.uid;
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    if (decodedToken && decodedToken.uid) {
+      await admin.auth().deleteUser(uid);
+      return response.status(200).send({ status: 'success', message: 'Registro creado correctamente.' });
     } else {
       return response.status(401).send({ message: 'Usuario no válido' });
     }
