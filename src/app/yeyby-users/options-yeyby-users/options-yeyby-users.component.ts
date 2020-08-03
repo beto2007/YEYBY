@@ -9,6 +9,9 @@ import {
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { AddYeybyUsersComponent } from '../add-yeyby-users/add-yeyby-users.component';
+import { HttpClient } from '@angular/common/http';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-options-yeyby-users',
@@ -18,6 +21,7 @@ import { AddYeybyUsersComponent } from '../add-yeyby-users/add-yeyby-users.compo
 export class OptionsYeybyUsersComponent implements OnInit {
   isLoading: boolean | undefined;
   item: any;
+  token: string;
 
   constructor(
     private modalController: ModalController,
@@ -26,10 +30,20 @@ export class OptionsYeybyUsersComponent implements OnInit {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private afs: AngularFirestore,
-    private afStorage: AngularFireStorage
+    private afStorage: AngularFireStorage,
+    private http: HttpClient,
+    private afAuth: AngularFireAuth
   ) {}
 
-  ngOnInit(): void {}
+  async getTOken() {
+    this.afAuth.authState.subscribe(async (user) => {
+      this.token = await user.getIdToken();
+    });
+  }
+
+  ngOnInit(): void {
+    this.getTOken();
+  }
 
   dismissPopover() {
     this.popoverController.dismiss();
@@ -61,23 +75,41 @@ export class OptionsYeybyUsersComponent implements OnInit {
     const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
     loadingOverlay.present();
     try {
-      const data = await this.getData();
-      let imagesPath: string[] = [];
-      if (data && data.image && data.image.main && data.image.main.path) {
-        imagesPath.push(data.image.main.path);
+      if (this.token) {
+        const responseInit: any = await this.http
+          .post(
+            `${environment.firebaseApi}deleteUserAuth`,
+            {
+              token: this.token,
+              uid: this.item.id,
+            },
+            { observe: 'body' }
+          )
+          .toPromise();
+        if (responseInit && responseInit.status && responseInit.status === 'success') {
+          const data = await this.getData();
+          let imagesPath: string[] = [];
+          if (data && data.image && data.image.main && data.image.main.path) {
+            imagesPath.push(data.image.main.path);
+          }
+          if (data && data.image && data.image.thumbnail && data.image.thumbnail.path) {
+            imagesPath.push(data.image.thumbnail.path);
+          }
+          if (data && data.image && data.image.list && data.image.list.path) {
+            imagesPath.push(data.image.list.path);
+          }
+          if (imagesPath[0]) {
+            this.deletePast(imagesPath);
+          }
+          await this.afs.collection('users').doc(this.item.id).delete();
+          this.presentToast('Usuario eliminado correctamente');
+          this.dismissPopover();
+        } else {
+          this.presentToast('Ha ocurrido un error');
+        }
+      } else {
+        this.presentToast('Ha ocurrido un error');
       }
-      if (data && data.image && data.image.thumbnail && data.image.thumbnail.path) {
-        imagesPath.push(data.image.thumbnail.path);
-      }
-      if (data && data.image && data.image.list && data.image.list.path) {
-        imagesPath.push(data.image.list.path);
-      }
-      if (imagesPath[0]) {
-        this.deletePast(imagesPath);
-      }
-      await this.afs.collection('customers').doc(this.item.id).delete();
-      this.presentToast('Usuario eliminado correctamente');
-      this.dismissPopover();
     } catch (error) {
       console.error(error);
       this.presentToast('Ha ocurrido un error');

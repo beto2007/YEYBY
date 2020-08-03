@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, LoadingController, ToastController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { DocumentReference } from '@angular/fire/firestore';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { NoWhiteSpaceValidator } from '@shared/validators/noWhiteSpace.validator';
 import { EmailValidator } from '@shared/validators/email.validator';
