@@ -180,6 +180,7 @@ export class AddYeybyUsersComponent implements OnInit {
             data.image = await this.tools.images(this.file, this.thumbnailSrc, this.middleSrc, 'users');
           }
           await this.afs.collection('users').doc(responseInit.data.uid).set(data);
+          this.close();
           this.presentToast('Usuario agregado correctamente');
         } else {
           this.presentToast('Ha ocurrido un error');
