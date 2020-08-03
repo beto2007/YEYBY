@@ -76,36 +76,25 @@ export class OptionsYeybyUsersComponent implements OnInit {
     loadingOverlay.present();
     try {
       if (this.token) {
-        const responseInit: any = await this.http
-          .post(
-            `${environment.firebaseApi}deleteUserAuth`,
-            {
-              token: this.token,
-              uid: this.item.id,
-            },
-            { observe: 'body' }
-          )
-          .toPromise();
+        let responseInit: any;
+        try {
+          responseInit = await this.http
+            .post(
+              `${environment.firebaseApi}deleteUserAuth`,
+              {
+                token: this.token,
+                uid: this.item.id,
+              },
+              { observe: 'body' }
+            )
+            .toPromise();
+        } catch (error) {
+          console.error(error);
+        }
         if (responseInit && responseInit.status && responseInit.status === 'success') {
-          const data = await this.getData();
-          let imagesPath: string[] = [];
-          if (data && data.image && data.image.main && data.image.main.path) {
-            imagesPath.push(data.image.main.path);
-          }
-          if (data && data.image && data.image.thumbnail && data.image.thumbnail.path) {
-            imagesPath.push(data.image.thumbnail.path);
-          }
-          if (data && data.image && data.image.list && data.image.list.path) {
-            imagesPath.push(data.image.list.path);
-          }
-          if (imagesPath[0]) {
-            this.deletePast(imagesPath);
-          }
-          await this.afs.collection('users').doc(this.item.id).delete();
-          this.presentToast('Usuario eliminado correctamente');
-          this.dismissPopover();
+          await this.deleteDoc();
         } else {
-          this.presentToast('Ha ocurrido un error');
+          await this.deleteDoc();
         }
       } else {
         this.presentToast('Ha ocurrido un error');
@@ -118,10 +107,35 @@ export class OptionsYeybyUsersComponent implements OnInit {
     loadingOverlay.dismiss();
   }
 
+  async deleteDoc() {
+    try {
+      const data = await this.getData();
+      let imagesPath: string[] = [];
+      if (data && data.image && data.image.main && data.image.main.path) {
+        imagesPath.push(data.image.main.path);
+      }
+      if (data && data.image && data.image.thumbnail && data.image.thumbnail.path) {
+        imagesPath.push(data.image.thumbnail.path);
+      }
+      if (data && data.image && data.image.list && data.image.list.path) {
+        imagesPath.push(data.image.list.path);
+      }
+      if (imagesPath[0]) {
+        this.deletePast(imagesPath);
+      }
+      await this.afs.collection('users').doc(this.item.id).delete();
+      this.presentToast('Usuario eliminado correctamente');
+      this.dismissPopover();
+    } catch (error) {
+      this.presentToast('Ha ocurrido un error');
+      console.error(error);
+    }
+  }
+
   async getData() {
     let data: any;
     try {
-      const response = await this.afs.collection('customers').doc(this.item.id).ref.get();
+      const response = await this.afs.collection('users').doc(this.item.id).ref.get();
       data = response.data();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
