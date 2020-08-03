@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Query } from '@angular/fire/firestore';
-import { ModalController, ToastController, PopoverController, AlertController } from '@ionic/angular';
+import { ModalController, ToastController, PopoverController } from '@ionic/angular';
 import { OptionsCustomersComponent } from './options-customers/options-customers.component';
 import { Subscription } from 'rxjs';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
 import { SortByCustomerComponent } from './sort-by-customer/sort-by-customer.component';
-import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { Logger } from '@core';
 const log = new Logger('CustomersComponent');
 
@@ -50,9 +49,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
     private afs: AngularFirestore,
     private toastController: ToastController,
     private popoverController: PopoverController,
-    private modalController: ModalController,
-    private myFire: FirebaseService,
-    private alertController: AlertController
+    private modalController: ModalController
   ) {}
 
   async doSearch(ev: any) {
@@ -258,6 +255,13 @@ export class CustomersComponent implements OnInit, OnDestroy {
     const modal = await this.modalController.create({
       component: AddCustomersComponent,
       componentProps: { id: id },
+    });
+    modal.onDidDismiss().then((response) => {
+      if (response && response.data && response.data.item && this.mode === 'modal') {
+        setTimeout(() => {
+          this.selectItem(response.data.item);
+        }, 600);
+      }
     });
     return await modal.present();
   }
