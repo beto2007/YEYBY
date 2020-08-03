@@ -190,13 +190,11 @@ exports.code = functions.https.onRequest(async (request, response) => {
       });
     }
   } catch (error) {
-    return response
-      .status(501)
-      .send({
-        error: error,
-        status: 'error',
-        message: 'El email que intentas registrar esta siendo utlizado por otra cuenta.',
-      });
+    return response.status(501).send({
+      error: error,
+      status: 'error',
+      message: 'El email que intentas registrar esta siendo utlizado por otra cuenta.',
+    });
   }
 });
 
@@ -256,7 +254,7 @@ exports.deleteUserAuth = functions.https.onRequest(async (request, response) => 
     const decodedToken = await admin.auth().verifyIdToken(token);
     if (decodedToken && decodedToken.uid) {
       await admin.auth().deleteUser(uid);
-      return response.status(200).send({ status: 'success', message: 'Registro creado correctamente.' });
+      return response.status(200).send({ status: 'success', message: 'Registro eliminado correctamente.' });
     } else {
       return response.status(401).send({ message: 'Usuario no válido' });
     }
