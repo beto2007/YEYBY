@@ -15,7 +15,7 @@
         <ion-list lines="full" class="ion-no-padding">
           <ion-menu-toggle auto-hide="false" *ngFor="let item of routes">
             <ion-item [routerDirection]="'root'" [routerLink]="item.link" routerLinkActive="active">
-              <ion-icon slot="start" [name]="item.icon"></ion-icon>
+              <ion-icon slot="start" [name]="item?.icon" [src]="item?.src"></ion-icon>
               <ion-label
                 ><span>{{ item.title }}</span></ion-label
               >
