@@ -9,6 +9,8 @@ import {
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { AddDelivererComponent } from '../add-deliverer/add-deliverer.component';
+import { Logger } from '@core';
+const log = new Logger('OptionsDelivererComponent');
 
 @Component({
   selector: 'app-options-deliverer',
@@ -79,7 +81,7 @@ export class OptionsDelivererComponent implements OnInit {
       this.presentToast('Repartidor eliminado correctamente');
       this.dismissPopover();
     } catch (error) {
-      console.error(error);
+      log.error(error);
       this.presentToast('Ha ocurrido un error');
     }
     this.isLoading = false;
@@ -93,7 +95,7 @@ export class OptionsDelivererComponent implements OnInit {
       data = response.data();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     return data;
   }

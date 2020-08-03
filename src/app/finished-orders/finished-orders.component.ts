@@ -3,10 +3,12 @@ import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Quer
 import { Subscription, Observable } from 'rxjs';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute } from '@angular/router';
-import * as moment from 'moment';
 import { interval } from 'rxjs';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { Logger } from '@core';
+const log = new Logger('FinishedOrdersComponent');
+
 @Component({
   selector: 'app-finished-orders',
   templateUrl: './finished-orders.component.html',
@@ -56,7 +58,7 @@ export class FinishedOrdersComponent implements OnInit {
       const id = response.id;
       this.customer = { id, ...data };
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -70,7 +72,7 @@ export class FinishedOrdersComponent implements OnInit {
     try {
       await this.getDocs(direction);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -183,7 +185,7 @@ export class FinishedOrdersComponent implements OnInit {
           sub.unsubscribe();
         }
       } catch (error) {
-        console.error(error);
+        log.error(error);
       }
     }
   }
@@ -210,7 +212,7 @@ export class FinishedOrdersComponent implements OnInit {
         this.totalSubs.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

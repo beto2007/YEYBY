@@ -6,6 +6,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import * as moment from 'moment';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Logger } from '@core';
+const log = new Logger('CreateOrderByStepsComponent');
 
 @Component({
   selector: 'app-create-order-by-steps',
@@ -83,7 +85,7 @@ export class CreateOrderByStepsComponent implements OnInit {
       }
       await this.afs.collection('orders').add(order);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -136,7 +138,7 @@ export class CreateOrderByStepsComponent implements OnInit {
       ];
       this.tools.presentToast('¡Órden creada con éxito! <br/> ¿Ir a órdenes en espera?', 60000, 'top', buttons);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();

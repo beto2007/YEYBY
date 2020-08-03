@@ -5,6 +5,8 @@ import { ToolsService } from '@shared/services/tools/tools.service';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import * as moment from 'moment';
+import { Logger } from '@core';
+const log = new Logger('ReportsComponent');
 
 @Component({
   selector: 'app-reports',
@@ -55,7 +57,7 @@ export class ReportsComponent implements OnInit {
         this.subscription.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -80,7 +82,7 @@ export class ReportsComponent implements OnInit {
           const data = await this.getDocs();
         }
       } catch (error) {
-        console.error(error);
+        log.error(error);
       }
       this.isLoading = false;
       loadingOverlay.dismiss();

@@ -5,6 +5,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { DocumentReference } from '@angular/fire/firestore';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import * as moment from 'moment';
+import { Logger } from '@core';
+const log = new Logger('AddDelivererComponent');
 
 @Component({
   selector: 'app-add-deliverer',
@@ -76,7 +78,7 @@ export class AddDelivererComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -140,7 +142,7 @@ export class AddDelivererComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -170,7 +172,7 @@ export class AddDelivererComponent implements OnInit {
       this.presentToast('Repartidor actualizado correctamente');
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();

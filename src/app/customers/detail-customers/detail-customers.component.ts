@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { AddCustomersComponent } from '../add-customers/add-customers.component';
+import { Logger } from '@core';
+const log = new Logger('DetailCustomersComponent');
 
 @Component({
   selector: 'app-detail-customers',
@@ -47,7 +49,7 @@ export class DetailCustomersComponent implements OnInit {
         this.suscription.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

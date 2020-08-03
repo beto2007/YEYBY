@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
 import { SortByCustomerComponent } from './sort-by-customer/sort-by-customer.component';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { Logger } from '@core';
+const log = new Logger('CustomersComponent');
 
 @Component({
   selector: 'app-customers',
@@ -58,7 +60,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
     try {
       await this.search(ev);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -69,7 +71,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
     try {
       await this.getDocs(direction);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -240,7 +242,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
         this.totalSubs.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

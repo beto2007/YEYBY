@@ -5,6 +5,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { DocumentReference } from '@angular/fire/firestore';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import * as moment from 'moment';
+import { Logger } from '@core';
+const log = new Logger('AddCustomersComponent');
 
 @Component({
   selector: 'app-add-customers',
@@ -77,7 +79,7 @@ export class AddCustomersComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -144,7 +146,7 @@ export class AddCustomersComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -174,7 +176,7 @@ export class AddCustomersComponent implements OnInit {
       this.presentToast('Cliente actualizado correctamente');
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();

@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore, CollectionReference, AngularFirestoreCollection, Query } from '@angular/fire/firestore';
-import { ModalController, ToastController, PopoverController, AlertController } from '@ionic/angular';
+import { ModalController, ToastController, PopoverController } from '@ionic/angular';
 import { OptionsYeybyUsersComponent } from './options-yeyby-users/options-yeyby-users.component';
 import { Subscription } from 'rxjs';
 import { AddYeybyUsersComponent } from './add-yeyby-users/add-yeyby-users.component';
 import { SortByYeybyUserComponent } from './sort-by-yeyby-user/sort-by-yeyby-user.component';
-import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { Logger } from '@core';
+const log = new Logger('YeybyUsersComponent');
 
 @Component({
   selector: 'app-yeyby-users',
@@ -54,7 +55,7 @@ export class YeybyUsersComponent implements OnInit {
     try {
       await this.search(ev);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -65,7 +66,7 @@ export class YeybyUsersComponent implements OnInit {
     try {
       await this.getDocs(direction);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -236,7 +237,7 @@ export class YeybyUsersComponent implements OnInit {
         this.subscription.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

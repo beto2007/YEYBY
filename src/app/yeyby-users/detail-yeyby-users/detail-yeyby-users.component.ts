@@ -4,6 +4,8 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AddYeybyUsersComponent } from '../add-yeyby-users/add-yeyby-users.component';
+import { Logger } from '@core';
+const log = new Logger('DetailYeybyUsersComponent');
 
 @Component({
   selector: 'app-detail-yeyby-users',
@@ -40,7 +42,7 @@ export class DetailYeybyUsersComponent implements OnInit {
         this.suscription.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -65,7 +67,7 @@ export class DetailYeybyUsersComponent implements OnInit {
         this.data.company = response.docs[0].data();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

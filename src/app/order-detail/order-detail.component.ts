@@ -7,6 +7,8 @@ import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import { Subscription } from 'rxjs';
+import { Logger } from '@core';
+const log = new Logger('OrderDetailComponent');
 
 @Component({
   selector: 'app-order-detail',
@@ -46,7 +48,7 @@ export class OrderDetailComponent implements OnInit {
         this.order.dateStr = moment(this.order.date.toDate()).format('LLLL');
       });
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -66,7 +68,7 @@ export class OrderDetailComponent implements OnInit {
         this.subscription.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

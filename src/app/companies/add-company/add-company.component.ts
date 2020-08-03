@@ -6,6 +6,8 @@ import { DocumentReference } from '@angular/fire/firestore';
 import { WorkDaysComponent } from '../work-days/work-days.component';
 import * as moment from 'moment';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
+import { Logger } from '@core';
+const log = new Logger('AddCompanyComponent');
 
 @Component({
   selector: 'app-add-company',
@@ -151,7 +153,7 @@ export class AddCompanyComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -216,7 +218,7 @@ export class AddCompanyComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -247,7 +249,7 @@ export class AddCompanyComponent implements OnInit {
       this.presentToast('Empresa actualizada correctamente');
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();

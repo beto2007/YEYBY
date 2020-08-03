@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { AddCompanyComponent } from './add-company/add-company.component';
 import { SortByCompanyComponent } from './sort-by-company/sort-by-company.component';
 import { CredentialsService } from '@app/auth';
+import { Logger } from '@core';
+const log = new Logger('CompaniesComponent');
 
 @Component({
   selector: 'app-companies',
@@ -66,7 +68,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     try {
       await this.search(ev);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -77,7 +79,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
     try {
       await this.getDocs(direction);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -248,7 +250,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
         this.totalSubs.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

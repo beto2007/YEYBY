@@ -4,6 +4,8 @@ import { LoadingController, ToastController, AlertController, ModalController } 
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { ToolsService } from '../tools/tools.service';
+import { Logger } from '@core';
+const log = new Logger('FirebaseService');
 
 @Injectable({
   providedIn: 'root',
@@ -49,7 +51,7 @@ export class FirebaseService {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     loadingOverlay.dismiss();
   }
@@ -70,7 +72,7 @@ export class FirebaseService {
       });
       this.presentToast('¡Orden entregada!');
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -82,7 +84,7 @@ export class FirebaseService {
       });
       this.presentToast('¡Orden cancelada!');
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -94,7 +96,7 @@ export class FirebaseService {
       });
       this.presentToast('¡Entrega cancelada!');
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -172,7 +174,7 @@ export class FirebaseService {
         return { canCreate: false, code: 'incomplete-order', message: 'Orden no iniciada, la orden no esta completa.' };
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       return ret;
     }
     return ret;
@@ -212,7 +214,7 @@ export class FirebaseService {
         return { canCreate: false, code: 'incomplete-order', message: 'Orden no iniciada, la orden no esta completa.' };
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       return ret;
     }
     return ret;
@@ -234,7 +236,7 @@ export class FirebaseService {
       });
       this.presentToast('¡Orden cancelada!');
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -306,7 +308,7 @@ export class FirebaseService {
           this.tools.sendInformationToDelvererCheck({ id, ...data }, 'update');
         }
       } catch (error) {
-        console.error(error);
+        log.error(error);
       }
       this.isLoading = false;
       loadingOverlay.dismiss();
@@ -353,7 +355,7 @@ export class FirebaseService {
         this.tools.presentToast('Ha ocurrido un error');
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       this.tools.presentToast('Ha ocurrido un error');
     }
     loadingOverlay.dismiss();

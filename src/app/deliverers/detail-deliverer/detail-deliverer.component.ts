@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { AddDelivererComponent } from '../add-deliverer/add-deliverer.component';
+import { Logger } from '@core';
+const log = new Logger('DetailDelivererComponent');
 
 @Component({
   selector: 'app-detail-deliverer',
@@ -47,7 +49,7 @@ export class DetailDelivererComponent implements OnInit {
         this.suscription.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

@@ -14,7 +14,7 @@ import { FirebaseService } from '@app/@shared/services/firebase/firebase.service
 import { AddCompanyComponent } from '../add-company/add-company.component';
 import { Logger } from '@core';
 import { CredentialsService } from '@app/auth';
-const log = new Logger('Login');
+const log = new Logger('DetailCompanyComponent');
 import * as moment from 'moment';
 
 @Component({
@@ -78,7 +78,7 @@ export class DetailCompanyComponent implements OnInit {
         this.suscription2.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -148,7 +148,7 @@ export class DetailCompanyComponent implements OnInit {
       }
     } catch (error) {
       this.tools.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -162,7 +162,7 @@ export class DetailCompanyComponent implements OnInit {
       await this.afs.collection('companies').doc(this.data.id).collection('menu').doc(id).delete();
       this.tools.presentToast('Producto eliminado correctamente');
     } catch (error) {
-      console.error(error);
+      log.error(error);
       this.tools.presentToast('Ha ocurrido un error');
     }
     this.isLoading = false;
@@ -208,7 +208,7 @@ export class DetailCompanyComponent implements OnInit {
         this.tools.presentToast('Producto actualizado correctamente');
       } catch (error) {
         this.tools.presentToast('Ha ocurrido un error');
-        console.error(error);
+        log.error(error);
       }
       this.isLoading = false;
       loadingOverlay.dismiss();

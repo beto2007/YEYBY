@@ -7,6 +7,8 @@ import { AddDelivererComponent } from './add-deliverer/add-deliverer.component';
 import { SortByDelivererComponent } from './sort-by-deliverer/sort-by-deliverer.component';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
 import { ActivatedRoute } from '@angular/router';
+import { Logger } from '@core';
+const log = new Logger('DeliverersComponent');
 
 @Component({
   selector: 'app-deliverers',
@@ -66,7 +68,7 @@ export class DeliverersComponent implements OnInit, OnDestroy {
     try {
       await this.search(ev);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -77,7 +79,7 @@ export class DeliverersComponent implements OnInit, OnDestroy {
     try {
       await this.getDocs(direction);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -248,7 +250,7 @@ export class DeliverersComponent implements OnInit, OnDestroy {
         this.totalSubs.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

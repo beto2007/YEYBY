@@ -12,6 +12,8 @@ import { AddYeybyUsersComponent } from '../add-yeyby-users/add-yeyby-users.compo
 import { HttpClient } from '@angular/common/http';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { environment } from '@env/environment';
+import { Logger } from '@core';
+const log = new Logger('OptionsYeybyUsersComponent');
 
 @Component({
   selector: 'app-options-yeyby-users',
@@ -89,7 +91,7 @@ export class OptionsYeybyUsersComponent implements OnInit {
             )
             .toPromise();
         } catch (error) {
-          console.error(error);
+          log.error(error);
         }
         if (responseInit && responseInit.status && responseInit.status === 'success') {
           await this.deleteDoc();
@@ -100,7 +102,7 @@ export class OptionsYeybyUsersComponent implements OnInit {
         this.presentToast('Ha ocurrido un error');
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       this.presentToast('Ha ocurrido un error');
     }
     this.isLoading = false;
@@ -128,7 +130,7 @@ export class OptionsYeybyUsersComponent implements OnInit {
       this.dismissPopover();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -139,7 +141,7 @@ export class OptionsYeybyUsersComponent implements OnInit {
       data = response.data();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     return data;
   }

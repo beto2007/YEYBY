@@ -11,7 +11,7 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { AddCompanyComponent } from '../add-company/add-company.component';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
 import { Logger } from '@core';
-const log = new Logger('Login');
+const log = new Logger('OptionsCompaniesComponent');
 import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -167,7 +167,7 @@ export class OptionsCompaniesComponent implements OnInit {
       this.presentToast('Empresa eliminada correctamente');
       this.dismissPopover();
     } catch (error) {
-      console.error(error);
+      log.error(error);
       this.presentToast('Ha ocurrido un error');
     }
     this.isLoading = false;
@@ -181,7 +181,7 @@ export class OptionsCompaniesComponent implements OnInit {
       data = response.data();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     return data;
   }
@@ -231,7 +231,7 @@ export class OptionsCompaniesComponent implements OnInit {
             )
             .toPromise();
         } catch (error) {
-          console.error(error);
+          log.error(error);
         }
         if (responseInit && responseInit.status && responseInit.status === 'success') {
           await this.deleteDoc(uid, showAlert);
@@ -242,7 +242,7 @@ export class OptionsCompaniesComponent implements OnInit {
         this.presentToast('Ha ocurrido un error');
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       this.presentToast('Ha ocurrido un error');
     }
     this.isLoading = false;
@@ -269,7 +269,7 @@ export class OptionsCompaniesComponent implements OnInit {
       try {
         await this.afs.collection('companies').doc(this.item.id).update({ user: '' });
       } catch (error) {
-        console.error(error);
+        log.error(error);
       }
       if (showAlert === true) {
         this.presentToast('Usuario eliminado correctamente');
@@ -277,7 +277,7 @@ export class OptionsCompaniesComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
   }
 
@@ -288,7 +288,7 @@ export class OptionsCompaniesComponent implements OnInit {
       data = response.data();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     return data;
   }

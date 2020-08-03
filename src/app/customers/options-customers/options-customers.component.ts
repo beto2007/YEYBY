@@ -9,6 +9,8 @@ import {
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { AddCustomersComponent } from '../add-customers/add-customers.component';
+import { Logger } from '@core';
+const log = new Logger('OptionsCustomersComponent');
 
 @Component({
   selector: 'app-options-customers',
@@ -79,7 +81,7 @@ export class OptionsCustomersComponent implements OnInit {
       this.presentToast('Usuario eliminado correctamente');
       this.dismissPopover();
     } catch (error) {
-      console.error(error);
+      log.error(error);
       this.presentToast('Ha ocurrido un error');
     }
     this.isLoading = false;
@@ -93,7 +95,7 @@ export class OptionsCustomersComponent implements OnInit {
       data = response.data();
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     return data;
   }

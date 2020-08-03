@@ -6,6 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DeliverersComponent } from '@app/deliverers/deliverers.component';
 import { interval } from 'rxjs';
 import { FirebaseService } from '@app/@shared/services/firebase/firebase.service';
+import { Logger } from '@core';
+const log = new Logger('PendingOrdersComponent');
 
 @Component({
   selector: 'app-pending-orders',
@@ -58,7 +60,7 @@ export class PendingOrdersComponent implements OnInit {
     try {
       await this.getDocs(direction);
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
   }
@@ -147,7 +149,7 @@ export class PendingOrdersComponent implements OnInit {
           sub.unsubscribe();
         }
       } catch (error) {
-        console.error(error);
+        log.error(error);
       }
     }
   }
@@ -174,7 +176,7 @@ export class PendingOrdersComponent implements OnInit {
         this.totalSubs.unsubscribe();
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

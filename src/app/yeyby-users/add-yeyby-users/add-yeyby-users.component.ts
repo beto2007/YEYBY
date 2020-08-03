@@ -10,6 +10,8 @@ import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Logger } from '@core';
+const log = new Logger('AddYeybyUsersComponent');
 
 @Component({
   selector: 'app-add-yeyby-users',
@@ -99,7 +101,7 @@ export class AddYeybyUsersComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -190,7 +192,7 @@ export class AddYeybyUsersComponent implements OnInit {
       }
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
@@ -223,7 +225,7 @@ export class AddYeybyUsersComponent implements OnInit {
       this.presentToast('Cliente actualizado correctamente');
     } catch (error) {
       this.presentToast('Ha ocurrido un error');
-      console.error(error);
+      log.error(error);
     }
     this.isLoading = false;
     loadingOverlay.dismiss();
