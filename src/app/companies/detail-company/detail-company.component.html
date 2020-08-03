@@ -75,7 +75,7 @@
             <ion-card-title>
               <ion-toolbar>
                 <ion-icon name="bookmark" slot="start"></ion-icon>
-                <ion-title>Agregar producto a menú</ion-title>
+                <ion-title>Agregar producto</ion-title>
                 <ion-buttons slot="end">
                   <ion-button (click)="viewForm = !viewForm">
                     <ion-icon slot="icon-only" [name]="viewForm == false ? 'chevron-down' : 'chevron-up'"></ion-icon>
@@ -141,12 +141,12 @@
 
         <ion-card class="ion-no-margin">
           <ion-card-header>
-            <ion-card-title>Menú</ion-card-title>
+            <ion-card-title>Productos</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-list>
               <ion-item-sliding *ngFor="let item of menu; let i = index">
-                <ion-item>
+                <ion-item lines="none">
                   <ion-icon name="bookmark" slot="start"></ion-icon>
                   <ion-label class="ion-text-wrap">
                     <h2>
