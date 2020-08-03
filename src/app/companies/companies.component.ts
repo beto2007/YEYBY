@@ -25,7 +25,7 @@ export class CompaniesComponent implements OnInit, OnDestroy {
   public orderByDirection: any = 'asc';
   private searchOrderBy: string = 'nameStr';
   private searchOorderByDirection: any = 'asc';
-  private perPage: number = 10;
+  private perPage: number = 50;
   private mainCollection: string = 'companies';
   private docNumbers: string = 'metadatas/companies';
   private startAfter: any;

@@ -24,7 +24,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
   public orderByDirection: any = 'asc';
   private searchOrderBy: string = 'nameStr';
   private searchOorderByDirection: any = 'asc';
-  private perPage: number = 10;
+  private perPage: number = 50;
   private mainCollection: string = 'customers';
   private docNumbers: string = 'metadatas/customers';
   private startAfter: any;
