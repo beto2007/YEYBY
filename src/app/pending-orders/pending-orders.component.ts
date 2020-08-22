@@ -116,9 +116,11 @@ export class PendingOrdersComponent implements OnInit {
             this.arrayDocs = snap.map((element) => {
               const id: string = element.payload.doc.id;
               const data: any = element.payload.doc.data();
-              data.menuStr = Array.from(data.menu)
-                .map((e: any) => ' ' + e.name)
-                .toString();
+              if (data && data.type && data.type === 'order') {
+                data.menuStr = Array.from(data.menu)
+                  .map((e: any) => ' ' + e.name)
+                  .toString();
+              }
               data.dateStr = data.date && data.date !== '' ? this.tools.beautyDate(data.date.toDate()) : '';
               data.time = new Observable<string>((observer) => {
                 observer.next(this.tools.getMinutes(data.date.toDate()));

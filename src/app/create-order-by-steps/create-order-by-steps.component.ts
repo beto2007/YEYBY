@@ -109,6 +109,25 @@ export class CreateOrderByStepsComponent implements OnInit, OnDestroy {
           date: moment().toDate(),
           status: 'pending',
         };
+      } else {
+        order = {
+          search: [],
+          type: this.type,
+          deliveryPlace: this.address,
+          collectionPlace: this.address2,
+          customer: {
+            id: this.customer.id,
+            folio: this.customer.folio,
+            name: this.customer.name,
+            phone: this.customer.phone,
+            image: this.customer && this.customer.image ? this.customer.image : {},
+          },
+          totalOrder: this.totalOrder,
+          shippingPrice: this.shippingPrice,
+          total: this.total,
+          date: moment().toDate(),
+          status: 'pending',
+        };
       }
       await this.afs.collection('orders').add(order);
     } catch (error) {
@@ -225,6 +244,7 @@ export class CreateOrderByStepsComponent implements OnInit, OnDestroy {
             references: '',
             streetAddress: '',
           };
+          this.calculate();
         }
         this.step2();
       }
