@@ -1307,15 +1307,23 @@
         </div>
         <!-- paso 7 mensaje de correcto-->
         <ion-card *ngIf="step === 7" class="ion-text-center ion-no-margin my-card-dark-5">
-          <ion-icon class="icon-gigant" src="assets\icons\garrapata.svg"></ion-icon>
-          <ion-card-header>
-            <ion-card-title color="light" *ngIf="type === 'orden'">Órden creada correctamente</ion-card-title>
-            <ion-card-title color="light" *ngIf="type === 'envio'">Envío creado correctamente</ion-card-title>
-          </ion-card-header>
           <ion-card-content>
             <ion-item lines="none">
               <ion-label class="ion-text-center">
-                <h2><strong>¿Que deseas hacer?</strong></h2>
+                <h1>
+                  <ion-text color="success" *ngIf="type === 'orden'">
+                    <strong>¡Órden creada correctamente!</strong>
+                  </ion-text>
+                  <ion-text color="success" *ngIf="type === 'envio'">
+                    <strong>¡Envío creado correctamente!</strong>
+                  </ion-text>
+                </h1>
+              </ion-label>
+            </ion-item>
+            <ion-icon class="icon-gigant" src="assets\icons\garrapata.svg"></ion-icon>
+            <ion-item lines="none">
+              <ion-label class="ion-text-center">
+                <h2><strong>¿Qué deseas hacer?</strong></h2>
               </ion-label>
             </ion-item>
             <ion-item lines="full" button mode="md" class="ion-no-margin my-item" (click)="reset()">
