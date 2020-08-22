@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModalController, LoadingController } from '@ionic/angular';
 import { CompaniesComponent } from '@app/companies/companies.component';
 import { CustomersComponent } from '@app/customers/customers.component';
@@ -14,19 +14,23 @@ const log = new Logger('CreateOrderByStepsComponent');
   templateUrl: './create-order-by-steps.component.html',
   styleUrls: ['./create-order-by-steps.component.scss'],
 })
-export class CreateOrderByStepsComponent implements OnInit {
+export class CreateOrderByStepsComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   customer: any;
   company: any;
   menu: any[];
   companyMenu: any[];
   address: any;
+  address2: any;
   totalOrder: number = 0;
   total: number = 0;
   public shippingPrice: number = 30;
   deliveryLocationReferences: string = '';
+  collectionLocationReferences: string = '';
   deliveryAddress: string = 'default';
+  collectionAddress: string = 'default';
   deliveryLocation: string = '';
+  collectionLocation: string = '';
   public step: number = 1;
   public type: 'orden' | 'envio';
 
@@ -45,7 +49,30 @@ export class CreateOrderByStepsComponent implements OnInit {
     });
   }
 
+  reset() {
+    this.type = undefined;
+    this.customer = undefined;
+    this.company = undefined;
+    this.companyMenu = undefined;
+    this.menu = undefined;
+    this.address = undefined;
+    this.totalOrder = 0;
+    this.total = 0;
+    this.shippingPrice = 30;
+    this.deliveryLocationReferences = '';
+    this.deliveryAddress = 'default';
+    this.deliveryLocation = '';
+    this.collectionLocationReferences = '';
+    this.collectionAddress = 'default';
+    this.collectionLocation = '';
+    this.step = 1;
+  }
+
+  result() {}
+
   ngOnInit(): void {}
+
+  ngOnDestroy(): void {}
 
   async save() {
     try {
@@ -97,6 +124,9 @@ export class CreateOrderByStepsComponent implements OnInit {
 
   public step1(type: 'orden' | 'envio') {
     this.type = type;
+    if (this.type === 'envio') {
+      this.deliveryAddress = 'other';
+    }
     this.step = 2;
   }
 
@@ -144,22 +174,6 @@ export class CreateOrderByStepsComponent implements OnInit {
     loadingOverlay.dismiss();
   }
 
-  reset() {
-    this.type = undefined;
-    this.customer = undefined;
-    this.company = undefined;
-    this.companyMenu = undefined;
-    this.menu = undefined;
-    this.address = undefined;
-    this.totalOrder = 0;
-    this.total = 0;
-    this.shippingPrice = 30;
-    this.deliveryLocationReferences = '';
-    this.deliveryAddress = 'default';
-    this.deliveryLocation = '';
-    this.step = 1;
-  }
-
   public async selectCompany(): Promise<void> {
     const modal = await this.modalController.create({
       component: CompaniesComponent,
@@ -197,10 +211,21 @@ export class CreateOrderByStepsComponent implements OnInit {
       loadingOverlay.present();
       if (response && response.data && response.data.item && response.data.item.id) {
         this.customer = response.data.item;
-        this.address = {
-          references: this.customer.references,
-          streetAddress: this.customer.streetAddress,
-        };
+        if (this.type === 'orden') {
+          this.address = {
+            references: this.customer.references,
+            streetAddress: this.customer.streetAddress,
+          };
+        } else {
+          this.address2 = {
+            references: this.customer.references,
+            streetAddress: this.customer.streetAddress,
+          };
+          this.address = {
+            references: '',
+            streetAddress: '',
+          };
+        }
         this.step2();
       }
       this.isLoading = false;
@@ -228,7 +253,7 @@ export class CreateOrderByStepsComponent implements OnInit {
     this.total = this.totalOrder + this.shippingPrice;
   }
 
-  change(event: any) {
+  changeDelivery(event: any) {
     if (event && event.target && event.target.value && event.target.value === 'default') {
       this.address = {
         references: this.customer.references,
@@ -242,12 +267,65 @@ export class CreateOrderByStepsComponent implements OnInit {
     }
   }
 
-  changeAddress(event: any) {
+  changeCollection(event: any) {
+    if (event && event.target && event.target.value && event.target.value === 'default') {
+      this.address2 = {
+        references: this.customer.references,
+        streetAddress: this.customer.streetAddress,
+      };
+    } else if (event && event.target && event.target.value && event.target.value === 'other') {
+      this.address2 = {
+        references: this.collectionLocationReferences,
+        streetAddress: this.collectionLocation,
+      };
+    }
+  }
+
+  changeDeliveryAddress(event: any) {
     if (event && event.target && event.target.value) {
       this.address = {
         references: this.deliveryLocationReferences,
         streetAddress: this.deliveryLocation,
       };
     }
+  }
+
+  changeCollectionAddress(event: any) {
+    if (event && event.target && event.target.value) {
+      this.address2 = {
+        references: this.collectionLocationReferences,
+        streetAddress: this.collectionLocation,
+      };
+    }
+  }
+
+  addressTwist() {
+    const _collectionAddress = this.collectionAddress;
+    const _deliveryAddress = this.deliveryAddress;
+
+    const _collectionLocationReferences = this.collectionLocationReferences;
+    const _deliveryLocationReferences = this.deliveryLocationReferences;
+
+    const _collectionLocation = this.collectionLocation;
+    const _deliveryLocation = this.deliveryLocation;
+
+    this.collectionAddress = _deliveryAddress;
+    this.deliveryAddress = _collectionAddress;
+
+    this.collectionLocationReferences = _deliveryLocationReferences;
+    this.deliveryLocationReferences = _collectionLocationReferences;
+
+    this.collectionLocation = _deliveryLocation;
+    this.deliveryLocation = _collectionLocation;
+
+    this.address = {
+      references: this.deliveryLocationReferences,
+      streetAddress: this.deliveryLocation,
+    };
+
+    this.address2 = {
+      references: this.collectionLocationReferences,
+      streetAddress: this.collectionLocation,
+    };
   }
 }
