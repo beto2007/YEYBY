@@ -302,27 +302,20 @@ export class CreateOrderByStepsComponent implements OnInit, OnDestroy {
   addressTwist() {
     const _collectionAddress = this.collectionAddress;
     const _deliveryAddress = this.deliveryAddress;
-
     const _collectionLocationReferences = this.collectionLocationReferences;
     const _deliveryLocationReferences = this.deliveryLocationReferences;
-
     const _collectionLocation = this.collectionLocation;
     const _deliveryLocation = this.deliveryLocation;
-
     this.collectionAddress = _deliveryAddress;
     this.deliveryAddress = _collectionAddress;
-
     this.collectionLocationReferences = _deliveryLocationReferences;
     this.deliveryLocationReferences = _collectionLocationReferences;
-
     this.collectionLocation = _deliveryLocation;
     this.deliveryLocation = _collectionLocation;
-
     this.address = {
       references: this.deliveryLocationReferences,
       streetAddress: this.deliveryLocation,
     };
-
     this.address2 = {
       references: this.collectionLocationReferences,
       streetAddress: this.collectionLocation,
