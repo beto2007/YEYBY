@@ -76,70 +76,6 @@
               </ion-button>
             </ion-buttons>
           </ion-toolbar>
-          <ion-toolbar>
-            <ion-title class="ion-text-center">
-              <ion-button
-                color="success"
-                shape="clear"
-                class="button-yeiby-no-shadow button-yeiby-no-padding"
-                size="small"
-                (click)="step = 1"
-                [disabled]="!type"
-              >
-                <ion-icon slot="icon-only" name="radio-button-on-outline"></ion-icon>
-              </ion-button>
-              <ion-button
-                color="medium"
-                shape="clear"
-                class="button-yeiby-no-shadow button-yeiby-no-padding"
-                size="small"
-                (click)="step = 2"
-                [disabled]="!customer"
-              >
-                <ion-icon slot="icon-only" name="radio-button-off-outline"></ion-icon>
-              </ion-button>
-              <ion-button
-                color="medium"
-                shape="clear"
-                class="button-yeiby-no-shadow button-yeiby-no-padding"
-                size="small"
-                (click)="step = 3"
-                [disabled]="!company"
-              >
-                <ion-icon slot="icon-only" name="radio-button-off-outline"></ion-icon>
-              </ion-button>
-              <ion-button
-                color="medium"
-                shape="clear"
-                class="button-yeiby-no-shadow button-yeiby-no-padding"
-                size="small"
-                (click)="step = 4"
-                [disabled]="!(menu && menu[0])"
-              >
-                <ion-icon slot="icon-only" name="radio-button-off-outline"></ion-icon>
-              </ion-button>
-              <ion-button
-                color="medium"
-                shape="clear"
-                class="button-yeiby-no-shadow button-yeiby-no-padding"
-                size="small"
-                (click)="step = 5"
-                [disabled]="!address"
-              >
-                <ion-icon slot="icon-only" name="radio-button-off-outline"></ion-icon>
-              </ion-button>
-              <ion-button
-                color="medium"
-                shape="clear"
-                class="button-yeiby-no-shadow button-yeiby-no-padding"
-                size="small"
-                (click)="step = 6"
-                [disabled]="!type && !customer && !company && !(menu && menu[0]) && !address"
-              >
-                <ion-icon slot="icon-only" name="radio-button-off-outline"></ion-icon>
-              </ion-button>
-            </ion-title>
-          </ion-toolbar>
         </ion-card>
         <div *ngIf="type === 'orden'">
           <!-- paso 2 seleccionar usuario-->
@@ -1369,6 +1305,65 @@
             </ion-toolbar>
           </ion-card>
         </div>
+        <!-- paso 7 mensaje de correcto-->
+        <ion-card *ngIf="step === 7" class="ion-text-center ion-no-margin my-card-dark-5">
+          <ion-icon class="icon-gigant" src="assets\icons\garrapata.svg"></ion-icon>
+          <ion-card-header>
+            <ion-card-title color="light" *ngIf="type === 'orden'">Órden creada correctamente</ion-card-title>
+            <ion-card-title color="light" *ngIf="type === 'envio'">Envío creado correctamente</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="none">
+              <ion-label class="ion-text-center">
+                <h2><strong>¿Que deseas hacer?</strong></h2>
+              </ion-label>
+            </ion-item>
+            <ion-item lines="full" button mode="md" class="ion-no-margin my-item" (click)="reset()">
+              <ion-icon color="success" name="add" slot="start" class="icon-big"> </ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h2>
+                  <strong>Crear nueva órden ó envío</strong>
+                </h2>
+                <p></p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" color="dark" slot="end"></ion-icon>
+            </ion-item>
+            <ion-item
+              lines="full"
+              button
+              mode="md"
+              class="ion-no-margin my-item"
+              routerLink="/pending-orders"
+              routerDirection="forward"
+            >
+              <ion-icon color="light" src="assets\icons\pendiente.svg" slot="start" class="icon-big"> </ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h2>
+                  <strong>Ir a órdenes en espera</strong>
+                </h2>
+                <p></p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" color="dark" slot="end"></ion-icon>
+            </ion-item>
+            <ion-item
+              lines="full"
+              button
+              mode="md"
+              class="ion-no-margin my-item"
+              routerLink="/deliverers/orders/list"
+              routerDirection="forward"
+            >
+              <ion-icon color="light" src="assets\icons\aceptar.svg" slot="start" class="icon-big"> </ion-icon>
+              <ion-label class="ion-text-wrap">
+                <h2>
+                  <strong>Ir a órdenes terminadas</strong>
+                </h2>
+                <p></p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" color="dark" slot="end"></ion-icon>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>

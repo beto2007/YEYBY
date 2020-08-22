@@ -171,7 +171,7 @@ export class CreateOrderByStepsComponent implements OnInit, OnDestroy {
     loadingOverlay.present();
     try {
       await this.save();
-      this.reset();
+      this.step = 7;
       const buttons = [
         {
           text: 'Ir',
