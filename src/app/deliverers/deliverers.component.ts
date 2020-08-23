@@ -147,7 +147,7 @@ export class DeliverersComponent implements OnInit, OnDestroy {
 
   async search(ev: any) {
     const searchStr: string = String(ev.target.value).toLocaleLowerCase();
-    if (searchStr.length >= 5) {
+    if (searchStr.length >= 3) {
       this.searchStr = searchStr;
       const snap = await this.afs
         .collection(this.mainCollection)

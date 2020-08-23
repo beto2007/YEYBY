@@ -115,11 +115,16 @@ export class PendingOrdersComponent implements OnInit {
             this.closeTimerSubscriptions();
             this.arrayDocs = snap.map((element) => {
               const id: string = element.payload.doc.id;
-              const data: any = element.payload.doc.data();
-              if (data && data.type && data.type === 'order') {
-                data.menuStr = Array.from(data.menu)
+              let data: any = element.payload.doc.data();
+              if (data && data.type === 'orden') {
+                data.title = Array.from(data.menu)
                   .map((e: any) => ' ' + e.name)
                   .toString();
+              } else {
+                data.title =
+                  data && data.deliveryPlace && data.deliveryPlace.streetAddress
+                    ? data.deliveryPlace.streetAddress
+                    : '';
               }
               data.dateStr = data.date && data.date !== '' ? this.tools.beautyDate(data.date.toDate()) : '';
               data.time = new Observable<string>((observer) => {

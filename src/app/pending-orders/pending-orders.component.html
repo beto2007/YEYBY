@@ -17,12 +17,23 @@
   <ion-grid fixed>
     <ion-row>
       <ion-col>
-        <ion-button routerLink="/deliverers/orders/list" routerDirection="forward" expand="block">
-          <ion-label>
-            <small>Ir a órdenes terminandas</small>
+        <ion-item
+          lines="none"
+          button
+          mode="md"
+          class="ion-no-margin my-item-no-border ion-margin-bottom"
+          routerLink="/deliverers/orders/list"
+          routerDirection="forward"
+        >
+          <ion-icon color="light" src="/assets/icons/aceptar.svg" slot="start"> </ion-icon>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              <strong>Ir a órdenes terminandas</strong>
+            </h2>
+            <p></p>
           </ion-label>
-          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-        </ion-button>
+          <ion-icon name="chevron-forward-outline" color="dark" slot="end"></ion-icon>
+        </ion-item>
         <ion-text color="medium" class="ion-text-center ion-padding">
           <h1>
             <ion-icon class="big-icon" name="search"></ion-icon>
@@ -71,23 +82,57 @@
   <ion-grid fixed>
     <ion-row>
       <ion-col>
-        <ion-button routerLink="/deliverers/orders/list" routerDirection="forward" expand="block">
-          <ion-label>
-            <small>Ir a órdenes terminandas</small>
+        <ion-item
+          lines="none"
+          button
+          mode="md"
+          class="ion-no-margin my-item-no-border ion-margin-bottom"
+          routerLink="/deliverers/orders/list"
+          routerDirection="forward"
+        >
+          <ion-icon color="light" src="/assets/icons/aceptar.svg" slot="start"> </ion-icon>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              <strong>Ir a órdenes terminandas</strong>
+            </h2>
+            <p></p>
           </ion-label>
-          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-        </ion-button>
+          <ion-icon name="chevron-forward-outline" color="dark" slot="end"></ion-icon>
+        </ion-item>
         <ion-list class="ion-no-padding">
+          <ion-list-header lines="full">
+            <ion-label class="ion-text-center">
+              <h2>
+                <strong>
+                  <ion-text color="primary">
+                    Órdenes en espera
+                    <ion-badge color="danger" mode="ios" *ngIf="arrayDocs?.length > 0">
+                      {{ arrayDocs?.length }}
+                      <ion-icon name="add" *ngIf="arrayDocs?.length >= 500"></ion-icon>
+                    </ion-badge>
+                  </ion-text>
+                </strong>
+              </h2>
+            </ion-label>
+          </ion-list-header>
           <ion-item-sliding *ngFor="let item of arrayDocs; let i = index">
             <ion-item lines="full">
+              <ion-icon
+                slot="start"
+                size="large"
+                [src]="
+                  item?.type === 'orden' ? '/assets/icons/para-llevar.svg' : '/assets/icons/paquete-o-empaquetar.svg'
+                "
+              >
+              </ion-icon>
               <ion-label>
                 <div class="ion-margin-vertical">
                   <ion-text color="primary">
-                    <strong> {{ item?.menuStr }}</strong>
+                    <strong> {{ item?.title }}</strong>
                   </ion-text>
                 </div>
                 <div *ngIf="item?.company?.name as name">
-                  <small> <ion-icon slot="icon-only" src="assets\icons\cocina.svg"></ion-icon> {{ name }} </small>
+                  <small> <ion-icon slot="icon-only" src="/assets/icons/cocina.svg"></ion-icon> {{ name }} </small>
                 </div>
                 <div *ngIf="item?.customer?.name as name">
                   <small> <ion-icon slot="icon-only" name="person"></ion-icon> {{ name }} </small>
@@ -104,14 +149,11 @@
               </ion-label>
               <ion-buttons slot="end">
                 <ion-button (click)="assignDeliverier(item)">
-                  <ion-icon class="icon-big" slot="icon-only" src="assets\icons\moto.svg"></ion-icon>
+                  <ion-icon class="icon-big" slot="icon-only" src="/assets/icons/moto.svg"></ion-icon>
                 </ion-button>
               </ion-buttons>
             </ion-item>
             <ion-item-options side="start">
-              <!-- <ion-item-option (click)="alertCancelOrder(item?.id)" color="light">
-                <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-              </ion-item-option> -->
               <ion-item-option [routerLink]="'/order-detail/' + item?.id" routerDirection="forward" color="light">
                 <ion-icon slot="icon-only" name="eye" color="medium"></ion-icon>
               </ion-item-option>

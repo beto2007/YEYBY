@@ -22,7 +22,7 @@
       <h2>{{ customer?.name ? customer?.name : 'Sin cliente asignado' }}</h2>
       <p><strong>Folio:</strong> {{ customer?.folio ? customer?.folio : '' }}</p>
     </ion-label>
-    <ion-icon slot="end" src="assets\icons\moto.svg"></ion-icon>
+    <ion-icon slot="end" src="/assets/icons/moto.svg"></ion-icon>
   </ion-item>
   <ion-grid fixed>
     <ion-row>
@@ -80,25 +80,32 @@
             <h2>{{ customer?.name ? customer?.name : 'Sin cliente asignado' }}</h2>
             <p><strong>Folio:</strong> {{ customer?.folio ? customer?.folio : '' }}</p>
           </ion-label>
-          <ion-icon slot="end" src="assets\icons\moto.svg"></ion-icon>
+          <ion-icon slot="end" src="/assets/icons/moto.svg"></ion-icon>
         </ion-item>
         <ion-list class="ion-no-padding">
           <ion-item-sliding *ngFor="let item of arrayDocs; let i = index">
             <ion-item lines="full">
+              <ion-icon
+                slot="start"
+                size="large"
+                [src]="
+                  item?.type === 'orden' ? '/assets/icons/para-llevar.svg' : '/assets/icons/paquete-o-empaquetar.svg'
+                "
+              ></ion-icon>
               <ion-label>
                 <div class="ion-margin-vertical">
                   <ion-text color="primary">
-                    <strong> {{ item?.menuStr }}</strong>
+                    <strong> {{ item?.title }}</strong>
                   </ion-text>
                 </div>
                 <div *ngIf="item?.company?.name as name">
-                  <small> <ion-icon slot="icon-only" src="assets\icons\cocina.svg"></ion-icon> {{ name }} </small>
+                  <small> <ion-icon slot="icon-only" src="/assets/icons/cocina.svg"></ion-icon> {{ name }} </small>
                 </div>
                 <div *ngIf="item?.customer?.name as name">
                   <small> <ion-icon slot="icon-only" name="person"></ion-icon> {{ name }} </small>
                 </div>
                 <div *ngIf="item?.delivery?.name as name">
-                  <small> <ion-icon slot="icon-only" src="assets\icons\motocicleta.svg"></ion-icon> {{ name }} </small>
+                  <small> <ion-icon slot="icon-only" src="/assets/icons/motocicleta.svg"></ion-icon> {{ name }} </small>
                 </div>
                 <div>
                   <ion-text color="medium">

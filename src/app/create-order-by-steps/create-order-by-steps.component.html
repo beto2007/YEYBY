@@ -35,7 +35,7 @@
                     class="ion-no-margin my-item-no-lines"
                     (click)="step1('orden')"
                   >
-                    <ion-icon color="light" src="assets\icons\para-llevar.svg" slot="start" class="icon-big">
+                    <ion-icon color="light" src="/assets/icons/para-llevar.svg" slot="start" class="icon-big">
                     </ion-icon>
                     <ion-label class="ion-text-wrap">
                       <h2>
@@ -54,7 +54,7 @@
                     class="ion-no-margin my-item-no-lines"
                     (click)="step1('envio')"
                   >
-                    <ion-icon color="light" src="assets\icons\paquete-o-empaquetar.svg" slot="start" class="icon-big">
+                    <ion-icon color="light" src="/assets/icons/paquete-o-empaquetar.svg" slot="start" class="icon-big">
                     </ion-icon>
                     <ion-label class="ion-text-wrap">
                       <h2>
@@ -80,7 +80,7 @@
         <div *ngIf="type === 'orden'">
           <!-- paso 2 seleccionar usuario-->
           <ion-card *ngIf="step === 2" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\equipo.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/equipo.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 2</ion-card-subtitle>
               <ion-card-title color="light">Selecciona al cliente</ion-card-title>
@@ -191,7 +191,7 @@
           </ion-card>
           <!-- paso 3 seleccionar empresa (Orden)-->
           <ion-card *ngIf="step === 3" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\restaurantes.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/restaurantes.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 3</ion-card-subtitle>
               <ion-card-title color="light">Selecciona la empresa</ion-card-title>
@@ -300,7 +300,7 @@
           </ion-card>
           <!-- paso 4 seleccionar menu-->
           <ion-card *ngIf="step === 4" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\comida-rapida.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/comida-rapida.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 4</ion-card-subtitle>
               <ion-card-title color="light">Selecciona los productos</ion-card-title>
@@ -507,7 +507,7 @@
           </ion-card>
           <!-- paso 5 seleccionar lugar de entrega-->
           <ion-card *ngIf="step === 5" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\alfiler.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/alfiler.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 5</ion-card-subtitle>
               <ion-card-title color="light">Selecciona el lugar de entrega</ion-card-title>
@@ -656,7 +656,7 @@
           </ion-card>
           <!-- paso 6 resumen-->
           <ion-card *ngIf="step === 6" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\factura.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/factura.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 6</ion-card-subtitle>
               <ion-card-title color="light">Resumen de orden</ion-card-title>
@@ -862,7 +862,7 @@
         <div *ngIf="type === 'envio'">
           <!-- paso 2 seleccionar usuario-->
           <ion-card *ngIf="step === 2" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\equipo.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/equipo.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 2</ion-card-subtitle>
               <ion-card-title color="light">Selecciona al cliente</ion-card-title>
@@ -953,7 +953,7 @@
           </ion-card>
           <!-- paso 3 seleccionar lugar de entrega (Envio)-->
           <ion-card *ngIf="step === 3" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\ubicacion-del-mapa.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/ubicacion-del-mapa.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 3</ion-card-subtitle>
               <ion-card-title color="light">Lugar de recolección y entrega</ion-card-title>
@@ -1153,7 +1153,7 @@
           </ion-card>
           <!-- paso 4 resumen-->
           <ion-card *ngIf="step === 4" class="ion-text-center ion-no-margin my-card-dark-5">
-            <ion-icon class="icon-gigant" src="assets\icons\factura.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/factura.svg"></ion-icon>
             <ion-card-header>
               <ion-card-subtitle color="light">Paso 4</ion-card-subtitle>
               <ion-card-title color="light">Resumen de envío</ion-card-title>
@@ -1320,7 +1320,7 @@
                 </h1>
               </ion-label>
             </ion-item>
-            <ion-icon class="icon-gigant" src="assets\icons\garrapata.svg"></ion-icon>
+            <ion-icon class="icon-gigant" src="/assets/icons/garrapata.svg"></ion-icon>
             <ion-item lines="none">
               <ion-label class="ion-text-center">
                 <h2><strong>¿Qué deseas hacer?</strong></h2>
@@ -1344,7 +1344,7 @@
               routerLink="/pending-orders"
               routerDirection="forward"
             >
-              <ion-icon color="light" src="assets\icons\pendiente.svg" slot="start" class="icon-big"> </ion-icon>
+              <ion-icon color="light" src="/assets/icons/pendiente.svg" slot="start" class="icon-big"> </ion-icon>
               <ion-label class="ion-text-wrap">
                 <h2>
                   <strong>Ir a órdenes en espera</strong>
@@ -1361,7 +1361,7 @@
               routerLink="/deliverers/orders/list"
               routerDirection="forward"
             >
-              <ion-icon color="light" src="assets\icons\aceptar.svg" slot="start" class="icon-big"> </ion-icon>
+              <ion-icon color="light" src="/assets/icons/aceptar.svg" slot="start" class="icon-big"> </ion-icon>
               <ion-label class="ion-text-wrap">
                 <h2>
                   <strong>Ir a órdenes terminadas</strong>

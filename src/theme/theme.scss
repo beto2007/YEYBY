@@ -184,6 +184,13 @@
   border-bottom: 2px solid var(--ion-color-primary);
 }
 
+.my-item-no-border {
+  --border-radius: 5px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  border: none !important;
+}
+
 .my-item-no-lines {
   --border-radius: 5px;
   --padding-top: 10px;

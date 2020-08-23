@@ -5,7 +5,7 @@ import { CustomersComponent } from '@app/customers/customers.component';
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as moment from 'moment';
 import { ToolsService } from '@app/@shared/services/tools/tools.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Logger } from '@core';
 const log = new Logger('CreateOrderByStepsComponent');
 
@@ -39,8 +39,7 @@ export class CreateOrderByStepsComponent implements OnInit, OnDestroy {
     private modalController: ModalController,
     private loadingController: LoadingController,
     private tools: ToolsService,
-    private aRoute: ActivatedRoute,
-    private router: Router
+    private aRoute: ActivatedRoute
   ) {
     this.aRoute.params.subscribe((params) => {
       if (params && params.type && (params.type === 'orden' || params.type === 'envio')) {
@@ -172,20 +171,7 @@ export class CreateOrderByStepsComponent implements OnInit, OnDestroy {
     try {
       await this.save();
       this.step = 7;
-      const buttons = [
-        {
-          text: 'Ir',
-          handler: () => {
-            this.router.navigate(['/pending-orders']);
-          },
-        },
-        {
-          text: '',
-          icon: 'close',
-          role: 'cancel',
-        },
-      ];
-      this.tools.presentToast('¡Órden creada con éxito! <br/> ¿Ir a órdenes en espera?', 60000, 'top', buttons);
+      this.tools.presentToast('¡Órden creada con éxito!', 5000, 'top');
     } catch (error) {
       log.error(error);
     }
