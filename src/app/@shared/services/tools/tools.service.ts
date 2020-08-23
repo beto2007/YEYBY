@@ -222,13 +222,10 @@ export class ToolsService {
   }
 
   async sendInformationToDelvererCheck(order: any, type: 'send' | 'update') {
-    const alert = await this.alertController.create({
-      cssClass: 'ion-text-wrap',
-      header: 'Enviar información a repartidor',
-      message: `¿Desea enviar la información de la orden generada al repartidor ${
-        order && order.delivery && order.delivery.name ? order.delivery.name : ''
-      }?`,
-      inputs: [
+    let inputs: any[] = [];
+
+    if (order && order.type === 'orden') {
+      inputs = [
         {
           name: 'companyFolio',
           type: 'checkbox',
@@ -265,7 +262,40 @@ export class ToolsService {
           value: 'customerPhone',
           checked: true,
         },
-      ],
+      ];
+    } else {
+      inputs = [
+        {
+          name: 'customerName',
+          type: 'checkbox',
+          label: 'Nombre de cliente',
+          value: 'customerName',
+          checked: true,
+        },
+
+        {
+          name: 'customerFolio',
+          type: 'checkbox',
+          label: 'Folio de cliente',
+          value: 'customerFolio',
+          checked: true,
+        },
+        {
+          name: 'customerPhone',
+          type: 'checkbox',
+          label: 'Teléfono de cliente',
+          value: 'customerPhone',
+          checked: true,
+        },
+      ];
+    }
+    const alert = await this.alertController.create({
+      cssClass: 'ion-text-wrap',
+      header: 'Enviar información a repartidor',
+      message: `¿Desea enviar la información de la órden/envío generada al repartidor ${
+        order && order.delivery && order.delivery.name ? order.delivery.name : ''
+      }?`,
+      inputs: inputs,
       buttons: [
         {
           text: 'No enviar',
@@ -300,79 +330,136 @@ export class ToolsService {
 
   mapInformation(order: any, filters: string[]): string {
     let message: string = '';
-    //Company Info
-    message = message + `Orden: ${order.folio}\n`;
-    message = message + '---------------------------\n';
-    message = message + `Fecha de inicio: ${moment(order.date.toDate()).format('LLL')}\n`;
-    message = message + '\n';
-    message = message + `Lugar de recolección\n`;
-    message = message + '---------------------------\n';
-    if (order && order.company && order.company.name) {
-      message = message + `Empresa: ${order.company.name}\n`;
-    }
-    if (order && order.company && order.company.folio && filters.indexOf('companyFolio') > -1) {
-      message = message + `Folio: ${order.company.folio}\n`;
-    }
-    if (order && order.company && order.company.phone && filters.indexOf('companyPhone') > -1) {
-      message = message + `Teléfono: ${order.company.phone}\n`;
-    }
-    if (order && order.company && order.company.streetAddress) {
-      message = message + `Dirección: ${order.company.streetAddress}\n`;
-    }
-    if (order && order.company && order.company.references) {
-      message = message + `Referencias: ${order.company.references}\n`;
-    }
-    message = message + '\n';
-    //Products Info
-    if (order && order.menu) {
-      message = message + `Productos:\n`;
+    if (order && order.type === 'orden') {
+      //Company Info
+      message = message + `Orden: ${order.folio}\n`;
       message = message + '---------------------------\n';
-      let productStr: string = '';
-      Array.from(order.menu).forEach((product: any) => {
-        if (product && product.name && product.name !== '') {
-          productStr = productStr + `(${product.quantity}) ${product.name}\n`;
-        }
-        if (product && product.observations && product.observations !== '') {
-          productStr = productStr + `${product.observations}\n`;
-        }
-        if (product && product.price && product.price !== '') {
-          productStr = productStr + `Precio: $${new Intl.NumberFormat('en-IN').format(Number(product.price))}\n`;
-        }
-      });
-      message = message + productStr;
+      message = message + `Fecha de inicio: ${moment(order.date.toDate()).format('LLL')}\n`;
+      message = message + '\n';
+      message = message + `Lugar de recolección\n`;
       message = message + '---------------------------\n';
-      message = message + `Costo de orden: $${new Intl.NumberFormat('en-IN').format(Number(order.totalOrder))}\n`;
+      if (order && order.company && order.company.name) {
+        message = message + `Empresa: ${order.company.name}\n`;
+      }
+      if (order && order.company && order.company.folio && filters.indexOf('companyFolio') > -1) {
+        message = message + `Folio: ${order.company.folio}\n`;
+      }
+      if (order && order.company && order.company.phone && filters.indexOf('companyPhone') > -1) {
+        message = message + `Teléfono: ${order.company.phone}\n`;
+      }
+      if (order && order.company && order.company.streetAddress) {
+        message = message + `Dirección: ${order.company.streetAddress}\n`;
+      }
+      if (order && order.company && order.company.references) {
+        message = message + `Referencias: ${order.company.references}\n`;
+      }
+      message = message + '\n';
+      //Products Info
+      if (order && order.menu) {
+        message = message + `Productos:\n`;
+        message = message + '---------------------------\n';
+        let productStr: string = '';
+        Array.from(order.menu).forEach((product: any) => {
+          if (product && product.name && product.name !== '') {
+            productStr = productStr + `(${product.quantity}) ${product.name}\n`;
+          }
+          if (product && product.observations && product.observations !== '') {
+            productStr = productStr + `${product.observations}\n`;
+          }
+          if (product && product.price && product.price !== '') {
+            productStr = productStr + `Precio: $${new Intl.NumberFormat('en-IN').format(Number(product.price))}\n`;
+          }
+        });
+        message = message + productStr;
+        message = message + '---------------------------\n';
+        message = message + `Costo de orden: $${new Intl.NumberFormat('en-IN').format(Number(order.totalOrder))}\n`;
+        message = message + `Costo de envío: $${new Intl.NumberFormat('en-IN').format(Number(order.shippingPrice))}\n`;
+        message = message + `Total: $${new Intl.NumberFormat('en-IN').format(Number(order.total))}\n`;
+        message = message + '\n';
+      }
+      //Customer Info
+      message = message + `Lugar de entrega\n`;
+      message = message + '---------------------------\n';
+      if (order && order.customer && order.customer.name && filters.indexOf('customerName') > -1) {
+        message = message + `Cliente: ${order.customer.name}\n`;
+      }
+      if (order && order.customer && order.customer.folio && filters.indexOf('customerFolio') > -1) {
+        message = message + `Folio: ${order.customer.folio}\n`;
+      }
+      if (order && order.customer && order.customer.phone && filters.indexOf('customerPhone') > -1) {
+        message = message + `Teléfono: ${order.customer.phone}\n`;
+      }
+      if (order && order.deliveryPlace && order.deliveryPlace.streetAddress) {
+        message = message + `Dirección: ${order.deliveryPlace.streetAddress}\n`;
+      }
+      if (order && order.deliveryPlace && order.deliveryPlace.references) {
+        message = message + `Referencias: ${order.deliveryPlace.references}\n`;
+      }
+      //Deliverer Info
+      message = message + '\n';
+      message = message + `El que entrega\n`;
+      message = message + '---------------------------\n';
+      if (order && order.delivery && order.delivery.name) {
+        message = message + `Repartidor: ${order.delivery.name}\n`;
+      }
+      if (order && order.delivery && order.delivery.folio) {
+        message = message + `Folio: ${order.delivery.folio}\n`;
+      }
+    } else {
+      //Company Info
+      message = message + `Orden: ${order.folio}\n`;
+      message = message + '---------------------------\n';
+      message = message + `Fecha de inicio: ${moment(order.date.toDate()).format('LLL')}\n`;
+      message = message + '\n';
+      message = message + `Lugar de recolección\n`;
+      message = message + '---------------------------\n';
+
+      if (order && order.collectionPlace && order.collectionPlace.streetAddress) {
+        message = message + `Dirección: ${order.collectionPlace.streetAddress}\n`;
+      }
+      if (order && order.collectionPlace && order.collectionPlace.references) {
+        message = message + `Referencias: ${order.collectionPlace.references}\n`;
+      }
+      message = message + '\n';
+
+      //Delivery Info
+      message = message + `Lugar de entrega\n`;
+      message = message + '---------------------------\n';
+
+      if (order && order.deliveryPlace && order.deliveryPlace.streetAddress) {
+        message = message + `Dirección: ${order.deliveryPlace.streetAddress}\n`;
+      }
+      if (order && order.deliveryPlace && order.deliveryPlace.references) {
+        message = message + `Referencias: ${order.deliveryPlace.references}\n`;
+      }
+      message = message + '\n';
+
+      message = message + '---------------------------\n';
       message = message + `Costo de envío: $${new Intl.NumberFormat('en-IN').format(Number(order.shippingPrice))}\n`;
       message = message + `Total: $${new Intl.NumberFormat('en-IN').format(Number(order.total))}\n`;
       message = message + '\n';
-    }
-    //Customer Info
-    message = message + `Lugar de entrega\n`;
-    message = message + '---------------------------\n';
-    if (order && order.customer && order.customer.name && filters.indexOf('customerName') > -1) {
-      message = message + `Cliente: ${order.customer.name}\n`;
-    }
-    if (order && order.customer && order.customer.folio && filters.indexOf('customerFolio') > -1) {
-      message = message + `Folio: ${order.customer.folio}\n`;
-    }
-    if (order && order.customer && order.customer.phone && filters.indexOf('customerPhone') > -1) {
-      message = message + `Teléfono: ${order.customer.phone}\n`;
-    }
-    if (order && order.deliveryPlace && order.deliveryPlace.streetAddress) {
-      message = message + `Dirección: ${order.deliveryPlace.streetAddress}\n`;
-    }
-    if (order && order.deliveryPlace && order.deliveryPlace.references) {
-      message = message + `Referencias: ${order.deliveryPlace.references}\n`;
-    }
-    //Deliverer Info
-    message = message + '\n';
-    message = message + `El que entrega\n`;
-    message = message + '---------------------------\n';
-    if (order && order.delivery && order.delivery.name) {
-      message = message + `Repartidor: ${order.delivery.name}\n`;
-    }
-    if (order && order.delivery && order.delivery.folio) {
-      message = message + `Folio: ${order.delivery.folio}\n`;
+
+      //Customer Info
+      message = message + '---------------------------\n';
+      if (order && order.customer && order.customer.name && filters.indexOf('customerName') > -1) {
+        message = message + `Cliente: ${order.customer.name}\n`;
+      }
+      if (order && order.customer && order.customer.folio && filters.indexOf('customerFolio') > -1) {
+        message = message + `Folio: ${order.customer.folio}\n`;
+      }
+      if (order && order.customer && order.customer.phone && filters.indexOf('customerPhone') > -1) {
+        message = message + `Teléfono: ${order.customer.phone}\n`;
+      }
+      //Deliverer Info
+      message = message + '\n';
+      message = message + `El que entrega\n`;
+      message = message + '---------------------------\n';
+      if (order && order.delivery && order.delivery.name) {
+        message = message + `Repartidor: ${order.delivery.name}\n`;
+      }
+      if (order && order.delivery && order.delivery.folio) {
+        message = message + `Folio: ${order.delivery.folio}\n`;
+      }
     }
     return message;
   }
