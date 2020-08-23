@@ -264,7 +264,11 @@
             <ion-item lines="none">
               <ion-avatar slot="start">
                 <img
-                  [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/img/user_default.jpg'"
+                  [src]="
+                    order?.customer?.image?.main?.url
+                      ? order?.customer?.image?.main?.url
+                      : '../../assets/img/user_default.jpg'
+                  "
                 />
               </ion-avatar>
               <ion-label>
