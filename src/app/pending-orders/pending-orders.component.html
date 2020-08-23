@@ -108,7 +108,7 @@
                     Órdenes en espera
                     <ion-badge color="danger" mode="ios" *ngIf="arrayDocs?.length > 0">
                       {{ arrayDocs?.length }}
-                      <ion-icon name="add" *ngIf="arrayDocs?.length >= 500"></ion-icon>
+                      <ion-icon name="add" *ngIf="arrayDocs?.length >= perPage"></ion-icon>
                     </ion-badge>
                   </ion-text>
                 </strong>

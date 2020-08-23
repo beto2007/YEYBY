@@ -126,6 +126,15 @@
           </ion-item>
         </ion-list>
         <ion-list *ngSwitchCase="'select'">
+          <ion-list-header lines="full">
+            <ion-label class="ion-text-wrap">
+              <h2>
+                <strong>
+                  Selecciona a un repartidor para continuar:
+                </strong>
+              </h2>
+            </ion-label>
+          </ion-list-header>
           <ion-item
             lines="full"
             *ngFor="let item of arrayDocs; let i = index"
@@ -156,15 +165,16 @@
             </ion-label>
           </ion-item>
         </ion-list>
-
-        <ion-button *ngSwitchCase="'list'" routerLink="/pending-orders" routerDirection="forward" expand="block">
-          <ion-label>
-            <small>Ir a órdenes en espera</small>
-          </ion-label>
-          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-        </ion-button>
-
         <ion-list *ngSwitchCase="'list'">
+          <ion-list-header lines="full">
+            <ion-label class="ion-text-wrap">
+              <h2>
+                <strong>
+                  Selecciona a un repartidor para ver sus órdenes:
+                </strong>
+              </h2>
+            </ion-label>
+          </ion-list-header>
           <ion-item
             lines="full"
             *ngFor="let item of arrayDocs; let i = index"
@@ -184,10 +194,6 @@
                 <ion-icon slot="start" name="call" color="medium"></ion-icon>
                 <strong>{{ item?.phone }}</strong>
               </h3>
-              <p>
-                <ion-icon slot="start" name="location" color="medium"></ion-icon>
-                {{ item?.streetAddress | slice: 0:100 }}
-              </p>
               <p><strong>Folio: </strong> {{ item?.folio }}</p>
               <ion-badge [color]="item?.isEnabled === true ? 'success' : 'danger'" mode="ios">
                 {{ item?.isEnabled === true ? 'Disponible' : 'Ocupado' }}</ion-badge

@@ -11,19 +11,38 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ion-toolbar *ngIf="filterByDelivery">
+    <ion-item lines="none">
+      <ion-avatar slot="start">
+        <img [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/img/user_default.jpg'" />
+      </ion-avatar>
+      <ion-label>
+        <p>
+          <strong>
+            <small>
+              Se muestran las órdenes asignadas al repartidor:
+            </small>
+          </strong>
+        </p>
+        <h2>{{ customer?.name ? customer?.name : 'Sin cliente asignado' }}</h2>
+        <p><strong>Folio:</strong> {{ customer?.folio ? customer?.folio : '' }}</p>
+        <p>
+          <strong>Status:</strong>
+          <ion-text [color]="customer?.isEnabled === false ? 'danger' : 'success'">
+            {{ customer?.isEnabled === false ? 'No disponible' : 'Disponible' }}
+          </ion-text>
+        </p>
+      </ion-label>
+      <ion-buttons slot="end" *ngIf="customer?.isEnabled === false">
+        <ion-button (click)="forceRelease(customer?.id)" color="danger">
+          <ion-icon slot="icon-only" name="stop"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content color="light" *ngIf="!(arrayDocs && arrayDocs[0]) && isLoading == false">
-  <ion-item lines="none" *ngIf="filterByDelivery">
-    <ion-avatar slot="start">
-      <img [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/img/user_default.jpg'" />
-    </ion-avatar>
-    <ion-label>
-      <h2>{{ customer?.name ? customer?.name : 'Sin cliente asignado' }}</h2>
-      <p><strong>Folio:</strong> {{ customer?.folio ? customer?.folio : '' }}</p>
-    </ion-label>
-    <ion-icon slot="end" src="/assets/icons/moto.svg"></ion-icon>
-  </ion-item>
   <ion-grid fixed>
     <ion-row>
       <ion-col>
@@ -70,18 +89,6 @@
   <ion-grid fixed>
     <ion-row>
       <ion-col>
-        <ion-item lines="none" *ngIf="filterByDelivery">
-          <ion-avatar slot="start">
-            <img
-              [src]="customer?.image?.main?.url ? customer?.image?.main?.url : '../../assets/img/user_default.jpg'"
-            />
-          </ion-avatar>
-          <ion-label>
-            <h2>{{ customer?.name ? customer?.name : 'Sin cliente asignado' }}</h2>
-            <p><strong>Folio:</strong> {{ customer?.folio ? customer?.folio : '' }}</p>
-          </ion-label>
-          <ion-icon slot="end" src="/assets/icons/moto.svg"></ion-icon>
-        </ion-item>
         <ion-list class="ion-no-padding">
           <ion-item-sliding *ngFor="let item of arrayDocs; let i = index">
             <ion-item lines="full">

@@ -23,7 +23,7 @@ export class PendingOrdersComponent implements OnInit {
   public total: number = 0;
   public orderBy: string = 'date';
   public orderByDirection: any = 'asc';
-  private perPage: number = 500;
+  public perPage: number = 100;
   private mainCollection: string = 'orders';
   private startAfter: any;
   private endBefore: any;
