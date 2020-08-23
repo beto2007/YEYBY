@@ -18,6 +18,8 @@ export class ReportsComponent implements OnInit {
   isLoading = false;
   public today: string;
   public today1: string;
+  public today2: string;
+  public todayDate: any;
   private subscription: Subscription;
   public orderBy: string = 'deliveredTime';
   public delivery: any;
@@ -35,8 +37,10 @@ export class ReportsComponent implements OnInit {
     private tools: ToolsService,
     private modalController: ModalController
   ) {
-    this.today = this.beautyDateToday(moment().toDate());
-    this.today1 = this.beautyDateTodayDDMMYYYY(moment().toDate());
+    this.todayDate = moment();
+    this.today = this.beautyDateToday(this.todayDate);
+    this.today1 = this.beautyDateTodayDDMMYYYY(this.todayDate);
+    this.today2 = this.today1;
   }
 
   beautyDate(date: any) {
@@ -48,7 +52,7 @@ export class ReportsComponent implements OnInit {
   }
 
   beautyDateTodayDDMMYYYY(date: any) {
-    return this.tools.dateFormatter(date, 'DD/MM/YYYY');
+    return this.tools.dateFormatter(date, 'YYYY-MM-DD');
   }
 
   closeSubscriptions() {
@@ -79,7 +83,7 @@ export class ReportsComponent implements OnInit {
       try {
         if (response && response.data && response.data.item && response.data.item.id) {
           this.delivery = response.data.item;
-          const data = await this.getDocs();
+          await this.getDocs();
         }
       } catch (error) {
         log.error(error);
@@ -90,10 +94,30 @@ export class ReportsComponent implements OnInit {
     return await modal.present();
   }
 
+  async changeDate(ev: any) {
+    if (ev && ev.target && ev.target.value) {
+      this.todayDate = moment(ev.target.value);
+      this.today = this.beautyDateToday(this.todayDate);
+      this.today1 = this.beautyDateTodayDDMMYYYY(this.todayDate);
+      if (this.delivery) {
+        this.isLoading = true;
+        const loadingOverlay = await this.loadingController.create({ message: 'Cargando' });
+        loadingOverlay.present();
+        try {
+          await this.getDocs();
+        } catch (error) {
+          log.error(error);
+        }
+        this.isLoading = false;
+        loadingOverlay.dismiss();
+      }
+    }
+  }
+
   getDocs(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const today = moment();
+        const today = this.todayDate;
         let start = today.startOf('day').toDate();
         let end = today.endOf('day').toDate();
         let collection: AngularFirestoreCollection<any>;

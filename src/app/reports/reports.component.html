@@ -35,7 +35,17 @@
         </ion-card>
         <ion-card class="ion-no-margin ion-margin-bottom">
           <ion-card-header>
-            <ion-card-subtitle>{{ today }}</ion-card-subtitle>
+            <ion-card-subtitle>
+              <label for="start">Selecionar fecha:</label>
+              <input
+                type="date"
+                id="start"
+                name="trip-start"
+                [value]="today1"
+                [max]="today2"
+                (change)="changeDate($event)"
+              />
+            </ion-card-subtitle>
             <ion-card-title color="success"><strong>Total:</strong> {{ total | currency: 'USD' }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
